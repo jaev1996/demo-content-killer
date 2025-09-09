@@ -46,7 +46,7 @@ const data = {
     },
     {
       title: "Buscar Contenido",
-      url: "#", // Esta opción podría iniciar una búsqueda
+      url: "/search", // Esta opción podría iniciar una búsqueda
       icon: IconSearch,
     },
     {
