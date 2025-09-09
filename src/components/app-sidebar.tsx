@@ -41,7 +41,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/", // En Next.js, la ruta principal es "/"
+      url: "/dashboard", // En Next.js, la ruta principal es "/"
       icon: IconDashboard,
     },
     {
@@ -59,14 +59,14 @@ const data = {
       url: "#", // Historial de reclamos enviados y resueltos
       icon: IconChartBar,
     },
-  ],
-  // Opciones secundarias para la configuración y ayuda
-  navSecondary: [
     {
       title: "Perfiles de Cliente",
       url: "/profiles", // Donde el cliente gestiona la whitelist
       icon: IconUserCircle,
-    },
+    }
+  ],
+  // Opciones secundarias para la configuración y ayuda
+  navSecondary: [
     {
       title: "Configuración",
       url: "#",
