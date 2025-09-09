@@ -1,0 +1,31 @@
+[
+    {
+        "id": "profile-1",
+        "creatorName": "Elena Valera",
+        "socialMediaUser": "@elena_v",
+        "whitelist": [
+            "https://youtube.com/elenavalera",
+            "https://patreon.com/elenavalera"
+        ],
+        "status": "active"
+    },
+    {
+        "id": "profile-2",
+        "creatorName": "Sofia Reyes",
+        "socialMediaUser": "@sofiareyes",
+        "whitelist": [
+            "https://youtube.com/sofiareyes",
+            "https://onlyfans.com/sofiareyes"
+        ],
+        "status": "active"
+    },
+    {
+        "id": "profile-3",
+        "creatorName": "Laura Gomez",
+        "socialMediaUser": "@laurag",
+        "whitelist": [
+            "https://patreon.com/laurag"
+        ],
+        "status": "inactive"
+    }
+]

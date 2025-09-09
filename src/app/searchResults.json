@@ -1,0 +1,20 @@
+[
+    {
+        "id": "search-1",
+        "url": "https://example-leak-site.com/video/creator-a-123",
+        "siteName": "Example Leak Site",
+        "status": "new"
+    },
+    {
+        "id": "search-2",
+        "url": "https://another-bad-place.net/creator-a/vid005",
+        "siteName": "Another Bad Place",
+        "status": "new"
+    },
+    {
+        "id": "search-3",
+        "url": "https://random-forum.org/thread/4567",
+        "siteName": "Random Forum",
+        "status": "claimed"
+    }
+]

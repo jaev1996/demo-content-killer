@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   IconCamera,
+  IconSkull,
   IconChartBar,
   IconDashboard,
   IconDatabase,
@@ -12,7 +13,6 @@ import {
   IconListCheck,
   IconUserCircle,
   IconHelp,
-  IconInnerShadowTop,
   IconReport,
   IconSearch,
   IconSettings,
@@ -64,7 +64,7 @@ const data = {
   navSecondary: [
     {
       title: "Perfiles de Cliente",
-      url: "#", // Donde el cliente gestiona la whitelist
+      url: "/profiles", // Donde el cliente gestiona la whitelist
       icon: IconUserCircle,
     },
     {
@@ -156,8 +156,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <IconSkull className="!size-5" />
+                <span className="text-base font-semibold">Demo Content Killer.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

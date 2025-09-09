@@ -1,0 +1,16 @@
+[
+    {
+        "id": "claim-1",
+        "url": "https://example-leak-site.com/video/creator-a-123",
+        "siteName": "Example Leak Site",
+        "status": "pending",
+        "foundDate": "2024-07-28"
+    },
+    {
+        "id": "claim-2",
+        "url": "https://another-bad-place.net/creator-a/vid005",
+        "siteName": "Another Bad Place",
+        "status": "pending",
+        "foundDate": "2024-07-28"
+    }
+]
