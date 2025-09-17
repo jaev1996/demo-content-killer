@@ -8,10 +8,10 @@ import {
     Card,
     CardContent,
     CardDescription,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
@@ -28,21 +28,55 @@ import { Textarea } from "@/components/ui/textarea"
 import profilesData from "../profiles/profiles.json"
 
 
+// Para resultados de la API externa
+interface ApiResult {
+    title: string;
+    url: string;
+    snippet: string;
+}
+
+interface SearchResult {
+    id: string;
+    url: string;
+    siteName: string;
+    status: string;
+}
+
+
 export default function SearchPage() {
-    const [searchTerm, setSearchTerm] = React.useState("")
+    const [searchTerm, setSearchTerm] = React.useState("descargar gratis peliculas")
     const [selectedCreator, setSelectedCreator] = React.useState("")
+    const [searchResults, setSearchResults] = React.useState<SearchResult[]>([])
+    // Para resultados de la API externa
+    const [apiResults, setApiResults] = React.useState<ApiResult[] | null>(null)
+    const [loading, setLoading] = React.useState(false)
+    const [error, setError] = React.useState<string | null>(null)
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-
-        alert("Solicitud en proceso... Estamos buscando el contenido solicitado. Por favor, espere.")
-
-        // Aquí iría la lógica real para buscar el contenido,
-        // que podría incluir una llamada a una API.
-
-        //Simulación de una búsqueda
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-
-        alert("Búsqueda Completa: La búsqueda de contenido ha finalizado.")
+        setLoading(true)
+        setError(null)
+        setApiResults(null)
+        try {
+            // Cambia la URL por la de tu API real
+            const response = await fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(searchTerm)}`);
+            if (!response.ok) throw new Error('Error en la petición')
+            const data = await response.json();
+            // Si la API retorna un objeto con "results"
+            if (data && Array.isArray(data.results)) {
+                setApiResults(data.results)
+            } else {
+                setApiResults([])
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message || 'Error desconocido')
+            } else {
+                setError('Error desconocido')
+            }
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -103,6 +137,79 @@ export default function SearchPage() {
                                     </form>
                                 </CardContent>
                             </Card>
+
+                            {/* Resultados de la API externa */}
+                            {loading && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Buscando resultados...</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-muted-foreground">Cargando resultados, por favor espera y valida el captcha si es necesario.</div>
+                                    </CardContent>
+                                </Card>
+                            )}
+                            {error && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Error</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-destructive">{error}</div>
+                                    </CardContent>
+                                </Card>
+                            )}
+                            {apiResults && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Resultados de la Búsqueda</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="grid gap-4">
+                                        {apiResults.length === 0 && (
+                                            <div className="text-muted-foreground">No se encontraron resultados.</div>
+                                        )}
+                                        {apiResults.map((result, idx) => (
+                                            <Card key={idx}>
+                                                <CardHeader>
+                                                    <CardTitle>{result.title}</CardTitle>
+                                                    <CardDescription>
+                                                        <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                                            {result.url}
+                                                        </a>
+                                                        {result.snippet && <div className="mt-2 text-sm text-muted-foreground">{result.snippet}</div>}
+                                                    </CardDescription>
+                                                </CardHeader>
+                                            </Card>
+                                        ))}
+                                    </CardContent>
+                                </Card>
+                            )}
+                            {/* Resultados internos (si los necesitas) */}
+                            {searchResults.length > 0 && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Resultados de la Búsqueda (Internos)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="grid gap-4">
+                                        {searchResults.map((result) => (
+                                            <Card key={result.id}>
+                                                <CardHeader>
+                                                    <CardTitle>{result.siteName}</CardTitle>
+                                                    <CardDescription>
+                                                        <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                                            {result.url}
+                                                        </a>
+                                                    </CardDescription>
+                                                </CardHeader>
+                                                <CardFooter className="flex justify-end gap-2">
+                                                    <Button variant="outline" size="sm">Añadir a Whitelist</Button>
+                                                    <Button size="sm">Solicitar Retiro</Button>
+                                                </CardFooter>
+                                            </Card>
+                                        ))}
+                                    </CardContent>
+                                </Card>
+                            )}
 
                             <Card>
                                 <CardHeader>
