@@ -51,12 +51,12 @@ const data = {
     },
     {
       title: "Reclamos Pendientes",
-      url: "#", // La lista de reclamos para aprobar
+      url: "/takedowns", // La lista de reclamos para aprobar
       icon: IconListCheck,
     },
     {
       title: "Historial de Reclamos",
-      url: "#", // Historial de reclamos enviados y resueltos
+      url: "/history", // Historial de reclamos enviados y resueltos
       icon: IconChartBar,
     },
     {

@@ -1,6 +1,6 @@
 "use client"
 
-import { IconSearch } from "@tabler/icons-react"
+import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX } from "@tabler/icons-react"
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -25,43 +25,135 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import profilesData from "../profiles/profiles.json"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Toaster, toast } from "sonner"
 
+// Interfaces
+interface Profile {
+    id: string;
+    creatorName: string;
+    whitelist: string[];
+    createdAt: string;
+    updatedAt: string;
+    settings: {
+        autoFilter: boolean;
+        strictMode: boolean;
+    };
+}
 
-// Para resultados de la API externa
+interface ProfilesResponse {
+    profiles: Profile[];
+    count: number;
+}
+
 interface ApiResult {
     title: string;
     url: string;
     snippet: string;
 }
 
-interface SearchResult {
-    id: string;
-    url: string;
-    siteName: string;
-    status: string;
+// Función para determinar si un enlace es sospechoso
+const isSuspiciousLink = (url: string, title: string, snippet: string): boolean => {
+    const suspiciousKeywords = [
+        'descargar', 'gratis', 'filtrado', 'leaked', 'onlyfans', 'pack',
+        'telegram', 'mega', 'mediafire', 'drive.google', 'dropbox',
+        'xxx', 'porn', 'adult', 'nude', 'naked', 'sex'
+    ]
+
+    const text = `${url} ${title} ${snippet}`.toLowerCase()
+    return suspiciousKeywords.some(keyword => text.includes(keyword))
 }
 
+// Función para obtener el nivel de riesgo
+const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'medium' | 'low' => {
+    const highRiskKeywords = ['leaked', 'filtrado', 'pack', 'onlyfans', 'telegram']
+    const mediumRiskKeywords = ['descargar', 'gratis', 'mega', 'drive']
+
+    const text = `${url} ${title} ${snippet}`.toLowerCase()
+
+    if (highRiskKeywords.some(keyword => text.includes(keyword))) return 'high'
+    if (mediumRiskKeywords.some(keyword => text.includes(keyword))) return 'medium'
+    return 'low'
+}
 
 export default function SearchPage() {
-    const [searchTerm, setSearchTerm] = React.useState("descargar gratis peliculas")
+    const [searchTerm, setSearchTerm] = React.useState("")
     const [selectedCreator, setSelectedCreator] = React.useState("")
-    const [searchResults, setSearchResults] = React.useState<SearchResult[]>([])
-    // Para resultados de la API externa
     const [apiResults, setApiResults] = React.useState<ApiResult[] | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState<string | null>(null)
 
+    // Estados para perfiles
+    const [profiles, setProfiles] = React.useState<Profile[]>([])
+    const [filteredProfiles, setFilteredProfiles] = React.useState<Profile[]>([])
+    const [profileFilter, setProfileFilter] = React.useState("")
+    const [loadingProfiles, setLoadingProfiles] = React.useState(false)
+
+    // Cargar perfiles al montar el componente
+    React.useEffect(() => {
+        const fetchProfiles = async () => {
+            setLoadingProfiles(true)
+            try {
+                const response = await fetch('http://localhost:3001/api/profiles')
+                if (!response.ok) throw new Error('Error al cargar perfiles')
+                const data: ProfilesResponse = await response.json()
+                setProfiles(data.profiles)
+                setFilteredProfiles(data.profiles)
+            } catch (err) {
+                console.error('Error cargando perfiles:', err)
+                // Si hay error, usar datos de fallback (si existen)
+                setProfiles([])
+                setFilteredProfiles([])
+            } finally {
+                setLoadingProfiles(false)
+            }
+        }
+
+        fetchProfiles()
+    }, [])
+
+    // Filtrar perfiles cuando cambie el texto del filtro
+    React.useEffect(() => {
+        if (!profileFilter.trim()) {
+            setFilteredProfiles(profiles)
+        } else {
+            const filtered = profiles.filter(profile =>
+                profile.creatorName.toLowerCase().includes(profileFilter.toLowerCase()) ||
+                profile.id.toLowerCase().includes(profileFilter.toLowerCase())
+            )
+            setFilteredProfiles(filtered)
+        }
+    }, [profileFilter, profiles])
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
+
+        if (!selectedCreator) {
+            setError('Por favor selecciona una creadora')
+            return
+        }
+
+        if (!searchTerm.trim()) {
+            setError('Por favor ingresa términos de búsqueda')
+            return
+        }
+
         setLoading(true)
         setError(null)
         setApiResults(null)
+
         try {
-            // Cambia la URL por la de tu API real
-            const response = await fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(searchTerm)}`);
-            if (!response.ok) throw new Error('Error en la petición')
-            const data = await response.json();
+            // Construir la URL con el creador seleccionado
+            const searchQuery = encodeURIComponent(searchTerm.trim())
+            const response = await fetch(`http://localhost:3001/api/search/${selectedCreator}?q=${searchQuery}`)
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`)
+            }
+
+            const data = await response.json()
+
             // Si la API retorna un objeto con "results"
             if (data && Array.isArray(data.results)) {
                 setApiResults(data.results)
@@ -72,18 +164,52 @@ export default function SearchPage() {
             if (err instanceof Error) {
                 setError(err.message || 'Error desconocido')
             } else {
-                setError('Error desconocido')
+                setError('Error desconocido al realizar la búsqueda')
             }
         } finally {
             setLoading(false)
         }
     }
 
+    const handleAddToWhitelist = (url: string) => {
+        console.log('Agregando a whitelist:', url)
+        // Aquí implementarías la lógica para agregar a whitelist
+    }
+
+    const handleRequestRemoval = async (url: string) => {
+        if (!selectedCreator) {
+            toast.error("Por favor, selecciona una creadora primero.")
+            return
+        }
+        try {
+            const response = await fetch('http://localhost:3001/api/takedowns', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, userId: selectedCreator, sourceQuery: searchTerm }),
+            })
+            if (!response.ok) {
+                throw new Error('Error al enviar la solicitud de retiro.')
+            }
+            toast.success(`Solicitud de retiro enviada para: ${url}`)
+            // Eliminar el resultado de la lista para evitar duplicados
+            setApiResults(prevResults => prevResults?.filter(result => result.url !== url) || null)
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Ocurrió un error desconocido.')
+        }
+    }
+
+    const clearProfileFilter = () => {
+        setProfileFilter("")
+    }
+
+    const selectedProfile = profiles.find(p => p.id === selectedCreator)
+
     return (
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeader />
+                <Toaster richColors />
                 <main className="flex-1 overflow-y-auto p-4 md:p-8">
                     <div className="mx-auto grid w-full max-w-4xl gap-8">
                         <div>
@@ -107,106 +233,263 @@ export default function SearchPage() {
                                     <form onSubmit={handleSubmit} className="grid gap-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="search">
-                                                Términos de búsqueda (uno por línea)
+                                                Términos de búsqueda
                                             </Label>
                                             <Textarea
                                                 id="search"
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                placeholder="Ej: video filtrado, contenido exclusivo..."
+                                                placeholder="Ej: nombre de la creadora pack, videos filtrados de..., contenido exclusivo..."
                                                 rows={3}
+                                                required
                                             />
                                         </div>
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="creator">Creadora de Contenido</Label>
-                                            <Select onValueChange={setSelectedCreator} value={selectedCreator}>
+
+                                        <div className="grid gap-3">
+                                            <Label>Creadora de Contenido</Label>
+
+                                            {/* Filtro de perfiles */}
+                                            <div className="relative">
+                                                <IconFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
+                                                <Input
+                                                    placeholder="Filtrar creadoras..."
+                                                    value={profileFilter}
+                                                    onChange={(e) => setProfileFilter(e.target.value)}
+                                                    className="pl-9 pr-9"
+                                                />
+                                                {profileFilter && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={clearProfileFilter}
+                                                        className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+                                                    >
+                                                        <IconX className="size-3" />
+                                                    </Button>
+                                                )}
+                                            </div>
+
+                                            <Select
+                                                onValueChange={setSelectedCreator}
+                                                value={selectedCreator}
+                                                disabled={loadingProfiles}
+                                            >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Selecciona una creadora" />
+                                                    <SelectValue
+                                                        placeholder={
+                                                            loadingProfiles
+                                                                ? "Cargando perfiles..."
+                                                                : filteredProfiles.length === 0 && profileFilter
+                                                                    ? "No se encontraron perfiles"
+                                                                    : "Selecciona una creadora"
+                                                        }
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {profilesData.map((profile) => (
-                                                        <SelectItem key={profile.id} value={profile.id}>{profile.creatorName}</SelectItem>
+                                                    {filteredProfiles.map((profile) => (
+                                                        <SelectItem key={profile.id} value={profile.id}>
+                                                            <div className="flex items-center justify-between w-full">
+                                                                <span>{profile.creatorName}</span>
+                                                                <Badge variant="secondary" className="ml-2 text-xs">
+                                                                    {profile.id}
+                                                                </Badge>
+                                                            </div>
+                                                        </SelectItem>
                                                     ))}
+                                                    {filteredProfiles.length === 0 && !loadingProfiles && (
+                                                        <div className="px-2 py-1 text-sm text-muted-foreground">
+                                                            {profileFilter
+                                                                ? "No se encontraron perfiles que coincidan"
+                                                                : "No hay perfiles disponibles"
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </SelectContent>
                                             </Select>
+
+                                            {/* Información del perfil seleccionado */}
+                                            {selectedProfile && (
+                                                <div className="p-3 bg-muted/50 rounded-lg text-sm">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Badge variant="outline">{selectedProfile.id}</Badge>
+                                                        <span className="text-muted-foreground">•</span>
+                                                        <span>
+                                                            {selectedProfile.settings.autoFilter ? 'Filtro automático activado' : 'Filtro manual'}
+                                                        </span>
+                                                        {selectedProfile.settings.strictMode && (
+                                                            <>
+                                                                <span className="text-muted-foreground">•</span>
+                                                                <Badge variant="secondary" className="text-xs">Modo estricto</Badge>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        Whitelist: {selectedProfile.whitelist.length} sitios permitidos
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                        <Button type="submit" className="w-fit">
+
+                                        <Button type="submit" className="w-fit" disabled={loading || !selectedCreator}>
                                             <IconSearch className="mr-2 size-4" />
-                                            Iniciar Búsqueda
+                                            {loading ? 'Buscando...' : 'Iniciar Búsqueda'}
                                         </Button>
                                     </form>
                                 </CardContent>
                             </Card>
 
-                            {/* Resultados de la API externa */}
+                            {/* Estado de carga */}
                             {loading && (
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>Buscando resultados...</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-muted-foreground">Cargando resultados, por favor espera y valida el captcha si es necesario.</div>
+                                        <div className="text-muted-foreground">
+                                            Analizando contenido para <strong>{selectedProfile?.creatorName}</strong>.
+                                            Por favor espera y valida el captcha si es necesario.
+                                        </div>
                                     </CardContent>
                                 </Card>
                             )}
+
+                            {/* Errores */}
                             {error && (
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Error</CardTitle>
+                                        <CardTitle className="text-destructive">Error</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-destructive">{error}</div>
                                     </CardContent>
                                 </Card>
                             )}
+
+                            {/* Resultados de la API externa */}
                             {apiResults && (
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>Resultados de la Búsqueda</CardTitle>
+                                        <CardDescription>
+                                            {apiResults.length} resultado(s) encontrado(s) para <strong>{selectedProfile?.creatorName}</strong>
+                                        </CardDescription>
                                     </CardHeader>
-                                    <CardContent className="grid gap-4">
-                                        {apiResults.length === 0 && (
-                                            <div className="text-muted-foreground">No se encontraron resultados.</div>
+                                    <CardContent>
+                                        {apiResults.length === 0 ? (
+                                            <div className="text-muted-foreground text-center py-8">
+                                                No se encontraron resultados para los términos de búsqueda especificados.
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                {apiResults.map((result, idx) => {
+                                                    const isSuspicious = isSuspiciousLink(result.url, result.title, result.snippet)
+                                                    const riskLevel = getRiskLevel(result.url, result.title, result.snippet)
+
+                                                    return (
+                                                        <Card
+                                                            key={idx}
+                                                            className={`transition-all hover:shadow-md ${isSuspicious
+                                                                ? riskLevel === 'high'
+                                                                    ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20'
+                                                                    : riskLevel === 'medium'
+                                                                        ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/20'
+                                                                        : 'border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20'
+                                                                : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20'
+                                                                }`}
+                                                        >
+                                                            <CardHeader className="pb-3">
+                                                                <div className="flex items-start justify-between gap-4">
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-center gap-2 mb-2">
+                                                                            {isSuspicious && (
+                                                                                <IconAlertTriangle
+                                                                                    className={`size-4 flex-shrink-0 ${riskLevel === 'high'
+                                                                                        ? 'text-red-500'
+                                                                                        : riskLevel === 'medium'
+                                                                                            ? 'text-yellow-500'
+                                                                                            : 'text-orange-500'
+                                                                                        }`}
+                                                                                />
+                                                                            )}
+                                                                            <Badge
+                                                                                variant={
+                                                                                    riskLevel === 'high'
+                                                                                        ? 'destructive'
+                                                                                        : riskLevel === 'medium'
+                                                                                            ? 'secondary'
+                                                                                            : isSuspicious
+                                                                                                ? 'outline'
+                                                                                                : 'default'
+                                                                                }
+                                                                                className={
+                                                                                    riskLevel === 'medium'
+                                                                                        ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-100'
+                                                                                        : riskLevel === 'low' && isSuspicious
+                                                                                            ? 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900 dark:text-orange-100'
+                                                                                            : !isSuspicious
+                                                                                                ? 'bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100'
+                                                                                                : ''
+                                                                                }
+                                                                            >
+                                                                                {riskLevel === 'high'
+                                                                                    ? 'Alto Riesgo'
+                                                                                    : riskLevel === 'medium'
+                                                                                        ? 'Riesgo Medio'
+                                                                                        : isSuspicious
+                                                                                            ? 'Riesgo Bajo'
+                                                                                            : 'Seguro'
+                                                                                }
+                                                                            </Badge>
+                                                                        </div>
+                                                                        <CardTitle className="text-base leading-tight break-words">
+                                                                            {result.title}
+                                                                        </CardTitle>
+                                                                    </div>
+                                                                </div>
+                                                                <CardDescription className="space-y-2">
+                                                                    <a
+                                                                        href={result.url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-blue-600 hover:text-blue-800 hover:underline dark:text-blue-400 dark:hover:text-blue-300 text-sm break-all"
+                                                                    >
+                                                                        {result.url}
+                                                                    </a>
+                                                                    {result.snippet && (
+                                                                        <div className="text-sm text-muted-foreground leading-relaxed">
+                                                                            {result.snippet}
+                                                                        </div>
+                                                                    )}
+                                                                </CardDescription>
+                                                            </CardHeader>
+                                                            <CardFooter className="pt-0">
+                                                                <div className="flex gap-2 w-full">
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={() => handleAddToWhitelist(result.url)}
+                                                                        className="flex-1"
+                                                                    >
+                                                                        <IconShield className="mr-2 size-3" />
+                                                                        Añadir a Whitelist
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        onClick={() => handleRequestRemoval(result.url)}
+                                                                        className="flex-1"
+                                                                        variant={isSuspicious ? "destructive" : "default"}
+                                                                    >
+                                                                        <IconTrash className="mr-2 size-3" />
+                                                                        Solicitar Retiro
+                                                                    </Button>
+                                                                </div>
+                                                            </CardFooter>
+                                                        </Card>
+                                                    )
+                                                })}
+                                            </div>
                                         )}
-                                        {apiResults.map((result, idx) => (
-                                            <Card key={idx}>
-                                                <CardHeader>
-                                                    <CardTitle>{result.title}</CardTitle>
-                                                    <CardDescription>
-                                                        <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                                            {result.url}
-                                                        </a>
-                                                        {result.snippet && <div className="mt-2 text-sm text-muted-foreground">{result.snippet}</div>}
-                                                    </CardDescription>
-                                                </CardHeader>
-                                            </Card>
-                                        ))}
-                                    </CardContent>
-                                </Card>
-                            )}
-                            {/* Resultados internos (si los necesitas) */}
-                            {searchResults.length > 0 && (
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Resultados de la Búsqueda (Internos)</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-4">
-                                        {searchResults.map((result) => (
-                                            <Card key={result.id}>
-                                                <CardHeader>
-                                                    <CardTitle>{result.siteName}</CardTitle>
-                                                    <CardDescription>
-                                                        <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                                            {result.url}
-                                                        </a>
-                                                    </CardDescription>
-                                                </CardHeader>
-                                                <CardFooter className="flex justify-end gap-2">
-                                                    <Button variant="outline" size="sm">Añadir a Whitelist</Button>
-                                                    <Button size="sm">Solicitar Retiro</Button>
-                                                </CardFooter>
-                                            </Card>
-                                        ))}
                                     </CardContent>
                                 </Card>
                             )}
@@ -216,28 +499,50 @@ export default function SearchPage() {
                                     <CardTitle>Búsquedas Recientes</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead>Creadora</TableHead>
-                                                <TableHead>Fecha</TableHead>
-                                                <TableHead>Estado</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {/* Aquí irían los datos de búsquedas reales */}
-                                            <TableRow>
-                                                <TableCell className="font-medium">Elena Valera</TableCell>
-                                                <TableCell>24 de Julio, 2024</TableCell>
-                                                <TableCell>Completada</TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell className="font-medium">Sofia Reyes</TableCell>
-                                                <TableCell>23 de Julio, 2024</TableCell>
-                                                <TableCell>Completada</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
+                                    <div className="rounded-md border">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="font-semibold">Creadora</TableHead>
+                                                    <TableHead className="font-semibold">Fecha</TableHead>
+                                                    <TableHead className="font-semibold">Estado</TableHead>
+                                                    <TableHead className="font-semibold">Resultados</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                <TableRow className="hover:bg-muted/50">
+                                                    <TableCell className="font-medium">Snoodyboo</TableCell>
+                                                    <TableCell>20 de Septiembre, 2025</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100">
+                                                            Completada
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex gap-1">
+                                                            <Badge variant="outline" className="text-xs">8 seguras</Badge>
+                                                            <Badge variant="destructive" className="text-xs">2 sospechosas</Badge>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow className="hover:bg-muted/50">
+                                                    <TableCell className="font-medium">Elena Valera</TableCell>
+                                                    <TableCell>19 de Septiembre, 2025</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100">
+                                                            Completada
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex gap-1">
+                                                            <Badge variant="outline" className="text-xs">12 seguras</Badge>
+                                                            <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-100">1 revisión</Badge>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
