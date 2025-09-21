@@ -83,8 +83,8 @@ export default function TakedownsPage() {
             try {
                 const response = await fetch("http://localhost:3001/api/profiles");
                 if (!response.ok) return;
-                const data = await response.json();
-                const newProfileMap: ProfileMap = (data.profiles as Profile[]).reduce((acc, profile) => {
+                const data: { data: Profile[] } = await response.json();
+                const newProfileMap: ProfileMap = (data.data as Profile[]).reduce((acc, profile) => {
                     acc[profile.id] = profile.creatorName;
                     return acc;
                 }, {} as ProfileMap);
@@ -99,27 +99,29 @@ export default function TakedownsPage() {
     const handleApprove = async (id: string) => {
         setProcessingId({ id, action: 'approve' })
         try {
-            const response = await fetch(
+            // 1. Marcar la solicitud como aprobada en el backend
+            const approveResponse = await fetch(
                 `http://localhost:3001/api/takedowns/${id}/approve`,
                 {
                     method: "PATCH",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({}), // Enviar un objeto JSON vacío
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({}),
                 }
             )
 
-            if (!response.ok) {
-                try {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || "No se pudo aprobar la solicitud.");
-                } catch {
-                    throw new Error("No se pudo aprobar la solicitud.");
-                }
+            if (!approveResponse.ok) {
+                const errorData = await approveResponse.json();
+                throw new Error(errorData.message || "Fallo al marcar la solicitud como aprobada.");
             }
 
-            toast.success("Solicitud aprobada con éxito.")
+            toast.success("Solicitud marcada como aprobada.");
+
+            // 2. Mostrar notificaciones del proceso sin llamar a las APIs de simulación
+            toast.info("Enviando correo de reclamo DMCA...");
+            toast.info("Enviando formulario de retiro a Google...");
+
+
+            toast.success("Proceso de retiro iniciado.")
             // Actualizar la lista para remover la solicitud aprobada
             setRequests((prev) => prev.filter((req) => req.id !== id))
         } catch (err: unknown) {
@@ -235,7 +237,10 @@ export default function TakedownsPage() {
                                                             ) : (
                                                                 <IconCheck className="mr-2 size-4" />
                                                             )}
-                                                            {processingId?.action === 'approve' && processingId.id === req.id ? "Aprobando..." : "Aprobar"}
+                                                            {processingId?.action === 'approve' && processingId.id === req.id
+                                                                ? "Procesando..."
+                                                                : "Aprobar"
+                                                            }
                                                         </Button>
                                                     </div>
                                                 </TableCell>

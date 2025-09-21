@@ -121,10 +121,10 @@ export default function HistoryPage() {
         const fetchProfiles = async () => {
             try {
                 const response = await fetch("http://localhost:3001/api/profiles")
-                if (!response.ok) return
-                const data = await response.json()
-                setProfiles(data.profiles || [])
-                const newProfileMap: ProfileMap = (data.profiles as Profile[]).reduce((acc, profile) => {
+                if (!response.ok) return;
+                const data: { data: Profile[] } = await response.json();
+                setProfiles(data.data || []);
+                const newProfileMap: ProfileMap = (data.data as Profile[]).reduce((acc, profile) => {
                     acc[profile.id] = profile.creatorName
                     return acc
                 }, {} as ProfileMap)

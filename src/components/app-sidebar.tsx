@@ -41,7 +41,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard", // En Next.js, la ruta principal es "/"
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {

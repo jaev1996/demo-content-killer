@@ -1,4 +1,5 @@
 "use client"
+import { useRouter } from "next/navigation"
 
 import {
   IconDotsVertical,
@@ -27,6 +28,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { toast } from "sonner"
 
 export function NavUser({
   user,
@@ -38,6 +40,15 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    toast.info("Cerrando sesión...")
+    // En una app real, aquí limpiarías el token de autenticación.
+    setTimeout(() => {
+      router.push("/")
+    }, 1000)
+  }
 
   return (
     <SidebarMenu>
@@ -93,7 +104,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
               Cerrar sesión
             </DropdownMenuItem>

@@ -43,7 +43,7 @@ interface Profile {
 }
 
 interface ProfilesResponse {
-    profiles: Profile[];
+    data: Profile[];
     count: number;
 }
 
@@ -98,8 +98,8 @@ export default function SearchPage() {
                 const response = await fetch('http://localhost:3001/api/profiles')
                 if (!response.ok) throw new Error('Error al cargar perfiles')
                 const data: ProfilesResponse = await response.json()
-                setProfiles(data.profiles)
-                setFilteredProfiles(data.profiles)
+                setProfiles(data.data)
+                setFilteredProfiles(data.data)
             } catch (err) {
                 console.error('Error cargando perfiles:', err)
                 // Si hay error, usar datos de fallback (si existen)
