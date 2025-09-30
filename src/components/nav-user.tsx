@@ -44,7 +44,8 @@ export function NavUser({
 
   const handleLogout = () => {
     toast.info("Cerrando sesión...")
-    // En una app real, aquí limpiarías el token de autenticación.
+    // Limpiamos el token de autenticación de localStorage.
+    localStorage.removeItem("authToken")
     setTimeout(() => {
       router.push("/")
     }, 1000)

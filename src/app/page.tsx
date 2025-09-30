@@ -1,5 +1,6 @@
 "use client"
 
+import { apiFetch } from "@/lib/api"
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -22,12 +23,21 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState("")
   const [loading, setLoading] = React.useState(false)
 
+  React.useEffect(() => {
+    // Si ya hay un token, redirigir directamente al panel.
+    // Esto evita que un usuario logueado vea la página de login de nuevo.
+    const token = localStorage.getItem("authToken")
+    if (token) {
+      router.replace("/dashboard")
+    }
+  }, [router])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const response = await apiFetch("http://localhost:3001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -38,9 +48,15 @@ export default function LoginPage() {
         throw new Error(errorData.error || "Credenciales inválidas.")
       }
 
-      const userData = await response.json()
-      // En una app real, guardarías el token (userData.token) en localStorage o cookies.
-      toast.success(`Bienvenido, ${userData.user.fullName}!`)
+      const data = await response.json()
+      console.log("Respuesta del servidor (login):", data) // Mostramos la respuesta completa
+
+      const userData = data.user
+      const token = userData.token // El token está DENTRO del objeto user
+
+      // Guardamos el token en localStorage para persistir la sesión.
+      localStorage.setItem("authToken", token)
+      toast.success(`Bienvenido, ${userData.fullName}!`)
 
       // Redirigir al dashboard después de un breve retraso
       setTimeout(() => {

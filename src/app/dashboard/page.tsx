@@ -1,3 +1,6 @@
+"use client"
+
+import { withAuth } from "@/components/with-auth"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
@@ -10,7 +13,7 @@ import {
 
 import data from "./data.json"
 
-export default function Page() {
+function DashboardPage() {
   return (
     <SidebarProvider
       style={
@@ -38,3 +41,5 @@ export default function Page() {
     </SidebarProvider>
   )
 }
+
+export default withAuth(DashboardPage)

@@ -1,5 +1,7 @@
 "use client"
 
+import { withAuth } from "@/components/with-auth"
+import { apiFetch } from "@/lib/api"
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Toaster, toast } from "sonner"
@@ -73,7 +75,7 @@ function WhitelistManager({ profile, onWhitelistUpdate }: { profile: Profile; on
         if (!isOpen) return;
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:3001/api/profiles/${profile.id}/whitelist`);
+            const response = await apiFetch(`/api/profiles/${profile.id}/whitelist`);
             if (!response.ok) throw new Error("Error al cargar la whitelist.");
             const data = await response.json();
             setWhitelist(data.whitelist || []);
@@ -95,7 +97,7 @@ function WhitelistManager({ profile, onWhitelistUpdate }: { profile: Profile; on
 
         setIsAdding(true);
         try {
-            const response = await fetch(`http://localhost:3001/api/profiles/${profile.id}/whitelist`, {
+            const response = await apiFetch(`/api/profiles/${profile.id}/whitelist`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ domain: domainToAdd }),
@@ -116,7 +118,7 @@ function WhitelistManager({ profile, onWhitelistUpdate }: { profile: Profile; on
 
     const handleRemoveDomain = async (domainToRemove: string) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/profiles/${profile.id}/whitelist/${encodeURIComponent(domainToRemove)}`, {
+            const response = await apiFetch(`/api/profiles/${profile.id}/whitelist/${encodeURIComponent(domainToRemove)}`, {
                 method: 'DELETE',
             });
             const result = await response.json();
@@ -164,7 +166,7 @@ function WhitelistManager({ profile, onWhitelistUpdate }: { profile: Profile; on
     );
 }
 
-export default function ProfilesPage() {
+function ProfilesPage() {
     const [profiles, setProfiles] = React.useState<Profile[]>([])
     const [loading, setLoading] = React.useState(true)
 
@@ -199,7 +201,7 @@ export default function ProfilesPage() {
                 limit: String(pagination.limit),
                 search: search,
             })
-            const response = await fetch(`http://localhost:3001/api/profiles?${params.toString()}`)
+            const response = await apiFetch(`/api/profiles?${params.toString()}`)
             if (!response.ok) {
                 throw new Error("Error al cargar los perfiles")
             }
@@ -248,11 +250,11 @@ export default function ProfilesPage() {
         ));
 
         try {
-            const response = await fetch('http://localhost:3001/api/profiles', {
+            const response = await apiFetch('/api/profiles', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    userId: newSocialMediaUser,
+                    id: newSocialMediaUser,
                     creatorName: newCreatorName,
                     platform: newPlatform,
                     dmcaInfo: {
@@ -303,7 +305,7 @@ export default function ProfilesPage() {
             return
         }
         try {
-            const response = await fetch(`http://localhost:3001/api/profiles/${userId}`, {
+            const response = await apiFetch(`/api/profiles/${userId}`, {
                 method: 'DELETE',
             })
             const result = await response.json()
@@ -572,3 +574,5 @@ export default function ProfilesPage() {
         </SidebarProvider>
     )
 }
+
+export default withAuth(ProfilesPage)

@@ -1,5 +1,7 @@
 "use client"
 
+import { withAuth } from "@/components/with-auth"
+import { apiFetch } from "@/lib/api"
 import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX } from "@tabler/icons-react"
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -16,14 +18,6 @@ import { Label } from "@/components/ui/label"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -77,7 +71,7 @@ const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'me
     return 'low'
 }
 
-export default function SearchPage() {
+function SearchPage() {
     const [searchTerm, setSearchTerm] = React.useState("")
     const [selectedCreator, setSelectedCreator] = React.useState("")
     const [apiResults, setApiResults] = React.useState<ApiResult[] | null>(null)
@@ -95,7 +89,7 @@ export default function SearchPage() {
         const fetchProfiles = async () => {
             setLoadingProfiles(true)
             try {
-                const response = await fetch('http://localhost:3001/api/profiles')
+                const response = await apiFetch('/api/profiles')
                 if (!response.ok) throw new Error('Error al cargar perfiles')
                 const data: ProfilesResponse = await response.json()
                 setProfiles(data.data)
@@ -146,10 +140,19 @@ export default function SearchPage() {
         try {
             // Construir la URL con el creador seleccionado
             const searchQuery = encodeURIComponent(searchTerm.trim())
-            const response = await fetch(`http://localhost:3001/api/search/${selectedCreator}?q=${searchQuery}`)
+            const response = await apiFetch(`/api/search/${selectedCreator}?q=${searchQuery}`)
 
             if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`)
+                let errorMessage = `Error ${response.status}: ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.message) {
+                        errorMessage = errorData.message;
+                    } else if (errorData && errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (jsonError) { /* No se pudo parsear JSON, usar mensaje por defecto */ }
+                throw new Error(errorMessage);
             }
 
             const data = await response.json()
@@ -171,21 +174,16 @@ export default function SearchPage() {
         }
     }
 
-    const handleAddToWhitelist = (url: string) => {
-        console.log('Agregando a whitelist:', url)
-        // Aquí implementarías la lógica para agregar a whitelist
-    }
-
     const handleRequestRemoval = async (url: string) => {
         if (!selectedCreator) {
             toast.error("Por favor, selecciona una creadora primero.")
             return
         }
         try {
-            const response = await fetch('http://localhost:3001/api/takedowns', {
+            const response = await apiFetch('/api/takedowns', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url, userId: selectedCreator, sourceQuery: searchTerm }),
+                body: JSON.stringify({ infringingUrl: url, userProfileId: selectedCreator, sourceQuery: searchTerm }),
             })
             if (!response.ok) {
                 throw new Error('Error al enviar la solicitud de retiro.')
@@ -197,6 +195,37 @@ export default function SearchPage() {
             toast.error(err instanceof Error ? err.message : 'Ocurrió un error desconocido.')
         }
     }
+
+    const handleAddToWhitelist = async (url: string) => {
+        if (!selectedCreator) {
+            toast.error("Por favor, selecciona una creadora primero.");
+            return;
+        }
+
+        try {
+            // Extraemos el dominio de la URL para añadirlo a la whitelist.
+            const domain = new URL(url).hostname.replace(/^www\./, '');
+
+            const response = await apiFetch(`/api/profiles/${selectedCreator}/whitelist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domain: domain }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al añadir a la whitelist.');
+            }
+
+            toast.success(`Dominio "${domain}" añadido a la whitelist.`);
+
+            // Opcional: Actualizar el estado local para reflejar el cambio en la UI
+            setProfiles(prev => prev.map(p => p.id === selectedCreator ? { ...p, whitelist: [...p.whitelist, domain] } : p));
+
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Ocurrió un error desconocido.');
+        }
+    };
 
     const clearProfileFilter = () => {
         setProfileFilter("")
@@ -315,9 +344,9 @@ export default function SearchPage() {
                                                         <Badge variant="outline">{selectedProfile.id}</Badge>
                                                         <span className="text-muted-foreground">•</span>
                                                         <span>
-                                                            {selectedProfile.settings.autoFilter ? 'Filtro automático activado' : 'Filtro manual'}
+                                                            {selectedProfile.settings?.autoFilter ? 'Filtro automático activado' : 'Filtro manual'}
                                                         </span>
-                                                        {selectedProfile.settings.strictMode && (
+                                                        {selectedProfile.settings?.strictMode && (
                                                             <>
                                                                 <span className="text-muted-foreground">•</span>
                                                                 <Badge variant="secondary" className="text-xs">Modo estricto</Badge>
@@ -325,7 +354,7 @@ export default function SearchPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-xs text-muted-foreground">
-                                                        Whitelist: {selectedProfile.whitelist.length} sitios permitidos
+                                                        Whitelist: {selectedProfile.whitelist?.length || 0} sitios permitidos
                                                     </div>
                                                 </div>
                                             )}
@@ -494,57 +523,6 @@ export default function SearchPage() {
                                 </Card>
                             )}
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Búsquedas Recientes</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="rounded-md border">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead className="font-semibold">Creadora</TableHead>
-                                                    <TableHead className="font-semibold">Fecha</TableHead>
-                                                    <TableHead className="font-semibold">Estado</TableHead>
-                                                    <TableHead className="font-semibold">Resultados</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                <TableRow className="hover:bg-muted/50">
-                                                    <TableCell className="font-medium">Snoodyboo</TableCell>
-                                                    <TableCell>20 de Septiembre, 2025</TableCell>
-                                                    <TableCell>
-                                                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100">
-                                                            Completada
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex gap-1">
-                                                            <Badge variant="outline" className="text-xs">8 seguras</Badge>
-                                                            <Badge variant="destructive" className="text-xs">2 sospechosas</Badge>
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow className="hover:bg-muted/50">
-                                                    <TableCell className="font-medium">Elena Valera</TableCell>
-                                                    <TableCell>19 de Septiembre, 2025</TableCell>
-                                                    <TableCell>
-                                                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100">
-                                                            Completada
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex gap-1">
-                                                            <Badge variant="outline" className="text-xs">12 seguras</Badge>
-                                                            <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-100">1 revisión</Badge>
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </CardContent>
-                            </Card>
                         </div>
                     </div>
                 </main>
@@ -552,3 +530,5 @@ export default function SearchPage() {
         </SidebarProvider>
     )
 }
+
+export default withAuth(SearchPage)
