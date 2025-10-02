@@ -44,8 +44,13 @@ export default function LoginPage() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Credenciales inválidas.")
+        let errorMessage = `Error: ${response.status} ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          // Usar el mensaje del backend si está disponible
+          errorMessage = errorData.message || errorData.error || "Credenciales inválidas o error en el servidor.";
+        } catch (e) { /* No hay cuerpo JSON, usar el mensaje de estado */ }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json()
