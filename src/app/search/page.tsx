@@ -123,6 +123,10 @@ function SearchPage() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
 
+        // Limpiar estados antes de una nueva búsqueda
+        setError(null)
+        setApiResults(null)
+
         if (!selectedCreator) {
             setError('Por favor selecciona una creadora')
             return
@@ -134,8 +138,6 @@ function SearchPage() {
         }
 
         setLoading(true)
-        setError(null)
-        setApiResults(null)
 
         try {
             // Construir la URL con el creador seleccionado
@@ -161,6 +163,7 @@ function SearchPage() {
             if (data && Array.isArray(data.results)) {
                 setApiResults(data.results)
             } else {
+                // Si no hay resultados, es mejor mostrar un array vacío que null
                 setApiResults([])
             }
         } catch (err: unknown) {
@@ -169,6 +172,8 @@ function SearchPage() {
             } else {
                 setError('Error desconocido al realizar la búsqueda')
             }
+            // Asegurarse de que no queden resultados de búsquedas anteriores si hay un error
+            setApiResults(null);
         } finally {
             setLoading(false)
         }
