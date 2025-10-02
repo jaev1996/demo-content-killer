@@ -2,7 +2,7 @@
 
 import { withAuth } from "@/components/with-auth"
 import { apiFetch } from "@/lib/api"
-import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX } from "@tabler/icons-react"
+import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX, IconLoader } from "@tabler/icons-react"
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -370,14 +370,17 @@ function SearchPage() {
 
                             {/* Estado de carga */}
                             {loading && (
-                                <Card>
+                                <Card className="mt-6">
                                     <CardHeader>
-                                        <CardTitle>Buscando resultados...</CardTitle>
+                                        <CardTitle className="flex items-center gap-2">
+                                            <IconLoader className="animate-spin" />
+                                            Buscando resultados...
+                                        </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-muted-foreground">
-                                            Analizando contenido para <strong>{selectedProfile?.creatorName}</strong>.
-                                            Por favor espera y valida el captcha si es necesario.
+                                            Analizando contenido para <strong>{selectedProfile?.creatorName}</strong>.<br />
+                                            Este proceso puede tardar más de un minuto. Por favor, no cierres ni recargues la página.
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -385,7 +388,7 @@ function SearchPage() {
 
                             {/* Errores */}
                             {error && (
-                                <Card>
+                                <Card className="mt-6">
                                     <CardHeader>
                                         <CardTitle className="text-destructive">Error</CardTitle>
                                     </CardHeader>
@@ -397,7 +400,7 @@ function SearchPage() {
 
                             {/* Resultados de la API externa */}
                             {apiResults && (
-                                <Card>
+                                <Card className="mt-6">
                                     <CardHeader>
                                         <CardTitle>Resultados de la Búsqueda</CardTitle>
                                         <CardDescription>
