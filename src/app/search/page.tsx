@@ -73,10 +73,21 @@ const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'me
 
 type SearchStatus = 'idle' | 'starting' | 'polling' | 'completed' | 'error';
 
-interface JobStatusResponse {
-    status: 'pending' | 'completed' | 'failed';
-    results?: ApiResult[];
-    message?: string;
+interface JobStatusCompletedResponse {
+    status: 'completed';
+    results: {
+        results: ApiResult[];
+        query: string;
+        timestamp: string;
+        count: number;
+    };
+    message?: string; // success message
+}
+
+interface JobStatusFailedResponse {
+    status: 'failed';
+    message: string;
+    results?: never;
 }
 
 function SearchPage() {
@@ -92,6 +103,7 @@ function SearchPage() {
     const [profileFilter, setProfileFilter] = React.useState("")
     const [loadingProfiles, setLoadingProfiles] = React.useState(false)
     const [searchStatus, setSearchStatus] = React.useState<SearchStatus>('idle');
+    const [jobId, setJobId] = React.useState<string | null>(null);
     const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Cargar perfiles al montar el componente
@@ -153,11 +165,11 @@ function SearchPage() {
                     return;
                 }
 
-                const data: JobStatusResponse = await response.json();
+                const data: JobStatusCompletedResponse | JobStatusFailedResponse = await response.json();
 
                 if (data.status === 'completed') {
                     if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-                    setApiResults(data.results || []);
+                    setApiResults(data.results?.results || []);
                     setSearchStatus('completed');
                     setLoading(false);
                     toast.success("Búsqueda completada.");
@@ -197,6 +209,7 @@ function SearchPage() {
         setError(null)
         setApiResults(null)
         setSearchStatus('starting');
+        setJobId(null);
         if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);
         }
@@ -217,10 +230,11 @@ function SearchPage() {
                 throw new Error(errorData.message || "No se pudo iniciar la búsqueda.");
             }
 
-            const { jobId } = await startResponse.json();
+            const { jobId: newJobId } = await startResponse.json();
+            setJobId(newJobId);
             setSearchStatus('polling');
             toast.info("Búsqueda iniciada. Verificando resultados...");
-            pollJobStatus(jobId);
+            pollJobStatus(newJobId);
 
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Error desconocido al iniciar la búsqueda');
