@@ -448,7 +448,7 @@ function SearchPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-muted-foreground">
-                                            Este proceso puede tardar varios minutos. Puedes navegar a otras secciones, el resultado aparecerá aquí cuando esté listo.
+                                            Este proceso puede tardar varios minutos. Por favor, no cierres ni recargues la página.
                                         </div>
                                     </CardContent>
                                 </Card>
