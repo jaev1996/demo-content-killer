@@ -47,21 +47,6 @@ interface ApiResult {
     snippet: string;
 }
 
-// --- INICIO: Interfaz de resultado actualizada ---
-interface SearchResult {
-    results: ApiResult[];
-    query: string;
-    timestamp: string;
-    count: number;
-}
-
-interface JobStatusResponse {
-    status: 'completed' | 'failed';
-    results?: SearchResult; // El resultado anidado
-    message?: string;
-}
-// --- FIN: Interfaz de resultado actualizada ---
-
 // Función para determinar si un enlace es sospechoso
 const isSuspiciousLink = (url: string, title: string, snippet: string): boolean => {
     const suspiciousKeywords = [
@@ -88,6 +73,12 @@ const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'me
 
 type SearchStatus = 'idle' | 'starting' | 'polling' | 'completed' | 'error';
 
+interface JobStatusResponse {
+    status: 'pending' | 'completed' | 'failed';
+    results?: ApiResult[];
+    message?: string;
+}
+
 function SearchPage() {
     const [searchTerm, setSearchTerm] = React.useState("")
     const [selectedCreator, setSelectedCreator] = React.useState("")
@@ -101,10 +92,7 @@ function SearchPage() {
     const [profileFilter, setProfileFilter] = React.useState("")
     const [loadingProfiles, setLoadingProfiles] = React.useState(false)
     const [searchStatus, setSearchStatus] = React.useState<SearchStatus>('idle');
-
-    // --- INICIO: Referencia para EventSource ---
-    const eventSourceRef = React.useRef<EventSource | null>(null);
-    // --- FIN: Referencia para EventSource ---
+    const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Cargar perfiles al montar el componente
     React.useEffect(() => {
@@ -118,6 +106,7 @@ function SearchPage() {
                 setFilteredProfiles(data.data)
             } catch (err) {
                 console.error('Error cargando perfiles:', err)
+                // Si hay error, usar datos de fallback (si existen)
                 setProfiles([])
                 setFilteredProfiles([])
             } finally {
@@ -141,54 +130,54 @@ function SearchPage() {
         }
     }, [profileFilter, profiles])
 
-    // --- INICIO: Limpiar EventSource al desmontar ---
+    // Limpiar el intervalo de polling si el componente se desmonta
     React.useEffect(() => {
         return () => {
-            if (eventSourceRef.current) {
-                eventSourceRef.current.close();
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
             }
         };
     }, []);
-    // --- FIN: Limpiar EventSource al desmontar ---
 
-    // --- INICIO: Nueva función para escuchar eventos del servidor (SSE) ---
-    const listenForJobStatus = (jobId: string) => {
-        if (eventSourceRef.current) {
-            eventSourceRef.current.close();
+    const pollJobStatus = (jobId: string) => {
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
         }
 
-        // La URL base de tu API. Asegúrate de que sea correcta para tu entorno.
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const eventSource = new EventSource(`${baseUrl}/api/search/status/${jobId}`);
-        eventSourceRef.current = eventSource;
+        pollingIntervalRef.current = setInterval(async () => {
+            try {
+                const response = await apiFetch(`/api/search/status/${jobId}`);
+                // Si el servidor responde con 204 No Content, significa que el trabajo sigue pendiente.
+                if (response.status === 204) {
+                    console.log("Job still pending...");
+                    return;
+                }
 
-        eventSource.onmessage = (event) => {
-            const data: JobStatusResponse = JSON.parse(event.data);
+                const data: JobStatusResponse = await response.json();
 
-            if (data.status === 'completed') {
-                // El problema estaba aquí: los resultados están en data.results.results
-                setApiResults(data.results?.results || []);
-                setSearchStatus('completed');
-                setLoading(false);
-                toast.success("Búsqueda completada.");
-                eventSource.close();
-            } else if (data.status === 'failed') {
-                setError(data.message || "El trabajo de búsqueda falló.");
+                if (data.status === 'completed') {
+                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                    setApiResults(data.results || []);
+                    setSearchStatus('completed');
+                    setLoading(false);
+                    toast.success("Búsqueda completada.");
+                } else if (data.status === 'failed') {
+                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                    setError(data.message || "El trabajo de búsqueda falló.");
+                    setSearchStatus('error');
+                    setLoading(false);
+                }
+                // Si está 'pending', no hacemos nada y esperamos al siguiente sondeo.
+
+            } catch (err) {
+                if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                setError("Error al verificar el estado de la búsqueda.");
                 setSearchStatus('error');
                 setLoading(false);
-                eventSource.close();
+                toast.error("No se pudo continuar con la búsqueda.");
             }
-        };
-
-        eventSource.onerror = () => {
-            setError("Error de conexión con el servidor de búsqueda. Inténtalo de nuevo.");
-            setSearchStatus('error');
-            setLoading(false);
-            toast.error("No se pudo continuar con la búsqueda.");
-            eventSource.close();
-        };
+        }, 5000); // Consultar cada 5 segundos
     };
-    // --- FIN: Nueva función para escuchar eventos del servidor (SSE) ---
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -208,15 +197,13 @@ function SearchPage() {
         setError(null)
         setApiResults(null)
         setSearchStatus('starting');
-        if (eventSourceRef.current) {
-            eventSourceRef.current.close();
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
         }
 
         try {
-            // --- INICIO: Generar jobId y ajustar llamada a la API ---
-            const jobId = crypto.randomUUID();
-
-            const startResponse = await apiFetch(`/api/search/start?jobId=${jobId}`, {
+            // 1. Iniciar el trabajo de búsqueda
+            const startResponse = await apiFetch('/api/search/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -225,16 +212,15 @@ function SearchPage() {
                 }),
             });
 
-            // El backend ahora responde con 202 Accepted y el cuerpo vacío.
-            if (startResponse.status !== 202) {
-                const errorData = await startResponse.json().catch(() => ({ message: "No se pudo iniciar la búsqueda." }));
-                throw new Error(errorData.message || "Respuesta inesperada del servidor.");
+            if (!startResponse.ok) {
+                const errorData = await startResponse.json();
+                throw new Error(errorData.message || "No se pudo iniciar la búsqueda.");
             }
 
+            const { jobId } = await startResponse.json();
             setSearchStatus('polling');
             toast.info("Búsqueda iniciada. Verificando resultados...");
-            listenForJobStatus(jobId);
-            // --- FIN: Generar jobId y ajustar llamada a la API ---
+            pollJobStatus(jobId);
 
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Error desconocido al iniciar la búsqueda');
