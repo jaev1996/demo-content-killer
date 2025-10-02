@@ -71,6 +71,14 @@ const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'me
     return 'low'
 }
 
+type SearchStatus = 'idle' | 'starting' | 'polling' | 'completed' | 'error';
+
+interface JobStatusResponse {
+    status: 'pending' | 'completed' | 'failed';
+    results?: ApiResult[];
+    message?: string;
+}
+
 function SearchPage() {
     const [searchTerm, setSearchTerm] = React.useState("")
     const [selectedCreator, setSelectedCreator] = React.useState("")
@@ -83,6 +91,8 @@ function SearchPage() {
     const [filteredProfiles, setFilteredProfiles] = React.useState<Profile[]>([])
     const [profileFilter, setProfileFilter] = React.useState("")
     const [loadingProfiles, setLoadingProfiles] = React.useState(false)
+    const [searchStatus, setSearchStatus] = React.useState<SearchStatus>('idle');
+    const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Cargar perfiles al montar el componente
     React.useEffect(() => {
@@ -120,12 +130,57 @@ function SearchPage() {
         }
     }, [profileFilter, profiles])
 
+    // Limpiar el intervalo de polling si el componente se desmonta
+    React.useEffect(() => {
+        return () => {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+        };
+    }, []);
+
+    const pollJobStatus = (jobId: string) => {
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+        }
+
+        pollingIntervalRef.current = setInterval(async () => {
+            try {
+                const response = await apiFetch(`/api/search/status/${jobId}`);
+                // Si el servidor responde con 204 No Content, significa que el trabajo sigue pendiente.
+                if (response.status === 204) {
+                    console.log("Job still pending...");
+                    return;
+                }
+
+                const data: JobStatusResponse = await response.json();
+
+                if (data.status === 'completed') {
+                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                    setApiResults(data.results || []);
+                    setSearchStatus('completed');
+                    setLoading(false);
+                    toast.success("Búsqueda completada.");
+                } else if (data.status === 'failed') {
+                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                    setError(data.message || "El trabajo de búsqueda falló.");
+                    setSearchStatus('error');
+                    setLoading(false);
+                }
+                // Si está 'pending', no hacemos nada y esperamos al siguiente sondeo.
+
+            } catch (err) {
+                if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
+                setError("Error al verificar el estado de la búsqueda.");
+                setSearchStatus('error');
+                setLoading(false);
+                toast.error("No se pudo continuar con la búsqueda.");
+            }
+        }, 5000); // Consultar cada 5 segundos
+    };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-
-        // Limpiar estados antes de una nueva búsqueda
-        setError(null)
-        setApiResults(null)
 
         if (!selectedCreator) {
             setError('Por favor selecciona una creadora')
@@ -137,44 +192,39 @@ function SearchPage() {
             return
         }
 
+        // Reiniciar estados
         setLoading(true)
+        setError(null)
+        setApiResults(null)
+        setSearchStatus('starting');
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+        }
 
         try {
-            // Construir la URL con el creador seleccionado
-            const searchQuery = encodeURIComponent(searchTerm.trim())
-            const response = await apiFetch(`/api/search/${selectedCreator}?q=${searchQuery}`)
+            // 1. Iniciar el trabajo de búsqueda
+            const startResponse = await apiFetch('/api/search/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userProfileId: selectedCreator,
+                    query: searchTerm.trim(),
+                }),
+            });
 
-            if (!response.ok) {
-                let errorMessage = `Error ${response.status}: ${response.statusText}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData && errorData.message) {
-                        errorMessage = errorData.message;
-                    } else if (errorData && errorData.error) {
-                        errorMessage = errorData.error;
-                    }
-                } catch (jsonError) { /* No se pudo parsear JSON, usar mensaje por defecto */ }
-                throw new Error(errorMessage);
+            if (!startResponse.ok) {
+                const errorData = await startResponse.json();
+                throw new Error(errorData.message || "No se pudo iniciar la búsqueda.");
             }
 
-            const data = await response.json()
+            const { jobId } = await startResponse.json();
+            setSearchStatus('polling');
+            toast.info("Búsqueda iniciada. Verificando resultados...");
+            pollJobStatus(jobId);
 
-            // Si la API retorna un objeto con "results"
-            if (data && Array.isArray(data.results)) {
-                setApiResults(data.results)
-            } else {
-                // Si no hay resultados, es mejor mostrar un array vacío que null
-                setApiResults([])
-            }
         } catch (err: unknown) {
-            if (err instanceof Error) {
-                setError(err.message || 'Error desconocido')
-            } else {
-                setError('Error desconocido al realizar la búsqueda')
-            }
-            // Asegurarse de que no queden resultados de búsquedas anteriores si hay un error
-            setApiResults(null);
-        } finally {
+            setError(err instanceof Error ? err.message : 'Error desconocido al iniciar la búsqueda');
+            setSearchStatus('error');
             setLoading(false)
         }
     }
@@ -379,13 +429,12 @@ function SearchPage() {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2">
                                             <IconLoader className="animate-spin" />
-                                            Buscando resultados...
+                                            {searchStatus === 'starting' ? 'Iniciando rastreo...' : 'Buscando resultados...'}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-muted-foreground">
-                                            Analizando contenido para <strong>{selectedProfile?.creatorName}</strong>.<br />
-                                            Este proceso puede tardar más de un minuto. Por favor, no cierres ni recargues la página.
+                                            Este proceso puede tardar varios minutos. Puedes navegar a otras secciones, el resultado aparecerá aquí cuando esté listo.
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -404,7 +453,7 @@ function SearchPage() {
                             )}
 
                             {/* Resultados de la API externa */}
-                            {apiResults && (
+                            {searchStatus === 'completed' && apiResults && (
                                 <Card className="mt-6">
                                     <CardHeader>
                                         <CardTitle>Resultados de la Búsqueda</CardTitle>
