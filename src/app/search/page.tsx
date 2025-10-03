@@ -41,10 +41,10 @@ interface ProfilesResponse {
     count: number;
 }
 
-interface ApiResult {
+interface SearchResult {
     title: string;
-    url: string;
-    snippet: string;
+    link: string;
+    description: string;
 }
 
 // Función para determinar si un enlace es sospechoso
@@ -71,29 +71,10 @@ const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'me
     return 'low'
 }
 
-type SearchStatus = 'idle' | 'starting' | 'polling' | 'completed' | 'error';
-
-interface JobStatusCompletedResponse {
-    status: 'completed';
-    results: {
-        results: ApiResult[];
-        query: string;
-        timestamp: string;
-        count: number;
-    };
-    message?: string; // success message
-}
-
-interface JobStatusFailedResponse {
-    status: 'failed';
-    message: string;
-    results?: never;
-}
-
 function SearchPage() {
     const [searchTerm, setSearchTerm] = React.useState("")
     const [selectedCreator, setSelectedCreator] = React.useState("")
-    const [apiResults, setApiResults] = React.useState<ApiResult[] | null>(null)
+    const [apiResults, setApiResults] = React.useState<SearchResult[] | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState<string | null>(null)
 
@@ -102,9 +83,6 @@ function SearchPage() {
     const [filteredProfiles, setFilteredProfiles] = React.useState<Profile[]>([])
     const [profileFilter, setProfileFilter] = React.useState("")
     const [loadingProfiles, setLoadingProfiles] = React.useState(false)
-    const [searchStatus, setSearchStatus] = React.useState<SearchStatus>('idle');
-    const [jobId, setJobId] = React.useState<string | null>(null);
-    const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Cargar perfiles al montar el componente
     React.useEffect(() => {
@@ -142,55 +120,6 @@ function SearchPage() {
         }
     }, [profileFilter, profiles])
 
-    // Limpiar el intervalo de polling si el componente se desmonta
-    React.useEffect(() => {
-        return () => {
-            if (pollingIntervalRef.current) {
-                clearInterval(pollingIntervalRef.current);
-            }
-        };
-    }, []);
-
-    const pollJobStatus = (jobId: string) => {
-        if (pollingIntervalRef.current) {
-            clearInterval(pollingIntervalRef.current);
-        }
-
-        pollingIntervalRef.current = setInterval(async () => {
-            try {
-                const response = await apiFetch(`/api/search/status/${jobId}`);
-                // Si el servidor responde con 204 No Content, significa que el trabajo sigue pendiente.
-                if (response.status === 204) {
-                    console.log("Job still pending...");
-                    return;
-                }
-
-                const data: JobStatusCompletedResponse | JobStatusFailedResponse = await response.json();
-
-                if (data.status === 'completed') {
-                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-                    setApiResults(data.results?.results || []);
-                    setSearchStatus('completed');
-                    setLoading(false);
-                    toast.success("Búsqueda completada.");
-                } else if (data.status === 'failed') {
-                    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-                    setError(data.message || "El trabajo de búsqueda falló.");
-                    setSearchStatus('error');
-                    setLoading(false);
-                }
-                // Si está 'pending', no hacemos nada y esperamos al siguiente sondeo.
-
-            } catch (err) {
-                if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
-                setError("Error al verificar el estado de la búsqueda.");
-                setSearchStatus('error');
-                setLoading(false);
-                toast.error("No se pudo continuar con la búsqueda.");
-            }
-        }, 5000); // Consultar cada 5 segundos
-    };
-
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
 
@@ -208,15 +137,10 @@ function SearchPage() {
         setLoading(true)
         setError(null)
         setApiResults(null)
-        setSearchStatus('starting');
-        setJobId(null);
-        if (pollingIntervalRef.current) {
-            clearInterval(pollingIntervalRef.current);
-        }
+        toast.info("Iniciando búsqueda...");
 
         try {
-            // 1. Iniciar el trabajo de búsqueda
-            const startResponse = await apiFetch('/api/search/start', {
+            const response = await apiFetch('/api/search', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -225,20 +149,20 @@ function SearchPage() {
                 }),
             });
 
-            if (!startResponse.ok) {
-                const errorData = await startResponse.json();
-                throw new Error(errorData.message || "No se pudo iniciar la búsqueda.");
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Ocurrió un error en la búsqueda.");
             }
 
-            const { jobId: newJobId } = await startResponse.json();
-            setJobId(newJobId);
-            setSearchStatus('polling');
-            toast.info("Búsqueda iniciada. Verificando resultados...");
-            pollJobStatus(newJobId);
+            setApiResults(data.results || []);
+            toast.success(`Búsqueda completada. Se encontraron ${data.count} resultados.`);
 
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'Error desconocido al iniciar la búsqueda');
-            setSearchStatus('error');
+            const errorMessage = err instanceof Error ? err.message : 'Error desconocido al realizar la búsqueda';
+            setError(errorMessage);
+            toast.error(errorMessage);
+        } finally {
             setLoading(false)
         }
     }
@@ -259,7 +183,7 @@ function SearchPage() {
             }
             toast.success(`Solicitud de retiro enviada para: ${url}`)
             // Eliminar el resultado de la lista para evitar duplicados
-            setApiResults(prevResults => prevResults?.filter(result => result.url !== url) || null)
+            setApiResults(prevResults => prevResults?.filter(result => result.link !== url) || null)
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Ocurrió un error desconocido.')
         }
@@ -443,7 +367,6 @@ function SearchPage() {
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2">
                                             <IconLoader className="animate-spin" />
-                                            {searchStatus === 'starting' ? 'Iniciando rastreo...' : 'Buscando resultados...'}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
@@ -467,7 +390,7 @@ function SearchPage() {
                             )}
 
                             {/* Resultados de la API externa */}
-                            {searchStatus === 'completed' && apiResults && (
+                            {apiResults && !loading && (
                                 <Card className="mt-6">
                                     <CardHeader>
                                         <CardTitle>Resultados de la Búsqueda</CardTitle>
@@ -483,8 +406,8 @@ function SearchPage() {
                                         ) : (
                                             <div className="space-y-4">
                                                 {apiResults.map((result, idx) => {
-                                                    const isSuspicious = isSuspiciousLink(result.url, result.title, result.snippet)
-                                                    const riskLevel = getRiskLevel(result.url, result.title, result.snippet)
+                                                    const isSuspicious = isSuspiciousLink(result.link, result.title, result.description)
+                                                    const riskLevel = getRiskLevel(result.link, result.title, result.description)
 
                                                     return (
                                                         <Card
@@ -549,16 +472,16 @@ function SearchPage() {
                                                                 </div>
                                                                 <CardDescription className="space-y-2">
                                                                     <a
-                                                                        href={result.url}
+                                                                        href={result.link}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
                                                                         className="text-blue-600 hover:text-blue-800 hover:underline dark:text-blue-400 dark:hover:text-blue-300 text-sm break-all"
                                                                     >
-                                                                        {result.url}
+                                                                        {result.link}
                                                                     </a>
-                                                                    {result.snippet && (
+                                                                    {result.description && (
                                                                         <div className="text-sm text-muted-foreground leading-relaxed">
-                                                                            {result.snippet}
+
                                                                         </div>
                                                                     )}
                                                                 </CardDescription>
@@ -568,7 +491,7 @@ function SearchPage() {
                                                                     <Button
                                                                         variant="outline"
                                                                         size="sm"
-                                                                        onClick={() => handleAddToWhitelist(result.url)}
+                                                                        onClick={() => handleAddToWhitelist(result.link)}
                                                                         className="flex-1"
                                                                     >
                                                                         <IconShield className="mr-2 size-3" />
@@ -576,7 +499,7 @@ function SearchPage() {
                                                                     </Button>
                                                                     <Button
                                                                         size="sm"
-                                                                        onClick={() => handleRequestRemoval(result.url)}
+                                                                        onClick={() => handleRequestRemoval(result.link)}
                                                                         className="flex-1"
                                                                         variant={isSuspicious ? "destructive" : "default"}
                                                                     >
