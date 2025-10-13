@@ -131,6 +131,20 @@ export function TakedownApprovalModal({
         if (!isOpen) {
             setGoogleFormData(null);
         }
+
+        // Limpiar estados al cerrar para evitar mostrar datos viejos
+        return () => {
+            if (!isOpen) {
+                setActiveTab("email");
+                setScrapedEmail("");
+                setEmailBody("");
+                setEmailSubject("");
+                setIsProcessing(false);
+                setIsLoadingTabData(false);
+                setGoogleFormData(null);
+                setGoogleManualSteps([]);
+            }
+        };
     }, [isOpen, request, activeTab, profile])
 
     const handleFindEmail = async () => {
@@ -208,6 +222,178 @@ export function TakedownApprovalModal({
         } finally {
             setIsProcessing(false);
         }
+    };
+
+    const countryMap: { [key: string]: string } = {
+        // 1. Hispanoamérica (Mayor probabilidad de coincidencia)
+        "MX": "México",
+        "CO": "Colombia",
+        "AR": "Argentina",
+        "CL": "Chile",
+        "PE": "Perú",
+        "EC": "Ecuador",
+        "VE": "Venezuela",
+        "DO": "República Dominicana",
+        "CU": "Cuba",
+        "GT": "Guatemala",
+        "CR": "Costa Rica",
+        "PR": "Puerto Rico",
+        "PA": "Panamá",
+        "SV": "El Salvador",
+        "HN": "Honduras",
+        "BO": "Bolivia",
+        "PY": "Paraguay",
+        "UY": "Uruguay",
+        "NI": "Nicaragua",
+
+        // 2. Norteamérica y Europa Occidental (Grandes mercados)
+        "US": "Estados Unidos",
+        "ES": "España",
+        "CA": "Canadá",
+        "GB": "Reino Unido",
+        "FR": "Francia",
+        "DE": "Alemania",
+        "IT": "Italia",
+        "NL": "Países Bajos",
+        "PT": "Portugal",
+        "BE": "Bélgica",
+        "CH": "Suiza",
+        "IE": "Irlanda",
+        "AT": "Austria",
+        "SE": "Suecia",
+        "NO": "Noruega",
+        "DK": "Dinamarca",
+        "FI": "Finlandia",
+
+        // 3. Europa Oriental y Rusia
+        "RU": "Rusia",
+        "PL": "Polonia",
+        "UA": "Ucrania",
+        "RO": "Rumanía",
+        "CZ": "República Checa",
+        "HU": "Hungría",
+        "GR": "Grecia",
+        "TR": "Turquía",
+        "BG": "Bulgaria",
+        "SK": "Eslovaquia",
+        "HR": "Croacia",
+        "RS": "Serbia",
+        "LT": "Lituania",
+        "LV": "Letonia",
+        "EE": "Estonia",
+
+        // 4. Asia y Oceanía
+        "AU": "Australia",
+        "NZ": "Nueva Zelanda",
+        "JP": "Japón",
+        "KR": "Corea del Sur",
+        "CN": "China",
+        "IN": "India",
+        "PH": "Filipinas",
+        "TH": "Tailandia",
+        "MY": "Malasia",
+        "ID": "Indonesia",
+        "VN": "Vietnam",
+        "SG": "Singapur",
+        "TW": "Taiwán",
+        "HK": "Hong Kong",
+
+        // 5. África y Oriente Medio
+        "ZA": "Sudáfrica",
+        "NG": "Nigeria",
+        "EG": "Egipto",
+        "MA": "Marruecos",
+        "DZ": "Argelia",
+        "AE": "Emiratos Árabes Unidos",
+        "SA": "Arabia Saudí",
+        "IL": "Israel",
+        "IQ": "Iraq",
+
+        // 6. Brasil y otros importantes de Latam/Caribe
+        "BR": "Brasil", // El más grande en Latam, aunque no hispanohablante
+        "HT": "Haití",
+        "JM": "Jamaica",
+        "TT": "Trinidad y Tobago",
+
+        // 7. Otros países europeos y del G20
+        "PK": "Pakistán",
+        "BD": "Bangladés",
+        "MM": "Myanmar",
+        "NP": "Nepal",
+        "LK": "Sri Lanka",
+        "IR": "Irán",
+        "SY": "Siria",
+        "LB": "Líbano",
+        "JO": "Jordania",
+        "KW": "Kuwait",
+        "QA": "Catar",
+        "OM": "Omán",
+        "BH": "Baréin",
+        "CY": "Chipre",
+        "MT": "Malta"
+        // El listado cubre más de 80 países clave para la creación global de contenido,
+        // garantizando alta probabilidad de acierto.
+    };
+
+    const buildClaimJson = (): string => {
+        if (!googleFormData) return "";
+
+        const fullCountryName = countryMap[googleFormData.country] || googleFormData.country;
+
+        const claimData = {
+            "DMCA_AUTOFILL_DATA": true,
+            "campos": {
+                "nombre": googleFormData.firstName,
+                "apellido": googleFormData.lastName,
+                "nombreEmpresa": googleFormData.companyName,
+                "descripcionObra": googleFormData.workDescription,
+                "urlsOriginales": googleFormData.authorizedExampleUrls,
+                "urlsInfractoras": googleFormData.infringingUrls,
+                "firma": googleFormData.signature,
+            },
+            "selectores": {
+                "nombre": "input[aria-label=\"Nombre\"]",
+                "apellido": "input[aria-label=\"Apellido\"]",
+                "nombreEmpresa": "input[aria-label=\"Nombre de la empresa\"]",
+                "titularDerechos": "material-radio:has-text(\"Yo mismo\")",
+                "paisRegion": "div[role=\"button\"]:has-text(\"Seleccionar país o región\")",
+                "paisSeleccion": `material-select-dropdown-item:has-text("${fullCountryName}")`,
+                "streamsNo": "material-radio:has-text(\"No\")",
+                "descripcionObra": "textarea[aria-label=\"Introduce tu descripción aquí\"]",
+                "urlsOriginales": "textarea[aria-label=\"Introduce tus ejemplos aquí\"]",
+                "urlsInfractoras": "textarea[aria-label=\"Introduce tus URLs aquí\"]",
+                "checkGoodFaith": "material-checkbox[aria-labelledby=\"mat-label-good-faith-belief\"]",
+                "checkAccurateInfo": "material-checkbox[aria-labelledby=\"mat-label-accurate-information\"]",
+                "checkLumen": "material-checkbox[aria-labelledby=\"mat-label-lumen-acknowledgement\"]",
+                "checkCopyrightAck": "material-checkbox[aria-labelledby=\"mat-label-copyright-acknowledgement\"]",
+                "fechaFirmaBtn": "div[aria-label=\"Fecha de la firma:* Elige una fecha\"]",
+                "fechaHoy": "div.day-slot.today[role=\"gridcell\"]",
+                "firmaInput": "input[aria-label=\"Firma\"]"
+            }
+        };
+        return JSON.stringify(claimData, null, 2);
+    };
+
+    const handleDmcaClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        const jsonToCopy = buildClaimJson();
+        if (!jsonToCopy) {
+            toast.error("No hay datos del formulario para copiar.");
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(jsonToCopy);
+            window.open("https://reportcontent.google.com/forms/dmca_search", "_blank");
+            toast.success("¡Datos copiados! Ahora, ve a la nueva pestaña y haz clic en el marcador 'Rellenar DMCA' para completar el envío.");
+        } catch (err) {
+            console.error("Error al copiar al portapapeles:", err);
+            toast.error("No se pudo copiar al portapapeles. Por favor, inténtalo manualmente.");
+        }
+    };
+
+    const handleGoogleFormChange = (field: keyof GoogleFormData, value: string) => {
+        setGoogleFormData(prev => prev ? { ...prev, [field]: value } : null);
     };
 
     // Componente auxiliar para los campos con botón de copiar
@@ -317,16 +503,37 @@ export function TakedownApprovalModal({
 
                                         {googleFormData ? (
                                             <div className="space-y-4">
-                                                <div className="grid gap-3 rounded-md border p-4">
-                                                    <CopyableField label="Nombre" value={googleFormData.firstName} />
-                                                    <CopyableField label="Apellidos" value={googleFormData.lastName} />
-                                                    <CopyableField label="Email Contacto" value={googleFormData.contactEmail} />
-                                                    <CopyableField label="País" value={googleFormData.country} />
-                                                    <CopyableField label="URL Infractora" value={googleFormData.infringingUrls} />
-                                                    <CopyableField label="URLs Autorizadas" value={googleFormData.authorizedExampleUrls} isTextarea />
-                                                    <CopyableField label="Descripción Obra" value={googleFormData.workDescription} isTextarea />
-                                                    <CopyableField label="Descripción Infracción" value={googleFormData.infringementDescription} isTextarea />
-                                                    <CopyableField label="Firma" value={googleFormData.signature} />
+                                                <div id="previewForm" className="grid gap-3 rounded-md border p-4">
+                                                    <div className="grid grid-cols-4 items-center gap-2">
+                                                        <Label htmlFor="g-firstName" className="text-right text-muted-foreground">Nombre</Label>
+                                                        <Input id="g-firstName" value={googleFormData.firstName} onChange={e => handleGoogleFormChange('firstName', e.target.value)} className="col-span-3" />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-2">
+                                                        <Label htmlFor="g-lastName" className="text-right text-muted-foreground">Apellidos</Label>
+                                                        <Input id="g-lastName" value={googleFormData.lastName} onChange={e => handleGoogleFormChange('lastName', e.target.value)} className="col-span-3" />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-2">
+                                                        <Label htmlFor="g-contactEmail" className="text-right text-muted-foreground">Email Contacto</Label>
+                                                        <Input id="g-contactEmail" value={googleFormData.contactEmail} onChange={e => handleGoogleFormChange('contactEmail', e.target.value)} className="col-span-3" />
+                                                    </div>
+                                                    {/* País no es editable aquí, se usa el del perfil */}
+                                                    <CopyableField label="País" value={`${googleFormData.country} (${countryMap[googleFormData.country] || 'N/A'})`} />
+                                                    <div className="grid grid-cols-4 items-start gap-2">
+                                                        <Label htmlFor="g-infringingUrls" className="text-right text-muted-foreground pt-2">URL Infractora</Label>
+                                                        <Textarea id="g-infringingUrls" value={googleFormData.infringingUrls} onChange={e => handleGoogleFormChange('infringingUrls', e.target.value)} className="col-span-3" rows={2} />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-start gap-2">
+                                                        <Label htmlFor="g-authorizedExampleUrls" className="text-right text-muted-foreground pt-2">URLs Autorizadas</Label>
+                                                        <Textarea id="g-authorizedExampleUrls" value={googleFormData.authorizedExampleUrls} onChange={e => handleGoogleFormChange('authorizedExampleUrls', e.target.value)} className="col-span-3" rows={3} />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-start gap-2">
+                                                        <Label htmlFor="g-workDescription" className="text-right text-muted-foreground pt-2">Descripción Obra</Label>
+                                                        <Textarea id="g-workDescription" value={googleFormData.workDescription} onChange={e => handleGoogleFormChange('workDescription', e.target.value)} className="col-span-3" rows={3} />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-2">
+                                                        <Label htmlFor="g-signature" className="text-right text-muted-foreground">Firma</Label>
+                                                        <Input id="g-signature" value={googleFormData.signature} onChange={e => handleGoogleFormChange('signature', e.target.value)} className="col-span-3" />
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <h4 className="font-medium mb-2">Pasos Manuales Adicionales:</h4>
@@ -340,6 +547,10 @@ export function TakedownApprovalModal({
                                                         ? `Enviado a Google (${new Date(request.googleSubmittedAt).toLocaleString()})`
                                                         : 'Marcar como Enviado a Google'
                                                     }
+                                                </Button>
+                                                <Button onClick={handleDmcaClick} variant="secondary">
+                                                    <IconCopy className="mr-2 size-4" />
+                                                    Copiar y Abrir Formulario DMCA
                                                 </Button>
                                                 {request.googleSubmittedAt && (
                                                     <p className="text-xs text-green-600">Esta acción ya fue completada.</p>
