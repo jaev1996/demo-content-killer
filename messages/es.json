@@ -1,0 +1,107 @@
+{
+    "LandingPage": {
+        "nav": {
+            "services": "Servicios",
+            "pricing": "Precios",
+            "faq": "Preguntas Frecuentes",
+            "clientAccess": "Acceso Clientes"
+        },
+        "hero": {
+            "title": "Recupera el Control de ",
+            "titleHighlight": "Tu Contenido.",
+            "subtitle": "Protegemos tu privacidad y tu carrera eliminando contenido filtrado de internet. Rápido, discreto y eficaz.",
+            "cta": "Comenzar Ahora"
+        },
+        "mission": {
+            "text": "Tu tranquilidad es nuestra misión."
+        },
+        "process": {
+            "title": "Nuestro Proceso Detallado",
+            "step1_title": "1. Registro y Configuración",
+            "step1_desc": "Comienzas con un registro sencillo y seguro. Configuramos tu perfil para iniciar la protección de inmediato.",
+            "step2_title": "2. Detección Inteligente",
+            "step2_desc": "Nuestra IA escanea la web, redes sociales y sitios pirata 24/7 para encontrar tu contenido filtrado.",
+            "step3_title": "3. Reclamación DMCA",
+            "step3_desc": "Iniciamos acciones legales inmediatas (DMCA Takedowns) contra las webs y plataformas infractoras.",
+            "step4_title": "4. Eliminación Verificada",
+            "step4_desc": "Nos aseguramos de que el contenido sea eliminado permanentemente y desindexado de los buscadores.",
+            "step5_title": "5. Monitoreo Continuo",
+            "step5_desc": "La protección no se detiene. Seguimos vigilando para evitar que el contenido reaparezca.",
+            "step6_title": "6. Análisis de Estadísticas",
+            "step6_desc": "Recibes informes detallados sobre las eliminaciones y el impacto positivo en tu marca personal."
+        },
+        "focus": {
+            "text": "Enfócate en crear, nosotros te protegemos."
+        },
+        "pricing": {
+            "title": "Planes Flexibles para Cada Necesidad",
+            "subtitle": "Elige el plan que mejor se adapta a tu carrera. Sin contratos a largo plazo, cancela cuando quieras.",
+            "basic_title": "Básico",
+            "basic_desc": "Ideal para empezar a proteger tu contenido.",
+            "basic_price": "$99",
+            "professional_title": "Profesional",
+            "professional_desc": "La solución completa para creadores en crecimiento.",
+            "professional_price": "$249",
+            "agency_title": "Agencia",
+            "agency_desc": "Gestiona múltiples perfiles con herramientas avanzadas.",
+            "agency_price": "Contacto",
+            "per_month": "/mes",
+            "most_popular": "Más Popular",
+            "choose_plan": "Elegir Plan",
+            "contact_sales": "Contactar Ventas"
+        },
+        "features": {
+            "basic": [
+                "Monitoreo 24/7",
+                "Hasta 100 eliminaciones/mes",
+                "Soporte por email"
+            ],
+            "professional": [
+                "Todo lo del plan Básico",
+                "Eliminaciones ilimitadas",
+                "Búsqueda en foros y Telegram",
+                "Soporte prioritario 24/7"
+            ],
+            "agency": [
+                "Todo lo del plan Profesional",
+                "Panel de gestión multi-perfil",
+                "API de integración",
+                "Manager de cuenta dedicado"
+            ]
+        },
+        "trust": {
+            "title": "Resultados que inspiran confianza.",
+            "stats_title": "Confianza y Resultados Que Hablan Por Sí Mismos",
+            "stats_subtitle": "Somos el aliado de confianza para creadoras de contenido. Nuestra misión es darte la tranquilidad que mereces.",
+            "stat1_value": "150,000+",
+            "stat1_desc": "Archivos eliminados con éxito",
+            "stat2_value": "<24h",
+            "stat2_desc": "Tiempo promedio de respuesta",
+            "stat3_value": "~25%",
+            "stat3_desc": "Aumento de ingresos reportado"
+        },
+        "faq": {
+            "title": "Preguntas que nos hacen a menudo",
+            "subtitle": "Encuentra respuestas rápidas a tus dudas. Si no ves tu pregunta aquí, no dudes en contactarnos.",
+            "q1_title": "¿Cómo funciona el proceso de eliminación DMCA?",
+            "q1_answer_p1": "Nuestro proceso es exhaustivo y se divide en varios pasos clave para garantizar la máxima eficacia:",
+            "q1_answer_li": [
+                "<strong>Búsqueda:</strong> Utilizamos sistemas avanzados para encontrar tu contenido filtrado en toda la web.",
+                "<strong>Categorización:</strong> Clasificamos los hallazgos para priorizar y agilizar el proceso.",
+                "<strong>Investigación de sitios:</strong> Analizamos cada sitio infractor para determinar la mejor estrategia de eliminación.",
+                "<strong>Envío de solicitudes:</strong> Enviamos notificaciones de eliminación DMCA formales y legalmente sólidas.",
+                "<strong>Seguimiento constante:</strong> Monitoreamos cada caso hasta confirmar la eliminación permanente del contenido."
+            ],
+            "q2_title": "¿Cuál es el costo del servicio de eliminación?",
+            "q2_answer": "Entendemos que cada caso es único. Por eso, ofrecemos un asesoramiento inicial sin compromiso para evaluar tus necesidades. A partir de ahí, te proporcionamos un presupuesto claro y detallado antes de iniciar cualquier acción. Nuestra prioridad es la transparencia total.",
+            "q3_title": "¿Tengo que hacer algo una vez que contrato el servicio?",
+            "q3_answer": "Absolutamente nada. Una vez que contratas nuestros servicios, nosotros nos encargamos de todo el proceso de principio a fin. No necesitas subir archivos, rellenar formularios complejos ni realizar ninguna acción. Tu única tarea es tener la tranquilidad de que tu contenido está siendo protegido.",
+            "q4_title": "¿Por qué usar un servicio en lugar de hacerlo yo misma?",
+            "q4_answer": "La principal ventaja es el ahorro de tiempo y la efectividad legal. Gestionar las eliminaciones DMCA por tu cuenta puede ser un proceso largo, frustrante y emocionalmente agotador. Nuestro equipo de expertos tiene la experiencia y las herramientas para hacerlo de manera rápida y eficiente, permitiéndote concentrarte en lo que mejor sabes hacer: crear contenido y hacer crecer tu negocio."
+        },
+        "footer": {
+            "copyright": "© 2024 PrivaClean. Todos los derechos reservados.",
+            "privacy": "Tu privacidad es nuestra prioridad."
+        }
+    }
+}

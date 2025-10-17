@@ -1,0 +1,107 @@
+{
+    "LandingPage": {
+        "nav": {
+            "services": "Services",
+            "pricing": "Pricing",
+            "faq": "FAQ",
+            "clientAccess": "Client Access"
+        },
+        "hero": {
+            "title": "Regain Control of ",
+            "titleHighlight": "Your Content.",
+            "subtitle": "We protect your privacy and your career by removing leaked content from the internet. Fast, discreet, and effective.",
+            "cta": "Get Started Now"
+        },
+        "mission": {
+            "text": "Your peace of mind is our mission."
+        },
+        "process": {
+            "title": "Our Detailed Process",
+            "step1_title": "1. Registration & Setup",
+            "step1_desc": "You start with a simple and secure registration. We set up your profile to start protection immediately.",
+            "step2_title": "2. Smart Detection",
+            "step2_desc": "Our AI scans the web, social media, and pirate sites 24/7 to find your leaked content.",
+            "step3_title": "3. DMCA Takedown",
+            "step3_desc": "We initiate immediate legal action (DMCA Takedowns) against infringing websites and platforms.",
+            "step4_title": "4. Verified Removal",
+            "step4_desc": "We ensure the content is permanently removed and de-indexed from search engines.",
+            "step5_title": "5. Continuous Monitoring",
+            "step5_desc": "Protection doesn't stop. We keep monitoring to prevent the content from reappearing.",
+            "step6_title": "6. Statistics Analysis",
+            "step6_desc": "You receive detailed reports on removals and the positive impact on your personal brand."
+        },
+        "focus": {
+            "text": "Focus on creating, we'll protect you."
+        },
+        "pricing": {
+            "title": "Flexible Plans for Every Need",
+            "subtitle": "Choose the plan that best suits your career. No long-term contracts, cancel anytime.",
+            "basic_title": "Basic",
+            "basic_desc": "Ideal for starting to protect your content.",
+            "basic_price": "$99",
+            "professional_title": "Professional",
+            "professional_desc": "The complete solution for growing creators.",
+            "professional_price": "$249",
+            "agency_title": "Agency",
+            "agency_desc": "Manage multiple profiles with advanced tools.",
+            "agency_price": "Contact Us",
+            "per_month": "/month",
+            "most_popular": "Most Popular",
+            "choose_plan": "Choose Plan",
+            "contact_sales": "Contact Sales"
+        },
+        "features": {
+            "basic": [
+                "24/7 Monitoring",
+                "Up to 100 removals/month",
+                "Email Support"
+            ],
+            "professional": [
+                "Everything in Basic",
+                "Unlimited removals",
+                "Forum & Telegram search",
+                "24/7 priority support"
+            ],
+            "agency": [
+                "Everything in Professional",
+                "Multi-profile management panel",
+                "API Integration",
+                "Dedicated account manager"
+            ]
+        },
+        "trust": {
+            "title": "Results that inspire confidence.",
+            "stats_title": "Trust and Results That Speak for Themselves",
+            "stats_subtitle": "We are the trusted ally for content creators. Our mission is to give you the peace of mind you deserve.",
+            "stat1_value": "150,000+",
+            "stat1_desc": "Files successfully removed",
+            "stat2_value": "<24h",
+            "stat2_desc": "Average response time",
+            "stat3_value": "~25%",
+            "stat3_desc": "Reported revenue increase"
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "subtitle": "Find quick answers to your questions. If you don't see your question here, feel free to contact us.",
+            "q1_title": "How does the DMCA removal process work?",
+            "q1_answer_p1": "Our process is thorough and divided into several key steps to ensure maximum effectiveness:",
+            "q1_answer_li": [
+                "<strong>Search:</strong> We use advanced systems to find your leaked content across the web.",
+                "<strong>Categorization:</strong> We classify findings to prioritize and streamline the process.",
+                "<strong>Site Investigation:</strong> We analyze each infringing site to determine the best removal strategy.",
+                "<strong>Request Submission:</strong> We send formal and legally sound DMCA takedown notices.",
+                "<strong>Constant Follow-up:</strong> We monitor each case until we confirm the permanent removal of the content."
+            ],
+            "q2_title": "What is the cost of the removal service?",
+            "q2_answer": "We understand that every case is unique. That's why we offer a no-commitment initial consultation to assess your needs. From there, we provide you with a clear and detailed quote before taking any action. Our priority is full transparency.",
+            "q3_title": "Do I have to do anything once I hire the service?",
+            "q3_answer": "Absolutely nothing. Once you hire our services, we handle the entire process from start to finish. You don't need to upload files, fill out complex forms, or take any action. Your only job is to have peace of mind that your content is being protected.",
+            "q4_title": "Why use a service instead of doing it myself?",
+            "q4_answer": "The main advantage is saving time and legal effectiveness. Managing DMCA takedowns on your own can be a long, frustrating, and emotionally draining process. Our team of experts has the experience and tools to do it quickly and efficiently, allowing you to focus on what you do best: creating content and growing your business."
+        },
+        "footer": {
+            "copyright": "© 2024 PrivaClean. All rights reserved.",
+            "privacy": "Your privacy is our priority."
+        }
+    }
+}
