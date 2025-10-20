@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
-// @ts-expect-error: allow importing global css without type declarations
+// @ts-ignore: allow importing global css without type declarations
 import "./globals.css"; // Importa los estilos de Tailwind aquí
 import { AuthProvider } from "@/contexts/auth-context";
 import { getLocale, getMessages } from "next-intl/server";
