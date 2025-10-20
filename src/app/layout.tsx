@@ -1,5 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
+// @ts-ignore: allow importing global css without type declarations
 import "./globals.css"; // Importa los estilos de Tailwind aquí
+import { AuthProvider } from "@/contexts/auth-context";
 import { getLocale, getMessages } from "next-intl/server";
 
 type Props = {
@@ -17,7 +19,7 @@ export default async function RootLayout({ children }: Props) {
                     locale={locale}
                     messages={messages}
                 >
-                    {children}
+                    <AuthProvider>{children}</AuthProvider>
                 </NextIntlClientProvider>
             </body>
         </html>

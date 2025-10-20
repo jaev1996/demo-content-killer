@@ -1,7 +1,7 @@
 "use client"
 
 import { apiFetch } from "@/lib/api"
-import * as React from "react"
+import React, { FormEvent, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -17,21 +17,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Toaster, toast } from "sonner"
 import { IconLoader, IconShield } from "@tabler/icons-react"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function LoginPage() {
     const router = useRouter()
-    const [username, setUsername] = React.useState("")
-    const [password, setPassword] = React.useState("")
-    const [loading, setLoading] = React.useState(false)
+    const { login, user, isLoading } = useAuth()
+    const [loginField, setLoginField] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    React.useEffect(() => {
-        const token = localStorage.getItem("authToken")
-        if (token) {
+    useEffect(() => {
+        // Solo redirigir si el usuario está definido y el contexto no está cargando
+        if (!isLoading && user) {
             router.replace("/dashboard")
         }
-    }, [router])
+    }, [user, isLoading, router])
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = async (e: FormEvent) => {
         e.preventDefault()
         setLoading(true)
 
@@ -39,7 +41,7 @@ export default function LoginPage() {
             const response = await apiFetch("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ login: loginField, password }),
             })
 
             if (!response.ok) {
@@ -52,18 +54,20 @@ export default function LoginPage() {
             }
 
             const data = await response.json()
-            const userData = data.user
-            const token = userData.token
+            const { user: userData, token } = data
 
-            localStorage.setItem("authToken", token)
             toast.success(`¡Bienvenido, ${userData.fullName}!`)
 
-            setTimeout(() => {
-                router.push("/dashboard")
-            }, 1000)
+            login(userData, token)
 
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Ocurrió un error.")
+            const errorMessage = error instanceof Error ? error.message : "Ocurrió un error desconocido.";
+            if (errorMessage.includes("Failed to fetch")) {
+                toast.error("No se pudo conectar con el servidor. ¿Está el backend en ejecución en el puerto 3001?");
+            } else {
+                toast.error(errorMessage);
+            }
+        } finally {
             setLoading(false)
         }
     }
@@ -89,8 +93,8 @@ export default function LoginPage() {
                     <form onSubmit={handleLogin}>
                         <CardContent className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="username">Usuario</Label>
-                                <Input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="nombre.usuario" required />
+                                <Label htmlFor="login">Usuario o Email</Label>
+                                <Input id="login" type="text" value={loginField} onChange={(e) => setLoginField(e.target.value)} placeholder="nombre.usuario o email@ejemplo.com" required />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Contraseña</Label>
