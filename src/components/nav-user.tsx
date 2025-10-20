@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/auth-context"
 import {
     Avatar,
     AvatarFallback,
-    AvatarImage,
 } from "@/components/ui/avatar"
 import {
     DropdownMenu,

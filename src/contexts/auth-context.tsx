@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { IconSkull } from "@tabler/icons-react"
 
 interface User {
     id: string

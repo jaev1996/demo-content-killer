@@ -26,13 +26,10 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled,
-  IconCircleXFilled,
   IconDotsVertical,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
-  IconPlus,
   IconTrendingUp,
 } from "@tabler/icons-react"
 import {
@@ -51,7 +48,6 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
 import { z } from "zod"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -182,11 +178,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: "Status",
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
+        <IconLoader />
         {row.original.status}
       </Badge>
     ),
