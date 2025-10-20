@@ -56,7 +56,7 @@ function ProfilePage() {
 
         setIsSubmitting(true)
         try {
-            const dataToUpdate: any = {
+            const dataToUpdate: Partial<typeof formData> = {
                 fullName: formData.fullName,
                 email: formData.email,
             }
@@ -140,4 +140,3 @@ function ProfilePage() {
 }
 
 export default withAuth(ProfilePage)
-

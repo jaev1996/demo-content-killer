@@ -27,11 +27,7 @@ export function NavUser() {
         <DropdownMenu>
             <DropdownMenuTrigger className="-mx-2 flex w-full items-center gap-2 rounded-lg p-2 text-left transition-colors hover:bg-muted">
                 <Avatar className="size-8">
-                    {(user as any).avatar ? (
-                        <AvatarImage src={(user as any).avatar} alt={user.fullName} />
-                    ) : (
-                        <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
-                    )}
+                    <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                     <div className="text-sm font-medium">{user.fullName}</div>
@@ -50,4 +46,3 @@ export function NavUser() {
         </DropdownMenu>
     )
 }
-

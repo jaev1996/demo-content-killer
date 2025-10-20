@@ -41,7 +41,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { IconLoader, IconPlus, IconUser, IconEdit, IconTrash } from "@tabler/icons-react"
+import { IconLoader, IconPlus, IconEdit, IconTrash } from "@tabler/icons-react"
 import { toast } from "sonner"
 
 interface User {
@@ -153,7 +153,7 @@ function UsersAdminPage() {
         setIsSubmitting(true)
         try {
             // Clonar el usuario y eliminar la contraseña si está vacía
-            const userDataToUpdate: any = { ...editingUser }
+            const userDataToUpdate: Partial<User> = { ...editingUser }
             if (userDataToUpdate.password === "") {
                 delete userDataToUpdate.password
             }
@@ -345,7 +345,7 @@ function UsersAdminPage() {
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="edit-password" className="text-right">Nueva Contraseña</Label>
-                                    <Input id="edit-password" name="password" type="password" value={(editingUser as any).password} onChange={handleEditInputChange} className="col-span-3" placeholder="Dejar en blanco para no cambiar" />
+                                    <Input id="edit-password" name="password" type="password" value={editingUser.password} onChange={handleEditInputChange} className="col-span-3" placeholder="Dejar en blanco para no cambiar" />
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="edit-fullName" className="text-right">Nombre Completo</Label>

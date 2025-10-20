@@ -48,8 +48,8 @@ export default function LoginPage() {
                 let errorMessage = `Error: ${response.status} ${response.statusText}`;
                 try {
                     const errorData = await response.json();
-                    errorMessage = errorData.message || errorData.error || "Credenciales inválidas o error en el servidor.";
-                } catch (e) { /* No hay cuerpo JSON, usar el mensaje de estado */ }
+                    errorMessage = errorData.message || errorData.error || "Credenciales inválidas o error en el servidor."
+                } catch { /* No hay cuerpo JSON, usar el mensaje de estado */ }
                 throw new Error(errorMessage);
             }
 
