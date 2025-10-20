@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useAuth } from "@/contexts/auth-context"
 import {
   IconCamera,
   IconSkull,
@@ -16,6 +17,7 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
+  IconUsers,
 } from "@tabler/icons-react"
 
 //import { NavDocuments } from "@/components/nav-documents"
@@ -32,13 +34,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const data = {
-  user: {
-    name: "user",
-    email: "user@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
+const navMainItems = [
     {
       title: "Dashboard",
       url: "/dashboard",
@@ -63,8 +59,9 @@ const data = {
       title: "Perfiles de Cliente",
       url: "/profiles", // Donde el cliente gestiona la whitelist
       icon: IconUserCircle,
-    }
-  ],
+    },
+]
+const data = {
   // Opciones secundarias para la configuración y ayuda
   navSecondary: [
     {
@@ -146,7 +143,21 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
+  const { user } = useAuth()
+
+  const navMain = React.useMemo(() => {
+    const items = [...navMainItems]
+    if (user?.role === "super_admin") {
+      items.push({
+        title: "Gestión de Usuarios",
+        url: "/admin/users",
+        icon: IconUsers,
+      })
+    }
+    return items
+  }, [user])
+
+    return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
@@ -164,11 +175,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

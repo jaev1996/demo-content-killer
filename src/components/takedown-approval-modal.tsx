@@ -208,9 +208,9 @@ export function TakedownApprovalModal({
                 if (!response.ok) {
                     try {
                         const errorData = await response.json();
-                        throw new Error(errorData.message || "Fallo al iniciar el proceso para Google.");
-                    } catch (jsonError) {
-                        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                        throw new Error(errorData.message || "Fallo al iniciar el proceso para Google.")
+                    } catch {
+                        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`)
                     }
                 }
                 const result = await response.json();
