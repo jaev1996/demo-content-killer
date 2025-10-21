@@ -479,11 +479,12 @@ function SearchPage() {
                                                                     >
                                                                         {result.link}
                                                                     </a>
-                                                                    {result.description && (
-                                                                        <div className="text-sm text-muted-foreground leading-relaxed">
+                                                                    {result.description &&
+                                                                        (<div className="text-sm text-muted-foreground leading-relaxed">
+                                                                            {result.description}
+                                                                        </div>)
+                                                                    }
 
-                                                                        </div>
-                                                                    )}
                                                                 </CardDescription>
                                                             </CardHeader>
                                                             <CardFooter className="pt-0">
