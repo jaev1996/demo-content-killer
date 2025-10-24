@@ -55,18 +55,9 @@ export function EditProfileModal({ profile, isOpen, onOpenChange, onProfileUpdat
     }, [isOpen, profile]); // Dependencia de isOpen para re-inicializar al abrir
 
     const handleChange = (field: string, value: string) => {
-        const keys = field.split('.');
         setFormData(prev => {
-            const newFormData = JSON.parse(JSON.stringify(prev)); // Copia profunda para evitar mutaciones
-            let current: Record<string, any> = newFormData;
-            for (let i = 0; i < keys.length - 1; i++) {
-                if (!current[keys[i]]) {
-                    current[keys[i]] = {};
-                }
-                current = current[keys[i]];
-            }
-            current[keys[keys.length - 1]] = value;
-            return newFormData;
+            // Como la estructura es plana, la actualización es más simple.
+            return { ...prev, [field]: value };
         });
     };
 
