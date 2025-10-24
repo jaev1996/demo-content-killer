@@ -47,7 +47,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { IconLoader, IconPlus, IconSearch, IconTrash, IconX } from "@tabler/icons-react"
+import { IconLoader, IconPlus, IconX, IconSearch, IconTrash, IconPencil } from "@tabler/icons-react"
+import { EditProfileModal } from "./edit-profile-modal"
 
 interface Profile {
     id: string;
@@ -55,13 +56,13 @@ interface Profile {
     socialMediaUser: string;
     whitelist: string[];
     status: "active" | "inactive";
-    dmcaInfo?: {
-        fullName: string;
-        contactEmail: string;
-        country: string;
-        workDescription: string;
-        signature: string;
-    }
+    autoFilter?: boolean;
+    strictMode?: boolean;
+    dmcaFullName?: string;
+    dmcaContactEmail?: string;
+    dmcaCountry?: string;
+    dmcaWorkDescription?: string;
+    dmcaSignature?: string;
 }
 
 function WhitelistManager({ profile, onWhitelistUpdate }: { profile: Profile; onWhitelistUpdate: (profileId: string, newCount: number) => void; }) {
@@ -185,6 +186,10 @@ function ProfilesPage() {
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
     // Estado de filtros y paginación
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [selectedProfile, setSelectedProfile] = React.useState<Profile | null>(null);
+
+
     const [searchTerm, setSearchTerm] = React.useState("")
     const [pagination, setPagination] = React.useState({
         currentPage: 1,
@@ -300,6 +305,15 @@ function ProfilesPage() {
         );
     };
 
+    const handleEditProfile = (profile: Profile) => {
+        setSelectedProfile(profile);
+        setIsEditModalOpen(true);
+    };
+
+    const handleProfileUpdate = () => {
+        fetchProfiles(pagination.currentPage, searchTerm);
+    };
+
     const handleDeleteProfile = async (userId: string) => {
         if (!confirm("¿Estás seguro de que deseas eliminar este perfil?")) {
             return
@@ -324,6 +338,12 @@ function ProfilesPage() {
             <AppSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeader />
+                <EditProfileModal
+                    profile={selectedProfile}
+                    isOpen={isEditModalOpen}
+                    onOpenChange={setIsEditModalOpen}
+                    onProfileUpdate={handleProfileUpdate}
+                />
                 <Toaster richColors />
                 <main className="flex-1 overflow-y-auto p-4 md:p-8">
                     <div className="mb-8">
@@ -531,7 +551,11 @@ function ProfilesPage() {
                                                                 : "Activo"}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="text-right">
+                                                    <TableCell className="text-right space-x-2">
+                                                        <Button variant="ghost" size="icon" onClick={() => handleEditProfile(profile)}>
+                                                            <IconPencil className="size-4" />
+                                                            <span className="sr-only">Editar</span>
+                                                        </Button>
                                                         <Button variant="ghost" size="icon" onClick={() => handleDeleteProfile(profile.id)}>
                                                             <IconTrash className="size-4 text-destructive" />
                                                             <span className="sr-only">Eliminar</span>
