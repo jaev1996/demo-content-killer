@@ -15,6 +15,18 @@
         "mission": {
             "text": "Tu tranquilidad es nuestra misión."
         },
+        "earnings": {
+            "title": "Visualiza el Impacto en Tus Ingresos",
+            "subtitle": "La piratería no solo afecta tu tranquilidad, sino también tu bolsillo. Ve la diferencia que nuestra protección puede hacer.",
+            "withoutLabel": "Sin Protección",
+            "withLabel": "Con PrivaClean",
+            "valuePropositionTitle": "Maximiza Tu Potencial",
+            "valuePropositionDescription": "La piratería diluye tus ingresos. Al proteger tu contenido, no solo detienes las pérdidas, sino que fomentas un crecimiento constante y seguro.",
+            "axisY": "Ingresos (USD)",
+            "axisXStart": "Inicio",
+            "axisXMid": "Mes 3",
+            "axisXEnd": "Mes 6"
+        },
         "process": {
             "title": "Nuestro Proceso Detallado",
             "step1_title": "1. Registro y Configuración",
