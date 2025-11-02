@@ -15,6 +15,18 @@
         "mission": {
             "text": "Your peace of mind is our mission."
         },
+        "earnings": {
+            "title": "Visualize the Impact on Your Income",
+            "subtitle": "Piracy not only affects your peace of mind, but also your wallet. See the difference our protection can make.",
+            "withoutLabel": "Without Protection",
+            "withLabel": "With PrivaClean",
+            "valuePropositionTitle": "Maximize Your Potential",
+            "valuePropositionDescription": "Piracy dilutes your income. By protecting your content, you not only stop losses but also foster steady and secure growth.",
+            "axisY": "Income (USD)",
+            "axisXStart": "Start",
+            "axisXMid": "Month 3",
+            "axisXEnd": "Month 6"
+        },
         "process": {
             "title": "Our Detailed Process",
             "step1_title": "1. Registration & Setup",

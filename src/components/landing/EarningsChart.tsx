@@ -80,11 +80,11 @@ export function EarningsChart() {
 
     // Definimos los puntos para las líneas del gráfico.
     // "M" es mover a, "C" es curva cúbica de Bézier.
-    // La línea "Sin Protección" es más plana y baja.
-    const withoutPath = "M0,80 C50,85 100,75 150,80 C200,85 250,75 300,80";
+    // La línea "Sin Protección" es más plana y baja. (Coordenadas Y más altas = más bajo en el gráfico)
+    const withoutPath = "M0,90 C50,95 100,85 150,90 C200,95 250,85 300,90";
 
-    // La línea "Con PrivaClean" es ascendente.
-    const withPath = "M0,80 C50,70 100,75 150,50 C200,25 250,30 300,10";
+    // La línea "Con PrivaClean" es ascendente. (Coordenadas Y más bajas = más alto en el gráfico)
+    const withPath = "M0,90 C50,80 100,85 150,60 C200,35 250,40 300,10";
 
     return (
         <div className="bg-gray-900/50 p-8 rounded-lg border border-gray-800 w-full max-w-6xl mx-auto">
@@ -106,44 +106,48 @@ export function EarningsChart() {
                 </div>
 
                 {/* Columna del Gráfico */}
-                <div className="md:col-span-2 relative h-56 md:h-80">
-                    <svg width="100%" height="100%" viewBox="0 0 350 120" preserveAspectRatio="none" className="absolute top-0 left-0" overflow="visible">
+                <div className="md:col-span-2 relative h-64 md:h-96">
+                    <svg width="100%" height="100%" viewBox="0 0 350 140" preserveAspectRatio="none" className="absolute top-0 left-0" overflow="visible">
                         {/* Eje Y (Ingresos) */}
-                        <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$15k</text>
+                        <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$20k</text>
                         <line x1="35" y1="10" x2="345" y2="10" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="80" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$5k</text>
-                        <line x1="35" y1="80" x2="345" y2="80" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <text x="30" y="37" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$15k</text>
+                        <line x1="35" y1="37" x2="345" y2="37" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <text x="30" y="64" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$10k</text>
+                        <line x1="35" y1="64" x2="345" y2="64" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <text x="30" y="90" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$5k</text>
+                        <line x1="35" y1="90" x2="345" y2="90" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
 
                         <g transform="translate(40, 0)">
                             {/* Area y línea "Sin Protección" */}
                             <defs>
                                 <linearGradient id="gradient-without" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="rgb(100 116 139 / 0.4)" />
-                                    <stop offset="100%" stopColor="rgb(100 116 139 / 0)" />
+                                    <stop offset="100%" stopColor="rgb(100 116 139 / 0.05)" />
                                 </linearGradient>
                             </defs>
-                            <motion.path d={`${withoutPath} L300,100 L0,100 Z`} fill="url(#gradient-without)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 1 }} />
-                            <motion.path d={withoutPath} fill="none" stroke="rgb(100 116 139)" strokeWidth="1.5" variants={pathVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{ delay: 0.5, ...pathVariants.visible?.transition }} />
+                            <motion.path d={`${withoutPath} L300,110 L0,110 Z`} fill="url(#gradient-without)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 1 }} />
+                            <motion.path d={withoutPath} fill="none" stroke="rgb(100 116 139)" strokeWidth="1.5" variants={pathVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{ delay: 0.5 }} />
 
                             {/* Area y línea "Con PrivaClean" */}
                             <defs>
                                 <linearGradient id="gradient-with" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stopColor="rgb(220 38 38 / 0.5)" />
-                                    <stop offset="100%" stopColor="rgb(220 38 38 / 0)" />
+                                    <stop offset="100%" stopColor="rgb(220 38 38 / 0.05)" />
                                 </linearGradient>
                             </defs>
-                            <motion.path d={`${withPath} L300,100 L0,100 Z`} fill="url(#gradient-with)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 0.5 }} />
+                            <motion.path d={`${withPath} L300,110 L0,110 Z`} fill="url(#gradient-with)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 0.5 }} />
                             <motion.path d={withPath} fill="none" stroke="#DC2626" strokeWidth="2" variants={pathVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} />
 
                             {/* Tooltips en los picos (coordenadas ajustadas) */}
-                            <TooltipCircle cx={280} cy={80} label="Estancado" value="-15" color="rgb(100 116 139)" />
-                            <TooltipCircle cx={280} cy={10} label="Ganancia" value="+45" color="#DC2626" />
+                            <TooltipCircle cx={280} cy={89} label="Estancado" value="-15" color="rgb(100 116 139)" />
+                            <TooltipCircle cx={280} cy={19} label="Ganancia" value="+45" color="#DC2626" />
                         </g>
 
                         {/* Eje X (Tiempo) */}
-                        <text x="40" y="115" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXStart')}</text>
-                        <text x="190" y="115" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXMid')}</text>
-                        <text x="340" y="115" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXEnd')}</text>
+                        <text x="40" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXStart')}</text>
+                        <text x="190" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXMid')}</text>
+                        <text x="340" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXEnd')}</text>
                     </svg>
                 </div>
             </div>
