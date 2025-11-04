@@ -87,7 +87,7 @@ export function EarningsChart() {
     const withPath = "M0,90 C50,80 100,85 150,60 C200,35 250,40 300,10";
 
     return (
-        <div className="bg-gray-900/50 p-8 rounded-lg border border-gray-800 w-full max-w-6xl mx-auto">
+        <div className="bg-black/95 p-8 rounded-lg border border-gray-800 w-full max-w-6xl mx-auto">
             <div className="grid md:grid-cols-3 gap-8 items-center">
                 {/* Columna de Texto */}
                 <div className="md:col-span-1 text-center md:text-left">

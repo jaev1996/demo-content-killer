@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import "./globals.css"; // Importa los estilos de Tailwind aquí
 import { AuthProvider } from "@/contexts/auth-context";
 import { getLocale, getMessages } from "next-intl/server";
+import { ThemeProvider } from "@/components/theme-provider";
 
 type Props = {
     children: React.ReactNode;
@@ -12,14 +13,21 @@ export default async function RootLayout({ children }: Props) {
     const messages = await getMessages();
 
     return (
-        <html lang={locale}>
+        <html lang={locale} suppressHydrationWarning>
             <body>
-                <NextIntlClientProvider
-                    locale={locale}
-                    messages={messages}
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
                 >
-                    <AuthProvider>{children}</AuthProvider>
-                </NextIntlClientProvider>
+                    <NextIntlClientProvider
+                        locale={locale}
+                        messages={messages}
+                    >
+                        <AuthProvider>{children}</AuthProvider>
+                    </NextIntlClientProvider>
+                </ThemeProvider>
             </body>
         </html>
     );

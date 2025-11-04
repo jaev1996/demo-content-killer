@@ -14,16 +14,17 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="relative overflow-hidden bg-black text-white font-sans">
+    <div className="relative overflow-hidden bg-background text-foreground font-sans">
       <Header />
 
       <main className="pt-20">
         <HeroSection />
         <MissionSeparator />
         <ProcessSection />
-        <div className="py-20 bg-black flex justify-center">
+        <div className="py-60 bg-background flex justify-center">
           <EarningsChart />
         </div>
+        <FocusSeparator />
         <PricingSection />
         <TrustSeparator />
         <TrustStatsSection />

@@ -9,7 +9,7 @@ export function HeroSection() {
 
     return (
         <motion.section
-            className="py-20 md:py-32 bg-black flex items-center min-h-[calc(100vh-5rem)]"
+            className="relative py-20 md:py-32 flex items-center min-h-[calc(100vh-5rem)] bg-background"
             initial="hidden"
             animate="visible"
             variants={{
@@ -19,13 +19,13 @@ export function HeroSection() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <motion.h1
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
-                    className="text-4xl md:text-6xl font-bold text-white leading-tight"
+                    className="text-4xl md:text-6xl font-bold text-foreground leading-tight"
                 >
                     {t('title')}<span className="text-red-600">{t('titleHighlight')}</span>
                 </motion.h1>
                 <motion.p
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
-                    className="mt-6 text-lg md:text-xl max-w-3xl mx-auto text-gray-400"
+                    className="mt-6 text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground"
                 >
                     {t('subtitle')}
                 </motion.p>

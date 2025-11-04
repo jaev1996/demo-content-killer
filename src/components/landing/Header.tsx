@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { IconShield, IconMenu2, IconX } from "@tabler/icons-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export function Header() {
@@ -34,6 +35,7 @@ export function Header() {
                         <a className="text-gray-400 hover:text-red-600 transition-colors" href="#faq">{t('faq')}</a>
                         <Link className="text-gray-400 hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
                         <div className="border-l border-border h-6"></div>
+                        <ThemeToggle />
                         <LanguageSwitcher />
                     </nav>
                     <div className="md:hidden">
@@ -50,8 +52,9 @@ export function Header() {
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#pricing">{t('pricing')}</a>
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#faq">{t('faq')}</a>
                         <Link className="block text-white hover:text-red-600 transition-colors py-2" href="/login">{t('clientAccess')}</Link>
-                        <div className="border-t border-gray-800 pt-4 mt-2">
+                        <div className="border-t border-gray-800 pt-4 mt-2 flex items-center justify-between">
                             <LanguageSwitcher />
+                            <ThemeToggle />
                         </div>
                     </nav>
                 </div>
