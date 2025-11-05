@@ -10,7 +10,7 @@ export function PricingSection() {
     const t = useTranslations('LandingPage');
 
     return (
-        <AnimatedSection id="pricing" className="py-20 bg-black/95">
+        <AnimatedSection id="pricing" className="py-20 bg-black">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-white">{t('pricing.title')}</h2>
@@ -26,7 +26,7 @@ export function PricingSection() {
                     <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-gray-900/50 p-8 rounded-lg border border-gray-800 flex flex-col h-full">
                         <h3 className="text-xl font-bold text-white mb-2">{t('pricing.basic_title')}</h3>
                         <p className="text-gray-400 mb-6 flex-grow">{t('pricing.basic_desc')}</p>
-                        <p className="text-4xl font-bold mb-6">{t('pricing.basic_price')}<span className="text-lg font-normal text-gray-400">{t('pricing.per_month')}</span></p>
+                        <p className="text-4xl font-bold text-white mb-6">{t('pricing.basic_price')}<span className="text-lg font-normal text-gray-400">{t('pricing.per_month')}</span></p>
                         <ul className="space-y-4 text-gray-400 mb-8">
                             {['basic.0', 'basic.1', 'basic.2'].map(key => (
                                 <li key={key} className="flex items-center gap-3"><IconCheck className="size-5 text-red-600" /> {t(`features.${key}`)}</li>
@@ -43,7 +43,7 @@ export function PricingSection() {
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2">{t('pricing.professional_title')}</h3>
                         <p className="text-gray-400 mb-6 flex-grow">{t('pricing.professional_desc')}</p>
-                        <p className="text-4xl font-bold mb-6">{t('pricing.professional_price')}<span className="text-lg font-normal text-gray-400">{t('pricing.per_month')}</span></p>
+                        <p className="text-4xl font-bold text-white mb-6">{t('pricing.professional_price')}<span className="text-lg font-normal text-gray-400">{t('pricing.per_month')}</span></p>
                         <ul className="space-y-4 text-gray-400 mb-8">
                             {['professional.0', 'professional.1', 'professional.2', 'professional.3'].map(key => (
                                 <li key={key} className="flex items-center gap-3"><IconCheck className="size-5 text-red-600" /> {t(`features.${key}`)}</li>
@@ -57,7 +57,7 @@ export function PricingSection() {
                     <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="bg-gray-900/50 p-8 rounded-lg border border-gray-800 flex flex-col h-full md:col-span-2 lg:col-span-1">
                         <h3 className="text-xl font-bold text-white mb-2">{t('pricing.agency_title')}</h3>
                         <p className="text-gray-400 mb-6 flex-grow">{t('pricing.agency_desc')}</p>
-                        <p className="text-4xl font-bold mb-6">{t('pricing.agency_price')}</p>
+                        <p className="text-4xl font-bold text-white mb-6">{t('pricing.agency_price')}</p>
                         <ul className="space-y-4 text-gray-400 mb-8">
                             {['agency.0', 'agency.1', 'agency.2', 'agency.3'].map(key => (
                                 <li key={key} className="flex items-center gap-3"><IconCheck className="size-5 text-red-600" /> {t(`features.${key}`)}</li>

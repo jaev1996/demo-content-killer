@@ -21,7 +21,7 @@ export function HeroSection() {
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
                     className="text-4xl md:text-6xl font-bold text-foreground leading-tight"
                 >
-                    {t('title')}<span className="text-red-600">{t('titleHighlight')}</span>
+                    {t('title')}<span className="text-red-600 dark:text-red-500">{t('titleHighlight')}</span>
                 </motion.h1>
                 <motion.p
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}

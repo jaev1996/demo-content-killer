@@ -9,14 +9,14 @@ export function FaqSection() {
     const t = useTranslations('LandingPage.faq');
 
     return (
-        <AnimatedSection id="faq" className="py-20 bg-gray-900/50">
+        <AnimatedSection id="faq" className="py-20 bg-background">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white">{t('title')}</h2>
-                    <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">{t('subtitle')}</p>
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t('title')}</h2>
+                    <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
                 </div>
                 <motion.div
-                    className="max-w-4xl mx-auto"
+                    className="max-w-4xl mx-auto rounded-lg border border-border w-full p-8 space-y-6"
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}

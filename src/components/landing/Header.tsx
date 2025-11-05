@@ -22,31 +22,31 @@ export function Header() {
     }, []);
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     <div className="flex items-center">
                         <IconShield className="text-red-600 size-8" />
-                        <span className="ml-2 text-2xl font-bold text-white">PrivaClean</span>
+                        <span className="ml-2 text-2xl font-bold text-foreground">PrivaClean</span>
                     </div>
                     <nav className="hidden md:flex items-center space-x-8">
-                        <a className="text-gray-400 hover:text-red-600 transition-colors" href="#services">{t('services')}</a>
-                        <a className="text-gray-400 hover:text-red-600 transition-colors" href="#pricing">{t('pricing')}</a>
-                        <a className="text-gray-400 hover:text-red-600 transition-colors" href="#faq">{t('faq')}</a>
-                        <Link className="text-gray-400 hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
+                        <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#services">{t('services')}</a>
+                        <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#pricing">{t('pricing')}</a>
+                        <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#faq">{t('faq')}</a>
+                        <Link className="text-muted-foreground hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
                         <div className="border-l border-border h-6"></div>
                         <ThemeToggle />
                         <LanguageSwitcher />
                     </nav>
                     <div className="md:hidden">
-                        <button className="text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                        <button className="text-foreground" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                             {isMenuOpen ? <IconX /> : <IconMenu2 />}
                         </button>
                     </div>
                 </div>
             </div>
             {isMenuOpen && (
-                <div className="md:hidden bg-black" id="mobile-menu">
+                <div className="md:hidden bg-background/95" id="mobile-menu">
                     <nav className="px-4 pt-2 pb-4 space-y-2">
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#services">{t('services')}</a>
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#pricing">{t('pricing')}</a>

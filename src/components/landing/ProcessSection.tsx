@@ -17,7 +17,7 @@ export function ProcessSection() {
     const t = useTranslations('LandingPage.process');
 
     return (
-        <AnimatedSection id="services" className="py-20 bg-black/95">
+        <AnimatedSection id="services" className="py-20 bg-gray-950">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">{t('title')}</h2>
                 <motion.div
@@ -27,7 +27,7 @@ export function ProcessSection() {
                     viewport={{ once: true, amount: 0.2 }}
                     variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
                 >
-                    <div className="absolute top-16 bottom-16 left-[calc(2.5rem-1px)] md:left-1/2 md:-translate-x-1/2 w-0.5 bg-border"></div>
+                    <div className="absolute top-16 bottom-16 left-[calc(2.5rem-1px)] md:left-1/2 md:-translate-x-1/2 w-0.5 bg-gray-800"></div>
                     <div className="grid md:grid-cols-2 gap-x-12 gap-y-16 relative">
                         {[1, 2, 3, 4, 5, 6].map((step) => {
                             const isOdd = step % 2 !== 0;
@@ -40,7 +40,7 @@ export function ProcessSection() {
                             const content = (
                                 <motion.div variants={itemVariants}>
                                     <div className={`flex items-center w-full ${isOdd ? 'md:flex-row-reverse' : 'flex-row'}`}>
-                                        <div className="flex-shrink-0 w-20 h-20 rounded-full bg-red-600/20 text-red-600 flex items-center justify-center z-10">
+                                        <div className="flex-shrink-0 w-20 h-20 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center z-10">
                                             <Icon size={36} />
                                         </div>
                                         {isOdd ? (

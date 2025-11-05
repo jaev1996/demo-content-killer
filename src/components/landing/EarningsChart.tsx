@@ -87,26 +87,9 @@ export function EarningsChart() {
     const withPath = "M0,90 C50,80 100,85 150,60 C200,35 250,40 300,10";
 
     return (
-        <div className="bg-black/95 p-8 rounded-lg border border-gray-800 w-full max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8 items-center">
-                {/* Columna de Texto */}
-                <div className="md:col-span-1 text-center md:text-left">
-                    <h3 className="text-2xl md:text-3xl font-bold text-white">{t('valuePropositionTitle')}</h3>
-                    <p className="mt-3 text-gray-400">{t('valuePropositionDescription')}</p>
-                    <div className="flex justify-center md:justify-start gap-6 mt-8">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                            <span className="text-sm text-gray-400 font-medium">{t('withoutLabel')}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-red-600"></div>
-                            <span className="text-sm text-white font-bold">{t('withLabel')}</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Columna del Gráfico */}
-                <div className="md:col-span-2 relative h-64 md:h-96">
+        <div className="bg-card text-card-foreground p-8 rounded-lg border border-border w-full max-w-6xl mx-auto">
+            <div className="relative">
+                <div className="relative h-64 md:h-96">
                     <svg width="100%" height="100%" viewBox="0 0 350 140" preserveAspectRatio="none" className="absolute top-0 left-0" overflow="visible">
                         {/* Eje Y (Ingresos) */}
                         <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$20k</text>
@@ -149,6 +132,16 @@ export function EarningsChart() {
                         <text x="190" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXMid')}</text>
                         <text x="340" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXEnd')}</text>
                     </svg>
+                </div>
+                <div className="flex justify-center md:justify-start gap-6 mt-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
+                        <span className="text-sm text-muted-foreground font-medium">{t('withoutLabel')}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-600"></div>
+                        <span className="text-sm text-foreground font-bold">{t('withLabel')}</span>
+                    </div>
                 </div>
             </div>
         </div>
