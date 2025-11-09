@@ -17,7 +17,7 @@ export function ProcessSection() {
     const t = useTranslations('LandingPage.process');
 
     return (
-        <AnimatedSection id="services" className="py-20 bg-gray-950">
+        <AnimatedSection id="services" className="py-20 bg-black/95">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-16">{t('title')}</h2>
                 <motion.div

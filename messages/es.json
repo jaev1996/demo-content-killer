@@ -113,7 +113,74 @@
         },
         "footer": {
             "copyright": "© 2024 PrivaClean. Todos los derechos reservados.",
-            "privacy": "Tu privacidad es nuestra prioridad."
+            "privacy": "Tu privacidad es nuestra prioridad.",
+            "links": {
+                "resources": {
+                    "title": "Recursos"
+                },
+                "legal": {
+                    "title": "Legal",
+                    "terms": "Términos y Condiciones",
+                    "privacy": "Política de Privacidad"
+                },
+                "contact": {
+                    "title": "Contacto"
+                }
+            }
+        },
+        "legal": {
+            "termsTitle": "Términos y Condiciones",
+            "privacyTitle": "Política de Privacidad",
+            "lastUpdated": "Última actualización: 24 de agosto de 2024",
+            "terms": {
+                "intro_title": "1. Introducción y Aceptación",
+                "intro_p1": "Bienvenido a PrivaClean. Estos Términos y Condiciones ('Términos') rigen el uso de nuestros servicios de monitoreo y eliminación de contenido en línea ('Servicio'). Al contratar nuestro Servicio, usted ('Cliente' o 'usted') acepta estar legalmente obligado por estos Términos. Si no está de acuerdo, no debe utilizar nuestros servicios.",
+                "services_title": "2. Descripción del Servicio",
+                "services_p1": "PrivaClean ofrece un servicio basado en suscripción que utiliza tecnología de inteligencia artificial y supervisión humana para detectar y solicitar la eliminación de contenido personal o de propiedad intelectual no autorizado, publicado en sitios web de terceros, redes sociales y otras plataformas en línea. Nuestro servicio se basa en el envío de notificaciones de eliminación bajo la Ley de Derechos de Autor de la Era Digital (DMCA) y otras leyes aplicables.",
+                "services_p2": "No garantizamos la eliminación de todo el contenido infractor, ya que la decisión final recae en los administradores de las plataformas de terceros. Sin embargo, nos comprometemos a aplicar nuestros mejores esfuerzos y experiencia para lograr los resultados deseados.",
+                "obligations_title": "3. Obligaciones del Cliente",
+                "obligations_p1": "Usted declara y garantiza que es el propietario legítimo de los derechos de autor del contenido que nos solicita proteger o que tiene la autorización explícita del titular de los derechos para actuar en su nombre.",
+                "obligations_p2": "Usted se compromete a proporcionar información precisa y completa durante el proceso de registro y a mantenerla actualizada. PrivaClean no se hace responsable de los retrasos o fallos en el servicio derivados de información inexacta proporcionada por el Cliente.",
+                "confidentiality_title": "4. Confidencialidad",
+                "confidentiality_p1": "PrivaClean se compromete a mantener la más estricta confidencialidad sobre toda la información y el contenido proporcionado por el Cliente. No compartiremos, venderemos ni divulgaremos su información personal o profesional a terceros, excepto cuando sea estrictamente necesario para la ejecución del Servicio (por ejemplo, en las notificaciones DMCA) o cuando la ley lo exija.",
+                "payments_title": "5. Pagos, Suscripción y Cancelación",
+                "payments_p1": "Los servicios se facturan de forma recurrente (mensual o anual) según el plan seleccionado. El pago se debe realizar por adelantado para el período de servicio correspondiente. Usted puede cancelar su suscripción en cualquier momento desde su panel de cliente. La cancelación detendrá los cobros futuros, pero no se realizarán reembolsos por el período ya pagado.",
+                "liability_title": "6. Limitación de Responsabilidad",
+                "liability_p1": "En la máxima medida permitida por la ley, PrivaClean no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, ni de ninguna pérdida de beneficios o ingresos, ya sea incurrida directa o indirectamente, o cualquier pérdida de datos, uso, fondo de comercio u otras pérdidas intangibles, como resultado de (i) nuestro servicio de eliminación; (ii) el acceso no autorizado, uso o alteración de sus transmisiones o contenido; (iii) la conducta o contenido de cualquier tercero en el Servicio.",
+                "governing_law_title": "7. Ley Aplicable",
+                "governing_law_p1": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de la jurisdicción en la que PrivaClean tiene su sede principal, sin tener en cuenta sus disposiciones sobre conflicto de leyes.",
+                "modifications_title": "8. Modificaciones de los Términos",
+                "modifications_p1": "Nos reservamos el derecho de modificar estos Términos en cualquier momento. Notificaremos los cambios importantes a través de nuestro sitio web o por correo electrónico. El uso continuado del Servicio después de que los cambios entren en vigor constituye su aceptación de los nuevos Términos.",
+                "contact_title": "9. Contacto",
+                "contact_p1": "Si tiene alguna pregunta sobre estos Términos, por favor contáctenos a través de nuestro formulario de contacto o en la dirección de correo electrónico proporcionada en nuestro sitio web."
+            },
+            "privacy": {
+                "intro_title": "1. Nuestro Compromiso con su Privacidad",
+                "intro_p1": "En PrivaClean, su privacidad no es solo una política, es nuestra máxima prioridad. Entendemos la naturaleza sensible del contenido que nos confía y estamos comprometidos a proteger su información personal con el más alto nivel de seguridad y confidencialidad. Esta Política de Privacidad explica qué información recopilamos, cómo la usamos y, lo más importante, cómo la mantenemos segura.",
+                "collection_title": "2. Información que Recopilamos",
+                "collection_p1": "Para proporcionar nuestro servicio de manera efectiva, recopilamos la siguiente información:",
+                "collection_li1": "<strong>Información de Contacto y Cuenta:</strong> Su nombre, dirección de correo electrónico y detalles de pago, necesarios para gestionar su suscripción y comunicarnos con usted.",
+                "collection_li2": "<strong>Contenido a Proteger:</strong> El contenido (imágenes, videos, etc.) que usted nos autoriza a proteger. Usted nos proporciona acceso a este contenido o nos indica dónde encontrarlo para que podamos actuar en su nombre.",
+                "collection_li3": "<strong>Información de Infracciones:</strong> URLs y detalles de los sitios web donde se encuentra su contenido no autorizado. Esta información es crucial para ejecutar las solicitudes de eliminación (takedowns).",
+                "usage_title": "3. Cómo Usamos su Información",
+                "usage_p1": "Su información se utiliza exclusivamente para los siguientes propósitos:",
+                "usage_li1": "<strong>Proveer y Mantener el Servicio:</strong> Para escanear la web, identificar infracciones y enviar notificaciones de eliminación DMCA a plataformas de terceros.",
+                "usage_li2": "<strong>Comunicación:</strong> Para enviarle informes de progreso, notificaciones importantes sobre su cuenta y responder a sus consultas de soporte.",
+                "usage_li3": "<strong>Procesamiento de Pagos:</strong> Para gestionar su suscripción y facturación de forma segura a través de nuestros proveedores de pago.",
+                "sharing_title": "4. Cómo y Por Qué Compartimos Información",
+                "sharing_p1": "<strong>No vendemos ni alquilamos su información personal a terceros.</strong> Su confianza es la base de nuestro negocio. La información solo se comparte en circunstancias muy específicas y necesarias:",
+                "sharing_li1": "<strong>Para la Eliminación de Contenido:</strong> Al enviar una notificación DMCA, debemos incluir su información de contacto (o la de nuestro agente autorizado) para que el administrador del sitio infractor pueda responder. Este es un requisito legal del proceso.",
+                "sharing_li2": "<strong>Proveedores de Servicios:</strong> Utilizamos proveedores de confianza para el procesamiento de pagos (ej. Stripe) y la infraestructura en la nube. Estos proveedores están obligados por contrato a proteger su información y solo pueden usarla para los fines que les hemos encomendado.",
+                "sharing_li3": "<strong>Requerimientos Legales:</strong> Podríamos divulgar su información si así lo exige la ley, una orden judicial o una solicitud gubernamental válida.",
+                "security_title": "5. Seguridad de los Datos",
+                "security_p1": "Implementamos medidas de seguridad técnicas y organizativas de primer nivel para proteger su información contra el acceso no autorizado, la alteración, la divulgación o la destrucción. Esto incluye cifrado de datos, controles de acceso estrictos y auditorías de seguridad regulares.",
+                "rights_title": "6. Sus Derechos y Control",
+                "rights_p1": "Usted tiene control sobre su información personal. En cualquier momento puede solicitar el acceso, la corrección o la eliminación de sus datos personales desde su panel de cliente o contactando a nuestro equipo de soporte.",
+                "changes_title": "7. Cambios a esta Política",
+                "changes_p1": "Nos reservamos el derecho de actualizar esta política. Le notificaremos sobre cualquier cambio significativo publicando la nueva política en esta página y, si corresponde, a través de una notificación por correo electrónico.",
+                "contact_title": "8. Contáctenos",
+                "contact_p1": "Si tiene alguna pregunta o inquietud sobre nuestra Política de Privacidad o sus datos, no dude en contactarnos."
+            }
         }
     }
 }

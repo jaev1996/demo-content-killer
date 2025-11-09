@@ -7,7 +7,7 @@ export function AccordionItem({ title, children, isInitiallyOpen = false }: { ti
     const [isOpen, setIsOpen] = React.useState(isInitiallyOpen);
 
     return (
-        <div className={`bg-black/95 rounded-lg border ${isOpen ? 'border-red-600' : 'border-gray-800'}`}>
+        <div className={`bg-black/90 rounded-lg border ${isOpen ? 'border-red-600' : 'border-gray-800'}`}>
             <button
                 className="accordion-header flex justify-between items-center w-full p-6 text-left"
                 onClick={() => setIsOpen(!isOpen)}
