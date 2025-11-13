@@ -5,19 +5,14 @@ import { useCreatorAuth } from "@/contexts/creator-auth-context" // <-- 1. Impor
 import React, { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image" // <-- 1. Importar el componente Image
 import { Button } from "@/components/ui/button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    CardFooter
-} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Toaster, toast } from "sonner"
-import { IconLoader, IconShield } from "@tabler/icons-react"
+import { IconHome, IconLoader } from "@tabler/icons-react" // <-- 1. Importar IconHome
+import { ThemeToggle } from "@/components/theme-toggle"
+import LanguageSwitcher from "@/components/LanguageSwitcher" // <-- 2. Importar LanguageSwitcher
 
 export default function CreatorLoginPage() {
     const { login } = useCreatorAuth() // <-- 2. Obtener la función de login del contexto
@@ -62,28 +57,19 @@ export default function CreatorLoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col bg-background font-sans">
-            <Toaster richColors />
-            <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
-                <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-                    <Link href="/" className="flex items-center">
-                        <IconShield className="text-primary size-8" />
-                        <span className="ml-2 text-2xl font-bold text-foreground">ContentGuard</span>
-                    </Link>
-                    <Button asChild variant="ghost">
-                        <Link href="/register">Crear una cuenta</Link>
-                    </Button>
-                </div>
-            </header>
+        <>
 
-            <main className="flex flex-1 items-center justify-center p-4">
-                <Card className="w-full max-w-sm">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-2xl">Acceso Creadores</CardTitle>
-                        <CardDescription>Ingresa a tu panel para gestionar tu protección.</CardDescription>
-                    </CardHeader>
-                    <form onSubmit={handleLogin}>
-                        <CardContent className="grid gap-6">
+            <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:grid-cols-5">
+                {/* Columna Izquierda: Formulario */}
+                <div className="flex items-center justify-center py-12 xl:col-span-2">
+                    <div className="mx-auto grid w-[350px] gap-6">
+                        <div className="grid gap-2 text-center">
+                            <h1 className="text-3xl font-bold tracking-tight">Acceso Creadores</h1>
+                            <p className="text-balance text-muted-foreground">
+                                Ingresa a tu panel para gestionar tu protección.
+                            </p>
+                        </div>
+                        <form onSubmit={handleLogin} className="grid gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" required />
@@ -92,16 +78,42 @@ export default function CreatorLoginPage() {
                                 <Label htmlFor="password">Contraseña</Label>
                                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
                             </div>
-                        </CardContent>
-                        <CardFooter className="pt-2">
-                            <Button type="submit" className="w-full" disabled={loading}>
+                            <Button type="submit" className="w-full bg-red-600 text-foreground hover:bg-red-700 transition-colors hover:scale-105 inline-block" disabled={loading}>
                                 {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
                                 {loading ? "Ingresando..." : "Iniciar Sesión"}
                             </Button>
-                        </CardFooter>
-                    </form>
-                </Card>
-            </main>
-        </div>
+                        </form>
+                        <div className="text-center text-sm">
+                            ¿No tienes una cuenta?{" "}
+                            <Link href="/register" className="underline">Regístrate</Link>
+                        </div>
+                    </div>
+                </div>
+                {/* Columna Derecha: Branding */}
+                <div className="hidden bg-muted lg:flex flex-col justify-between p-4 xl:col-span-3">
+                    <div className="self-end flex items-center gap-2">
+                        <LanguageSwitcher />
+                        <ThemeToggle />
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href="/" aria-label="Volver a la página de inicio">
+                                <IconHome className="size-5" />
+                            </Link>
+                        </Button>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                        <Image src="/privaclean.svg" alt="PrivaClean Logo" width={80} height={80} className="mb-6" />
+                        <blockquote className="space-y-2 max-w-md">
+                            <p className="text-xl lg:text-2xl font-semibold text-foreground">
+                                &ldquo;Enfócate en crear, nosotros nos encargamos de la protección. Tu tranquilidad es nuestra misión.&rdquo;
+                            </p>
+                            <footer className="text-sm text-muted-foreground">Equipo de PrivaClean</footer>
+                        </blockquote>
+                    </div>
+                    <div /> {/* Div vacío para empujar el contenido con justify-between */}
+                </div>
+            </div>
+            <Toaster richColors position="top-center" />
+        </>
+
     )
 }

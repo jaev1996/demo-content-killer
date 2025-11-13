@@ -81,7 +81,7 @@ export const CreatorAuthProvider = ({ children }: { children: ReactNode }) => {
                     // ¡CAMBIO TEMPORAL PARA DEPURAR!
                     // Comentamos la siguiente línea para evitar la redirección automática
                     // y poder ver el error en la consola.
-                    //logout();
+                    logout();
                 }
             }
             setIsLoading(false);
