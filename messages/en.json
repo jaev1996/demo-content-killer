@@ -182,5 +182,56 @@
                 "contact_p1": "If you have any questions or concerns about our Privacy Policy or your data, please do not hesitate to contact us."
             }
         }
+    },
+    "LoginPage": {
+        "title": "Login",
+        "subtitle": "Enter your panel to manage your protection.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@email.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "loginButton": "Login",
+        "loggingIn": "Logging in...",
+        "noAccount": "Don't have an account?",
+        "registerLink": "Sign up",
+        "welcomeBack": "Welcome back!",
+        "homeAriaLabel": "Back to homepage",
+        "quote": "&ldquo;Focus on creating, we'll handle the protection. Your peace of mind is our mission.&rdquo;",
+        "quoteAuthor": "PrivaClean Team",
+        "validation": {
+            "emailInvalid": "Please enter a valid email.",
+            "passwordLength": "Password must be at least 8 characters long.",
+            "invalidCredentials": "Invalid credentials.",
+            "unknownError": "An unknown error occurred."
+        }
+    },
+    "RegisterPage": {
+        "title": "Creator Registration",
+        "subtitle": "Create your account to start protecting your content.",
+        "creatorNameLabel": "Creator Name",
+        "creatorNamePlaceholder": "Your public name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@email.com",
+        "passwordLabel": "Password (min. 8 characters)",
+        "confirmPasswordLabel": "Confirm Password",
+        "passwordPlaceholder": "••••••••",
+        "registerButton": "Create Account",
+        "registering": "Registering...",
+        "alreadyAccount": "Already have an account?",
+        "loginLink": "Login",
+        "acceptPolicies": "I accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>.",
+        "welcomeMessage": "Welcome, {name}! Registration complete.",
+        "homeAriaLabel": "Back to homepage",
+        "quote": "&ldquo;Your creativity deserves to be protected. Join us and take back control of your content.&rdquo;",
+        "quoteAuthor": "PrivaClean Team",
+        "validation": {
+            "creatorNameLength": "Creator name must be at least 3 characters long.",
+            "emailInvalid": "Please enter a valid email.",
+            "passwordLength": "Password must be at least 8 characters long.",
+            "passwordMismatch": "Passwords do not match.",
+            "acceptPolicies": "You must accept the terms and policies to continue.",
+            "registerError": "Could not complete registration.",
+            "unknownError": "An unknown error occurred."
+        }
     }
 }

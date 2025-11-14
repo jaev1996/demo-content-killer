@@ -182,5 +182,56 @@
                 "contact_p1": "Si tiene alguna pregunta o inquietud sobre nuestra Política de Privacidad o sus datos, no dude en contactarnos."
             }
         }
+    },
+    "LoginPage": {
+        "title": "Iniciar Sesión",
+        "subtitle": "Ingresa a tu panel para gestionar tu protección.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "tu@email.com",
+        "passwordLabel": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "loginButton": "Iniciar Sesión",
+        "loggingIn": "Ingresando...",
+        "noAccount": "¿No tienes una cuenta?",
+        "registerLink": "Regístrate",
+        "welcomeBack": "¡Bienvenido de nuevo!",
+        "homeAriaLabel": "Volver a la página de inicio",
+        "quote": "&ldquo;Enfócate en crear, nosotros nos encargamos de la protección. Tu tranquilidad es nuestra misión.&rdquo;",
+        "quoteAuthor": "Equipo de PrivaClean",
+        "validation": {
+            "emailInvalid": "Por favor, introduce un email válido.",
+            "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
+            "invalidCredentials": "Credenciales inválidas.",
+            "unknownError": "Ocurrió un error desconocido."
+        }
+    },
+    "RegisterPage": {
+        "title": "Registro de Creador",
+        "subtitle": "Crea tu cuenta para empezar a proteger tu contenido.",
+        "creatorNameLabel": "Nombre de Creador",
+        "creatorNamePlaceholder": "Tu nombre público",
+        "emailLabel": "Email",
+        "emailPlaceholder": "tu@email.com",
+        "passwordLabel": "Contraseña (mín. 8 caracteres)",
+        "confirmPasswordLabel": "Confirmar Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "registerButton": "Crear Cuenta",
+        "registering": "Registrando...",
+        "alreadyAccount": "¿Ya tienes una cuenta?",
+        "loginLink": "Inicia Sesión",
+        "acceptPolicies": "Acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>.",
+        "welcomeMessage": "¡Bienvenido, {name}! Registro completado.",
+        "homeAriaLabel": "Volver a la página de inicio",
+        "quote": "&ldquo;Tu creatividad merece ser protegida. Únete a nosotros y recupera el control de tu contenido.&rdquo;",
+        "quoteAuthor": "Equipo de PrivaClean",
+        "validation": {
+            "creatorNameLength": "El nombre de creador debe tener al menos 3 caracteres.",
+            "emailInvalid": "Por favor, introduce un email válido.",
+            "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
+            "passwordMismatch": "Las contraseñas no coinciden.",
+            "acceptPolicies": "Debes aceptar los términos y políticas para continuar.",
+            "registerError": "No se pudo completar el registro.",
+            "unknownError": "Ocurrió un error desconocido."
+        }
     }
 }
