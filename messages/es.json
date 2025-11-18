@@ -233,5 +233,84 @@
             "registerError": "No se pudo completar el registro.",
             "unknownError": "Ocurrió un error desconocido."
         }
+    },
+    "DashboardSidebar": {
+        "nav": {
+            "home": "Inicio",
+            "removals": "Eliminaciones",
+            "subscription": "Suscripción",
+            "settings": "Ajustes"
+        },
+        "logout": "Cerrar Sesión"
+    },
+    "CreatorRemovalsPage": {
+        "title": "Gestión de Eliminaciones",
+        "subtitle": "Aquí puedes ver un listado detallado de todo el contenido encontrado y el estado de su eliminación.",
+        "searchPlaceholder": "Buscar por URL...",
+        "filterByStatus": "Filtrar por estado",
+        "table": {
+            "headers": {
+                "url": "Contenido Infractor",
+                "platform": "Plataforma",
+                "detectedOn": "Detectado",
+                "status": "Estado",
+                "resolvedOn": "Resuelto"
+            },
+            "statuses": {
+                "all": "Todos",
+                "removed": "Eliminado",
+                "in_process": "En Proceso",
+                "reported": "Reportado",
+                "failed": "No se pudo eliminar"
+            },
+            "noResults": "No se encontraron resultados que coincidan con tu búsqueda."
+        }
+    },
+    "CreatorSettingsPage": {
+        "title": "Ajustes de la Cuenta",
+        "subtitle": "Gestiona tu información de perfil, seguridad y configuración de DMCA.",
+        "saveSuccess": "Ajustes guardados con éxito.",
+        "saveError": "No se pudieron guardar los ajustes.",
+        "profile": {
+            "title": "Perfil",
+            "subtitle": "Esta es tu información de cuenta. No se puede cambiar por el momento.",
+            "creatorNameLabel": "Nombre de Creador",
+            "emailLabel": "Email de la cuenta"
+        },
+        "security": {
+            "title": "Seguridad",
+            "subtitle": "Cambia tu contraseña aquí. Se recomienda usar una contraseña segura.",
+            "currentPasswordLabel": "Contraseña Actual",
+            "newPasswordLabel": "Nueva Contraseña",
+            "confirmPasswordLabel": "Confirmar Nueva Contraseña",
+            "updatePasswordButton": "Actualizar Contraseña",
+            "updating": "Actualizando...",
+            "success": "Contraseña actualizada con éxito.",
+            "validation": {
+                "passwordLength": "La nueva contraseña debe tener al menos 8 caracteres.",
+                "passwordMismatch": "Las contraseñas no coinciden."
+            }
+        },
+        "dmca": {
+            "title": "Información DMCA",
+            "subtitle": "Esta información se usará para las reclamaciones DMCA. Asegúrate de que sea precisa.",
+            "fullNameLabel": "Nombre Completo Legal",
+            "contactEmailLabel": "Email de Contacto DMCA",
+            "countryLabel": "País de Residencia",
+            "workDescriptionLabel": "Descripción de tu Obra",
+            "signatureLabel": "Firma Digital (tu nombre completo)",
+            "saveButton": "Guardar Información"
+        },
+        "whitelist": {
+            "title": "Whitelist de Sitios",
+            "subtitle": "Los sitios en esta lista serán ignorados. Agrega los dominios donde tu contenido está permitido (ej: onlyfans.com).",
+            "manageButton": "Gestionar Whitelist",
+            "modalTitle": "Gestionar Whitelist",
+            "modalDescription": "Agrega o elimina los dominios que quieres excluir de las detecciones.",
+            "addDomainPlaceholder": "ejemplo.com",
+            "addButton": "Agregar",
+            "emptyList": "Tu whitelist está vacía.",
+            "removeAriaLabel": "Eliminar {domain} de la whitelist"
+        }
     }
 }
