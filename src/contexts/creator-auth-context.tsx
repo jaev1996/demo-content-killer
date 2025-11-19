@@ -41,6 +41,7 @@ interface CreatorAuthContextType {
     token: string | null;
     login: (creatorData: UserProfile, token: string) => void;
     logout: () => void;
+    updateCreatorProfile: (updatedProfile: Partial<UserProfile>) => void;
     isLoading: boolean;
 }
 
@@ -95,8 +96,15 @@ export const CreatorAuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('creator_token', token);
     };
 
+    const updateCreatorProfile = (updatedProfile: Partial<UserProfile>) => {
+        setCreator(prevCreator => {
+            if (!prevCreator) return null;
+            return { ...prevCreator, ...updatedProfile };
+        });
+    };
+
     return (
-        <CreatorAuthContext.Provider value={{ creator, token, login, logout, isLoading }}>
+        <CreatorAuthContext.Provider value={{ creator, token, login, logout, updateCreatorProfile, isLoading }}>
             {children}
         </CreatorAuthContext.Provider>
     );

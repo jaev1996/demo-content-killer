@@ -309,8 +309,11 @@
             "modalDescription": "Agrega o elimina los dominios que quieres excluir de las detecciones.",
             "addDomainPlaceholder": "ejemplo.com",
             "addButton": "Agregar",
+            "addingButton": "Agregando...",
             "emptyList": "Tu whitelist está vacía.",
-            "removeAriaLabel": "Eliminar {domain} de la whitelist"
+            "removeAriaLabel": "Eliminar {domain} de la whitelist",
+            "addSuccess": "Dominio añadido a tu whitelist.",
+            "removeSuccess": "Dominio eliminado de tu whitelist."
         }
     }
 }
