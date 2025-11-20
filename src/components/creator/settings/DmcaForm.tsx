@@ -94,7 +94,7 @@ export function DmcaForm() {
                 <CardDescription>{t("subtitle")}</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid gap-6 mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="dmcaFullName">{t("fullNameLabel")}</Label>
@@ -115,7 +115,7 @@ export function DmcaForm() {
                     </div>
                 </CardContent>
                 <CardFooter className="border-t px-6 py-4">
-                    <Button type="submit" disabled={loading}>{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{t("saveButton")}</Button>
+                    <Button type="submit" disabled={loading} className="bg-red-600 hover:bg-red-700 border-0">{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{t("saveButton")}</Button>
                 </CardFooter>
             </form>
         </Card>

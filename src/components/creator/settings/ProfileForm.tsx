@@ -21,40 +21,63 @@ import { apiFetch } from "@/lib/api"
 export function ProfileForm() {
     const t = useTranslations("CreatorSettingsPage.profile")
     const tShared = useTranslations("CreatorSettingsPage")
-    const { creator, updateCreatorProfile } = useCreatorAuth()
+    const { creator, updateCreatorProfile, login } = useCreatorAuth()
     const [creatorName, setCreatorName] = useState("")
+    const [email, setEmail] = useState("")
+    const [currentPassword, setCurrentPassword] = useState("")
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (creator) {
             setCreatorName(creator.creatorName)
+            setEmail(creator.email)
         }
     }, [creator])
 
+    const hasChanges = creator ? creatorName !== creator.creatorName || email !== creator.email : false
+
     const handleSaveChanges = async () => {
-        if (!creator || creatorName === creator.creatorName) return
+        if (!creator || !hasChanges || !currentPassword) return
 
         setLoading(true)
         try {
-            const payload = { creatorName };
+            const payload: { creatorName?: string; newEmail?: string; currentPassword?: string } = {
+                currentPassword: currentPassword,
+            };
+
+            if (creatorName !== creator.creatorName) {
+                payload.creatorName = creatorName;
+            }
+            if (email !== creator.email) {
+                payload.newEmail = email;
+            }
+
             console.log("Enviando datos de perfil:", payload);
 
-            const response = await apiFetch("/api/auth/me", {
+            const response = await apiFetch("/api/auth/me/change-email", {
                 method: "PUT",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             })
 
+            const responseData = await response.json()
+
             if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData.message || tShared("saveError"))
+                throw new Error(responseData.message || tShared("saveError"))
             }
 
-            const { data: updatedData } = await response.json()
-            updateCreatorProfile(updatedData) // Actualizamos el contexto
+            if (responseData.data?.token && responseData.data?.userProfile) {
+                // Si se cambió el email, la API devuelve nuevo token. Actualizamos todo.
+                login(responseData.data.userProfile, responseData.data.token)
+            } else {
+                // Si solo se cambió el creatorName, actualizamos solo el perfil local.
+                updateCreatorProfile({ ...creator, creatorName })
+            }
+
             toast.success(tShared("saveSuccess"))
+            setCurrentPassword("") // Limpiamos la contraseña después de un guardado exitoso
         } catch (error) {
             toast.error((error as Error).message)
-            setCreatorName(creator.creatorName) // Revertimos en caso de error
         } finally {
             setLoading(false)
         }
@@ -71,7 +94,7 @@ export function ProfileForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="grid gap-6">
+                <form className="grid gap-6 mb-6">
                     <div className="grid gap-2">
                         <Label htmlFor="creatorName">{t("creatorNameLabel")}</Label>
                         <Input
@@ -82,14 +105,25 @@ export function ProfileForm() {
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="email">{t("emailLabel")}</Label>
-                        <Input id="email" type="email" value={creator.email} readOnly />
+                        <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="currentPassword">{t("currentPasswordLabel")}</Label>
+                        <Input id="currentPassword" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••" required />
+                        <p className="text-[0.8rem] text-muted-foreground">{t("passwordHelpText")}</p>
                     </div>
                 </form>
             </CardContent>
             <CardFooter className="border-t px-6 py-4">
                 <Button
                     onClick={handleSaveChanges}
-                    disabled={loading || creatorName === creator.creatorName}
+                    disabled={loading || !hasChanges || !currentPassword}
+                    className="bg-red-600 hover:bg-red-700"
                 >
                     {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
                     {tShared("dmca.saveButton")}

@@ -115,15 +115,15 @@ export function WhitelistForm() {
                                     placeholder={t("addDomainPlaceholder")}
                                     disabled={isAdding}
                                 />
-                                <Button type="submit" disabled={isAdding}>{isAdding && <IconLoader className="mr-2 size-4 animate-spin" />}{isAdding ? t("addingButton") : t("addButton")}</Button>
+                                <Button type="submit" disabled={isAdding} variant="outline">{isAdding && <IconLoader className="mr-2 size-4 animate-spin" />}{isAdding ? t("addingButton") : t("addButton")}</Button>
                             </div>
                         </form>
-                        <div className="space-y-2">
+                        <div className="flex flex-wrap gap-2">
                             {whitelist.length > 0 ? (
                                 whitelist.map(domain => (
-                                    <Badge key={domain} variant="secondary" className="flex justify-between items-center p-2">
+                                    <Badge key={domain} variant="secondary" className="p-2">
                                         <span>{domain}</span>
-                                        <button onClick={() => handleRemoveDomain(domain)} aria-label={t("removeAriaLabel", { domain })}>
+                                        <button onClick={() => handleRemoveDomain(domain)} aria-label={t("removeAriaLabel", { domain })} className="ml-2 rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                                             <IconX className="h-4 w-4 ml-2 hover:text-destructive" />
                                         </button>
                                     </Badge>

@@ -273,9 +273,11 @@
         "saveError": "No se pudieron guardar los ajustes.",
         "profile": {
             "title": "Perfil",
-            "subtitle": "Esta es tu información de cuenta. No se puede cambiar por el momento.",
+            "subtitle": "Actualiza tu nombre de creador y tu email de acceso.",
             "creatorNameLabel": "Nombre de Creador",
-            "emailLabel": "Email de la cuenta"
+            "emailLabel": "Email de la cuenta",
+            "currentPasswordLabel": "Contraseña Actual",
+            "passwordHelpText": "Para guardar los cambios, por favor introduce tu contraseña actual."
         },
         "security": {
             "title": "Seguridad",
@@ -288,7 +290,8 @@
             "success": "Contraseña actualizada con éxito.",
             "validation": {
                 "passwordLength": "La nueva contraseña debe tener al menos 8 caracteres.",
-                "passwordMismatch": "Las contraseñas no coinciden."
+                "passwordMismatch": "Las contraseñas no coinciden.",
+                "updateError": "No se pudo actualizar la contraseña."
             }
         },
         "dmca": {

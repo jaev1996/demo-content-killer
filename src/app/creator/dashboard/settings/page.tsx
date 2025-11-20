@@ -29,7 +29,7 @@ function SettingsPage() {
                     <TabsTrigger value="whitelist">{t("whitelist.title")}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="profile">
-                    <div className="grid gap-6 mt-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
                         <ProfileForm />
                         <SecurityForm />
                     </div>

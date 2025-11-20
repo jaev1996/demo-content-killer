@@ -46,17 +46,19 @@ export function SecurityForm() {
 
         try {
             passwordSchema.parse(passwords)
-            // TODO: Implementar llamada a la API para cambiar la contraseña
-            // const response = await apiFetch("/api/auth/change-password", {
-            //     method: "POST",
-            //     body: JSON.stringify({
-            //         currentPassword: passwords.currentPassword,
-            //         newPassword: passwords.newPassword,
-            //     }),
-            // })
-            // if (!response.ok) throw new Error("Failed to update password")
+            const response = await apiFetch("/api/auth/me/change-password", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    currentPassword: passwords.currentPassword,
+                    newPassword: passwords.newPassword,
+                }),
+            })
 
-            await new Promise(resolve => setTimeout(resolve, 1000)) // Simular llamada a API
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || t("validation.updateError"))
+            }
             toast.success(t("success"))
             setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" })
         } catch (error) {
@@ -77,13 +79,13 @@ export function SecurityForm() {
                 <CardDescription>{t("subtitle")}</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid gap-6 mb-6">
                     <div className="grid gap-2"><Label htmlFor="currentPassword">{t("currentPasswordLabel")}</Label><Input id="currentPassword" type="password" value={passwords.currentPassword} onChange={handleInputChange} required /></div>
                     <div className="grid gap-2"><Label htmlFor="newPassword">{t("newPasswordLabel")}</Label><Input id="newPassword" type="password" value={passwords.newPassword} onChange={handleInputChange} required /></div>
                     <div className="grid gap-2"><Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label><Input id="confirmPassword" type="password" value={passwords.confirmPassword} onChange={handleInputChange} required /></div>
                 </CardContent>
                 <CardFooter className="border-t px-6 py-4">
-                    <Button type="submit" disabled={loading}>{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{loading ? t("updating") : t("updatePasswordButton")}</Button>
+                    <Button type="submit" className="bg-red-600 hover:bg-red-700 border-0" disabled={loading}>{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{loading ? t("updating") : t("updatePasswordButton")}</Button>
                 </CardFooter>
             </form>
         </Card>

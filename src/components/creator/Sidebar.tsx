@@ -66,8 +66,8 @@ export function Sidebar() {
                                 key={item.label}
                                 href={item.href}
                                 className={cn(
-                                    "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                                    pathname === item.href && "bg-muted text-primary"
+                                    "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-accent",
+                                    pathname === item.href && "bg-muted text-accent"
                                 )}
                             >
                                 <item.icon className="h-4 w-4" />
@@ -77,7 +77,7 @@ export function Sidebar() {
                     </nav>
                 </div>
                 <div className="mt-auto p-4">
-                    <Button size="sm" className="w-full" onClick={logout}>
+                    <Button size="sm" className="w-full bg-red-600 hover:bg-red-700" onClick={logout}>
                         <IconLogout className="mr-2 h-4 w-4" />
                         {t("logout")}
                     </Button>
