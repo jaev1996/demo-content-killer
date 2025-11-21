@@ -318,5 +318,45 @@
             "addSuccess": "Dominio añadido a tu whitelist.",
             "removeSuccess": "Dominio eliminado de tu whitelist."
         }
+    },
+    "CreatorSubscriptionPage": {
+        "title": "Mi Suscripción",
+        "subtitle": "Consulta y gestiona los detalles de tu plan y tu historial de facturación.",
+        "per_month": "/mes",
+        "currentPlan": {
+            "title": "Mi Plan Actual",
+            "planLabel": "Plan",
+            "statusLabel": "Estado",
+            "nextBillingLabel": "Próxima Facturación",
+            "amountLabel": "Importe"
+        },
+        "plans": {
+            "none": "Ninguno",
+            "basic": "Básico",
+            "professional": "Profesional"
+        },
+        "statuses": {
+            "active": "Activa",
+            "inactive": "Inactiva",
+            "canceled": "Cancelada",
+            "past_due": "Vencida"
+        },
+        "manageButton": "Gestionar Suscripción",
+        "changePlanButton": "Cambiar de Plan",
+        "billingHistory": {
+            "title": "Historial de Facturación",
+            "subtitle": "Aquí puedes ver y descargar tus facturas anteriores.",
+            "headers": {
+                "date": "Fecha",
+                "amount": "Importe",
+                "status": "Estado",
+                "invoice": "Factura"
+            },
+            "statuses": {
+                "paid": "Pagada",
+                "open": "Pendiente"
+            },
+            "download": "Descargar"
+        }
     }
 }
