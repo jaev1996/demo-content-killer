@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { withCreatorAuth } from "@/components/with-creator-auth"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
@@ -22,14 +22,40 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { IconExternalLink, IconFileText, IconRefresh, IconSettings } from "@tabler/icons-react"
-import Link from "next/link"
+import { IconFileText, IconCheck } from "@tabler/icons-react"
+
+// Stripe Price IDs
+const STRIPE_PRICE_IDS = {
+    PRO: 'price_1SWoyB2zbUB6qmZWA16KQSE0',
+    BASIC: 'price_1SVhGO2zbUB6qmZWnfYx4ZiH'
+};
+
+const PLANS = [
+    {
+        id: 'basic',
+        name: 'Plan Basic',
+        priceId: STRIPE_PRICE_IDS.BASIC,
+        price: '$99',
+        features: ['Acceso básico', 'Soporte por email', '10 GB de almacenamiento']
+    },
+    {
+        id: 'pro',
+        name: 'Plan Pro',
+        priceId: STRIPE_PRICE_IDS.PRO,
+        price: '$249',
+        features: ['Acceso completo', 'Soporte prioritario', '100 GB de almacenamiento', 'Funciones avanzadas']
+    }
+];
 
 function CreatorSubscriptionPage() {
     const t = useTranslations("CreatorSubscriptionPage")
-    const { creator } = useCreatorAuth()
+    const { creator, updateCreatorProfile } = useCreatorAuth()
 
-    // Mock de datos para el historial de facturación. Esto vendría de tu API.
+    const [loading, setLoading] = useState(false);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+    const [cancelLoading, setCancelLoading] = useState(false);
+
+    // Mock de datos para el historial de facturación
     const billingHistory = [
         { id: "inv_1", date: "2024-07-25", amount: 249.0, status: "paid", url: "#" },
         { id: "inv_2", date: "2024-06-25", amount: 249.0, status: "paid", url: "#" },
@@ -47,11 +73,10 @@ function CreatorSubscriptionPage() {
             }
         }
 
-        // Lógica para determinar el nombre del plan basado en el precio o ID de Stripe
-        const planName = creator.stripePriceId === "price_123professional" ? t("plans.professional") : t("plans.basic")
-        const planAmount = creator.stripePriceId === "price_123professional" ? "$249" : "$99"
+        const planName = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "Plan Pro" : "Plan Basic"
+        const planAmount = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "$249" : "$99"
 
-        const status = creator.stripeSubscriptionStatus || "inactive"
+        const status = "active"
         const date = creator.stripeCurrentPeriodEnd
             ? new Date(creator.stripeCurrentPeriodEnd).toLocaleDateString("es-ES", {
                 day: "2-digit",
@@ -68,14 +93,81 @@ function CreatorSubscriptionPage() {
         }
     }, [creator, t])
 
-    const handleManageSubscription = async () => {
-        // TODO: Implementar la llamada a la API para crear una sesión del portal de Stripe
-        // y redirigir al usuario.
-        // const response = await apiFetch("/api/stripe/create-portal-session");
-        // const { url } = await response.json();
-        // window.location.href = url;
-        alert("Redirigiendo al portal de Stripe...")
+    const handleSubscribe = async (priceId: string) => {
+        setLoading(true);
+        try {
+            const userToken = creator?.token || localStorage.getItem('creator_token');
+
+            if (!userToken) {
+                alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
+                return;
+            }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stripe/create-checkout-session`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`,
+                },
+                body: JSON.stringify({ priceId }),
+            });
+
+            const data = await response.json();
+
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Error:', data.error);
+                alert('No se pudo iniciar el pago.');
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+            alert('Ocurrió un error al intentar conectar con el servidor.');
+        } finally {
+            setLoading(false);
+        }
     }
+
+    const handleCancelSubscription = async () => {
+        setCancelLoading(true);
+        try {
+            const userToken = creator?.token || localStorage.getItem('creator_token');
+
+            if (!userToken) {
+                alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
+                return;
+            }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stripe/cancel-subscription`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Suscripción cancelada exitosamente');
+                setShowCancelConfirm(false);
+                updateCreatorProfile({
+                    stripeSubscriptionId: null,
+                    stripePriceId: null,
+                    stripeCurrentPeriodEnd: null,
+                });
+            } else {
+                alert(data.error || 'Error al cancelar la suscripción');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión');
+        } finally {
+            setCancelLoading(false);
+        }
+    }
+
+    const hasActiveSubscription = !!creator?.stripeSubscriptionId;
 
     return (
         <div className="mx-auto grid w-full max-w-6xl gap-6">
@@ -83,6 +175,42 @@ function CreatorSubscriptionPage() {
                 <h1 className="text-3xl font-semibold">{t("title")}</h1>
                 <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
             </div>
+
+            {/* Planes Disponibles */}
+            {!hasActiveSubscription && (
+                <div>
+                    <h2 className="text-2xl font-semibold mb-4">Planes Disponibles</h2>
+                    <div className="grid gap-6 md:grid-cols-2">
+                        {PLANS.map((plan) => (
+                            <Card key={plan.id}>
+                                <CardHeader>
+                                    <CardTitle>{plan.name}</CardTitle>
+                                    <div className="text-3xl font-bold">{plan.price}<span className="text-sm font-normal text-muted-foreground">/mes</span></div>
+                                </CardHeader>
+                                <CardContent>
+                                    <ul className="space-y-2">
+                                        {plan.features.map((feature, idx) => (
+                                            <li key={idx} className="flex items-center gap-2">
+                                                <IconCheck className="size-4 text-green-500" />
+                                                <span>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button
+                                        className="w-full"
+                                        onClick={() => handleSubscribe(plan.priceId)}
+                                        disabled={loading}
+                                    >
+                                        {loading ? "Procesando..." : "Suscribirse"}
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid gap-6 md:grid-cols-5">
                 <Card className="md:col-span-2">
@@ -110,16 +238,37 @@ function CreatorSubscriptionPage() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-2">
-                        <Button className="w-full" onClick={handleManageSubscription}>
-                            <IconSettings className="mr-2 size-4" />
-                            {t("manageButton")}
-                        </Button>
-                        <Button variant="outline" className="w-full" asChild>
-                            <Link href="/#pricing">
-                                <IconRefresh className="mr-2 size-4" />
-                                {t("changePlanButton")}
-                            </Link>
-                        </Button>
+                        {hasActiveSubscription && !showCancelConfirm && (
+                            <Button
+                                variant="destructive"
+                                className="w-full"
+                                onClick={() => setShowCancelConfirm(true)}
+                            >
+                                Cancelar Suscripción
+                            </Button>
+                        )}
+                        {showCancelConfirm && (
+                            <div className="w-full space-y-2">
+                                <p className="text-sm text-center">¿Estás seguro de que deseas cancelar tu suscripción?</p>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant="destructive"
+                                        className="flex-1"
+                                        onClick={handleCancelSubscription}
+                                        disabled={cancelLoading}
+                                    >
+                                        {cancelLoading ? "Cancelando..." : "Sí, cancelar"}
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1"
+                                        onClick={() => setShowCancelConfirm(false)}
+                                    >
+                                        No, mantener
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </CardFooter>
                 </Card>
 
@@ -168,5 +317,3 @@ function CreatorSubscriptionPage() {
 }
 
 export default withCreatorAuth(CreatorSubscriptionPage)
-
-
