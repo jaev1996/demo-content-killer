@@ -12,7 +12,7 @@ export const apiFetch = async (
     options: RequestInit = {}
 ): Promise<Response> => {
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
     const fullUrl = `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`; // Asegurarse de que la URL tenga una barra inicial si no la tiene
 

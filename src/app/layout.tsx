@@ -1,6 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import "./globals.css"; // Importa los estilos de Tailwind aquí
 import { AuthProvider } from "@/contexts/auth-context";
+import { CreatorAuthProvider } from "@/contexts/creator-auth-context";
 import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -25,7 +26,11 @@ export default async function RootLayout({ children }: Props) {
                         locale={locale}
                         messages={messages}
                     >
-                        <AuthProvider>{children}</AuthProvider>
+                        <AuthProvider>
+                            <CreatorAuthProvider>
+                                {children}
+                            </CreatorAuthProvider>
+                        </AuthProvider>
                     </NextIntlClientProvider>
                 </ThemeProvider>
             </body>
