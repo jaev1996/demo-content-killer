@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
 import { withCreatorAuth } from "@/components/with-creator-auth"
+import { apiFetch } from "@/lib/api"
 import {
     Card,
     CardContent,
@@ -20,9 +21,11 @@ import {
     IconZoomCheck,
     IconSettings,
 } from "@tabler/icons-react"
+import { ActivityChart } from "@/components/dashboard/activity-chart"
 
 function CreatorDashboardPage() {
-    const { creator, logout } = useCreatorAuth()
+    const { creator } = useCreatorAuth()
+    const [loadingPortal, setLoadingPortal] = useState(false);
     //const t = useTranslations("CreatorDashboard") // TODO: Agregar traducciones
 
     // El HOC `withCreatorAuth` asegura que `creator` no será nulo aquí.
@@ -31,8 +34,21 @@ function CreatorDashboardPage() {
 
     // Usamos useMemo para evitar recalcular en cada render
     const { subscriptionStatus, nextBillingDate, subscriptionPlan } = useMemo(() => {
-        const status = creator!.stripeSubscriptionId ? "Activa" : "Inactiva"
-        const plan = creator!.stripeSubscriptionId ? "Profesional" : "Ninguno" // Lógica a mejorar
+        const STRIPE_PRICE_IDS = {
+            PRO: 'price_1SWoyB2zbUB6qmZWA16KQSE0',
+            BASIC: 'price_1SVhGO2zbUB6qmZWnfYx4ZiH'
+        };
+
+        const isActive = creator!.stripeSubscriptionId && creator!.stripeSubscriptionStatus === 'active';
+
+        let status = "Inactiva";
+        if (isActive) status = "Activa";
+        else if (creator!.stripeSubscriptionStatus === 'canceled') status = "Cancelada";
+
+        let plan = "Ninguno";
+        if (creator!.stripePriceId === STRIPE_PRICE_IDS.PRO) plan = "Plan Pro";
+        else if (creator!.stripePriceId === STRIPE_PRICE_IDS.BASIC) plan = "Plan Basic";
+
         const date = creator!.stripeCurrentPeriodEnd
             ? new Date(creator!.stripeCurrentPeriodEnd).toLocaleDateString("es-ES", {
                 day: "2-digit",
@@ -49,6 +65,39 @@ function CreatorDashboardPage() {
         successRate: 98.5,
         activeSearches: 15,
     }
+
+    const handleManageSubscription = async () => {
+        setLoadingPortal(true);
+        try {
+            const response = await apiFetch('/api/stripe/create-portal-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    configurationId: 'bpc_1SYFi32zbUB6qmZWo312cM3O'
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    console.error('No URL returned');
+                    alert('Error al redirigir al portal de facturación.');
+                }
+            } else {
+                console.error('Error creating portal session');
+                alert('Error al acceder al portal de facturación.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión.');
+        } finally {
+            setLoadingPortal(false);
+        }
+    };
 
     return (
         <div className="mx-auto grid w-full flex-1 auto-rows-max gap-6">
@@ -111,8 +160,8 @@ function CreatorDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         {/* TODO: Implementar un componente de gráfico de barras aquí */}
-                        <div className="h-64 w-full bg-secondary/50 flex items-center justify-center rounded-md">
-                            <p className="text-sm text-muted-foreground">[Gráfico de Actividad]</p>
+                        <div className="h-[350px] w-full">
+                            <ActivityChart />
                         </div>
                     </CardContent>
                 </Card>
@@ -140,9 +189,13 @@ function CreatorDashboardPage() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full">
+                        <Button
+                            className="w-full"
+                            onClick={handleManageSubscription}
+                            disabled={loadingPortal}
+                        >
                             <IconSettings className="mr-2 size-4" />
-                            Gestionar Suscripción
+                            {loadingPortal ? "Cargando..." : "Gestionar Suscripción"}
                         </Button>
                     </CardFooter>
                 </Card>

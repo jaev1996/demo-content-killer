@@ -28,6 +28,7 @@ export interface UserProfile {
     stripeCustomerId: string | null;
     stripeSubscriptionId: string | null;
     stripePriceId: string | null;
+    stripeSubscriptionStatus: string | null;
     stripeCurrentPeriodEnd: string | null; // El backend envía esto como un string en formato ISO 8601
 
     // Timestamps

@@ -49,7 +49,7 @@ const PLANS = [
 
 function CreatorSubscriptionPage() {
     const t = useTranslations("CreatorSubscriptionPage")
-    const { creator, updateCreatorProfile } = useCreatorAuth()
+    const { creator, token, updateCreatorProfile } = useCreatorAuth()
 
     const [loading, setLoading] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -76,7 +76,7 @@ function CreatorSubscriptionPage() {
         const planName = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "Plan Pro" : "Plan Basic"
         const planAmount = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "$249" : "$99"
 
-        const status = "active"
+        const status = creator.stripeSubscriptionStatus || "active"
         const date = creator.stripeCurrentPeriodEnd
             ? new Date(creator.stripeCurrentPeriodEnd).toLocaleDateString("es-ES", {
                 day: "2-digit",
@@ -96,7 +96,7 @@ function CreatorSubscriptionPage() {
     const handleSubscribe = async (priceId: string) => {
         setLoading(true);
         try {
-            const userToken = creator?.token || localStorage.getItem('creator_token');
+            const userToken = token || localStorage.getItem('creator_token');
 
             if (!userToken) {
                 alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
@@ -131,7 +131,7 @@ function CreatorSubscriptionPage() {
     const handleCancelSubscription = async () => {
         setCancelLoading(true);
         try {
-            const userToken = creator?.token || localStorage.getItem('creator_token');
+            const userToken = token || localStorage.getItem('creator_token');
 
             if (!userToken) {
                 alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
@@ -152,9 +152,7 @@ function CreatorSubscriptionPage() {
                 alert('Suscripción cancelada exitosamente');
                 setShowCancelConfirm(false);
                 updateCreatorProfile({
-                    stripeSubscriptionId: null,
-                    stripePriceId: null,
-                    stripeCurrentPeriodEnd: null,
+                    stripeSubscriptionStatus: 'canceled',
                 });
             } else {
                 alert(data.error || 'Error al cancelar la suscripción');
@@ -167,7 +165,7 @@ function CreatorSubscriptionPage() {
         }
     }
 
-    const hasActiveSubscription = !!creator?.stripeSubscriptionId;
+    const hasActiveSubscription = !!creator?.stripeSubscriptionId && creator?.stripeSubscriptionStatus === 'active';
 
     return (
         <div className="mx-auto grid w-full max-w-6xl gap-6">
