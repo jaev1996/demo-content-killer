@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { z } from "zod"
 import {
     Card,
     CardContent,
@@ -19,6 +18,7 @@ import { IconLoader } from "@tabler/icons-react"
 import { toast } from "sonner"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
 import { apiFetch } from "@/lib/api"
+import { CountrySelect } from "@/components/ui/country-select"
 
 export function DmcaForm() {
     const t = useTranslations("CreatorSettingsPage.dmca")
@@ -48,6 +48,10 @@ export function DmcaForm() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value } = e.target
         setFormData(prev => ({ ...prev, [id]: value }))
+    }
+
+    const handleCountryChange = (value: string) => {
+        setFormData(prev => ({ ...prev, dmcaCountry: value }))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -89,33 +93,72 @@ export function DmcaForm() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t("title")}</CardTitle>
-                <CardDescription>{t("subtitle")}</CardDescription>
+            <CardHeader className="space-y-1">
+                <CardTitle className="text-lg sm:text-xl">{t("title")}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">{t("subtitle")}</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
-                <CardContent className="grid gap-6 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="dmcaFullName">{t("fullNameLabel")}</Label>
-                            <Input id="dmcaFullName" value={formData.dmcaFullName} onChange={handleInputChange} />
+                            <Label htmlFor="dmcaFullName" className="text-sm">{t("fullNameLabel")}</Label>
+                            <Input
+                                id="dmcaFullName"
+                                value={formData.dmcaFullName}
+                                onChange={handleInputChange}
+                                className="text-sm"
+                            />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="dmcaContactEmail">{t("contactEmailLabel")}</Label>
-                            <Input id="dmcaContactEmail" type="email" value={formData.dmcaContactEmail} onChange={handleInputChange} />
+                            <Label htmlFor="dmcaContactEmail" className="text-sm">{t("contactEmailLabel")}</Label>
+                            <Input
+                                id="dmcaContactEmail"
+                                type="email"
+                                value={formData.dmcaContactEmail}
+                                onChange={handleInputChange}
+                                className="text-sm"
+                            />
                         </div>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="dmcaWorkDescription">{t("workDescriptionLabel")}</Label>
-                        <Textarea id="dmcaWorkDescription" value={formData.dmcaWorkDescription} onChange={handleInputChange} />
+                        <Label htmlFor="dmcaWorkDescription" className="text-sm">{t("workDescriptionLabel")}</Label>
+                        <Textarea
+                            id="dmcaWorkDescription"
+                            value={formData.dmcaWorkDescription}
+                            onChange={handleInputChange}
+                            className="text-sm min-h-[100px]"
+                        />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="grid gap-2"><Label htmlFor="dmcaCountry">{t("countryLabel")}</Label><Input id="dmcaCountry" value={formData.dmcaCountry} onChange={handleInputChange} /></div>
-                        <div className="grid gap-2"><Label htmlFor="dmcaSignature">{t("signatureLabel")}</Label><Input id="dmcaSignature" value={formData.dmcaSignature} onChange={handleInputChange} /></div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="dmcaCountry" className="text-sm">{t("countryLabel")}</Label>
+                            <CountrySelect
+                                value={formData.dmcaCountry}
+                                onValueChange={handleCountryChange}
+                                placeholder="Selecciona un país"
+                                className="text-sm"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="dmcaSignature" className="text-sm">{t("signatureLabel")}</Label>
+                            <Input
+                                id="dmcaSignature"
+                                value={formData.dmcaSignature}
+                                onChange={handleInputChange}
+                                className="text-sm"
+                            />
+                        </div>
                     </div>
                 </CardContent>
-                <CardFooter className="border-t px-6 py-4">
-                    <Button type="submit" disabled={loading} className="bg-red-600 hover:bg-red-700 border-0">{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{t("saveButton")}</Button>
+                <CardFooter className="border-t px-4 sm:px-6 py-3 sm:py-4">
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="bg-red-600 hover:bg-red-700 border-0 w-full sm:w-auto text-sm"
+                    >
+                        {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
+                        {t("saveButton")}
+                    </Button>
                 </CardFooter>
             </form>
         </Card>

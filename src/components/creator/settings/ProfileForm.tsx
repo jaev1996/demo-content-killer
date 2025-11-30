@@ -87,43 +87,53 @@ export function ProfileForm() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t("title")}</CardTitle>
-                <CardDescription>
+            <CardHeader className="space-y-1">
+                <CardTitle className="text-lg sm:text-xl">{t("title")}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                     {t("subtitle")}
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="grid gap-6 mb-6">
+                <form className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="creatorName">{t("creatorNameLabel")}</Label>
+                        <Label htmlFor="creatorName" className="text-sm">{t("creatorNameLabel")}</Label>
                         <Input
                             id="creatorName"
                             value={creatorName}
                             onChange={(e) => setCreatorName(e.target.value)}
+                            className="text-sm"
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="email">{t("emailLabel")}</Label>
+                        <Label htmlFor="email" className="text-sm">{t("emailLabel")}</Label>
                         <Input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            className="text-sm"
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="currentPassword">{t("currentPasswordLabel")}</Label>
-                        <Input id="currentPassword" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••" required />
-                        <p className="text-[0.8rem] text-muted-foreground">{t("passwordHelpText")}</p>
+                        <Label htmlFor="currentPassword" className="text-sm">{t("currentPasswordLabel")}</Label>
+                        <Input
+                            id="currentPassword"
+                            type="password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            placeholder="••••••••"
+                            required
+                            className="text-sm"
+                        />
+                        <p className="text-[0.75rem] sm:text-[0.8rem] text-muted-foreground">{t("passwordHelpText")}</p>
                     </div>
                 </form>
             </CardContent>
-            <CardFooter className="border-t px-6 py-4">
+            <CardFooter className="border-t px-4 sm:px-6 py-3 sm:py-4">
                 <Button
                     onClick={handleSaveChanges}
                     disabled={loading || !hasChanges || !currentPassword}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 w-full sm:w-auto text-sm"
                 >
                     {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
                     {tShared("dmca.saveButton")}

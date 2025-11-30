@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
 import { withCreatorAuth } from "@/components/with-creator-auth"
 import { apiFetch } from "@/lib/api"
@@ -16,17 +17,18 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
     IconUserCircle,
-    IconShieldCheck,
-    IconLink,
-    IconZoomCheck,
-    IconSettings,
+    IconTrash,
+    IconActivity,
+    IconSearch,
+    IconCreditCard,
+    IconLoader2
 } from "@tabler/icons-react"
 import { ActivityChart } from "@/components/dashboard/activity-chart"
 
 function CreatorDashboardPage() {
     const { creator } = useCreatorAuth()
     const [loadingPortal, setLoadingPortal] = useState(false);
-    //const t = useTranslations("CreatorDashboard") // TODO: Agregar traducciones
+    const t = useTranslations("CreatorDashboard")
 
     // El HOC `withCreatorAuth` asegura que `creator` no será nulo aquí.
     // Usamos el operador "!" para indicarle a TypeScript que estamos seguros de ello.
@@ -60,8 +62,8 @@ function CreatorDashboardPage() {
     }, [creator])
 
     // TODO: Estos serían datos traídos de la API, gestionados por un admin
-    const kpis = {
-        totalLinksRemoved: 124,
+    const stats = {
+        totalRemoved: 124,
         successRate: 98.5,
         activeSearches: 15,
     }
@@ -100,102 +102,130 @@ function CreatorDashboardPage() {
     };
 
     return (
-        <div className="mx-auto grid w-full flex-1 auto-rows-max gap-6">
-            <div className="flex items-center gap-4">
-                {/* TODO: Reemplazar con un Avatar si el creador sube foto */}
-                <IconUserCircle className="size-12 text-muted-foreground" />
-                <div className="grid gap-1">
-                    <h1 className="text-2xl font-semibold">
-                        ¡Bienvenido, {creatorName}!
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Aquí tienes un resumen de la protección de tu contenido.
-                    </p>
-                </div>
-                <div className="ml-auto flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                        Ver Reporte Completo
-                    </Button>
+        <div className="mx-auto grid w-full flex-1 auto-rows-max gap-4 md:gap-6">
+            {/* Header Section - Responsive */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                    {/* TODO: Reemplazar con un Avatar si el creador sube foto */}
+                    <IconUserCircle className="size-10 sm:size-12 text-muted-foreground flex-shrink-0" />
+                    <div className="grid gap-1 min-w-0">
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate">
+                            {t('welcome', { name: creatorName })}
+                        </h1>
+                        <p className="text-sm text-muted-foreground hidden sm:block">
+                            {t('welcomeSubtitle')}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Stats Cards - Responsive Grid */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Eliminado</CardTitle>
-                        <IconLink className="size-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">
+                            {t('kpis.totalRemoved')}
+                        </CardTitle>
+                        <IconTrash className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{kpis.totalLinksRemoved}</div>
-                        <p className="text-xs text-muted-foreground">enlaces eliminados con éxito</p>
+                        <div className="text-2xl font-bold">{stats.totalRemoved}</div>
+                        <p className="text-xs text-muted-foreground">
+                            {t('kpis.totalRemovedDesc')}
+                        </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Tasa de Éxito</CardTitle>
-                        <IconShieldCheck className="size-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">
+                            {t('kpis.successRate')}
+                        </CardTitle>
+                        <IconActivity className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{kpis.successRate}%</div>
-                        <p className="text-xs text-muted-foreground">de los enlaces reportados</p>
+                        <div className="text-2xl font-bold">{stats.successRate}%</div>
+                        <p className="text-xs text-muted-foreground">
+                            {t('kpis.successRateDesc')}
+                        </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Búsquedas Activas</CardTitle>
-                        <IconZoomCheck className="size-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">
+                            {t('kpis.activeSearches')}
+                        </CardTitle>
+                        <IconSearch className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">+{kpis.activeSearches}</div>
-                        <p className="text-xs text-muted-foreground">plataformas monitoreadas 24/7</p>
+                        <div className="text-2xl font-bold">{stats.activeSearches}</div>
+                        <p className="text-xs text-muted-foreground">
+                            {t('kpis.activeSearchesDesc')}
+                        </p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* Activity & Subscription Section - Responsive Grid */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-7">
+                {/* Activity Chart - Full width on mobile, 4/7 on large screens */}
                 <Card className="lg:col-span-4">
                     <CardHeader>
-                        <CardTitle>Actividad de Eliminaciones</CardTitle>
-                        <CardDescription>Enlaces encontrados vs. eliminados en los últimos 30 días.</CardDescription>
+                        <CardTitle className="text-lg sm:text-xl">{t('activity.title')}</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">
+                            {t('activity.description')}
+                        </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        {/* TODO: Implementar un componente de gráfico de barras aquí */}
-                        <div className="h-[350px] w-full">
+                    <CardContent className="px-2 sm:px-6 pb-4">
+                        <div className="h-[250px] sm:h-[300px] md:h-[350px] w-full">
                             <ActivityChart />
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Subscription Card - Full width on mobile, 3/7 on large screens */}
                 <Card className="lg:col-span-3">
                     <CardHeader>
-                        <CardTitle>Suscripción</CardTitle>
-                        <CardDescription>
-                            Estado actual de tu plan.
+                        <CardTitle className="text-lg sm:text-xl">{t('subscription.title')}</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">
+                            {t('subscription.description')}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="grid gap-4">
+                    <CardContent className="grid gap-3 sm:gap-4">
                         <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Plan</span>
-                            <span className="font-semibold">{subscriptionPlan}</span>
+                            <span className="text-sm font-medium">{t('subscription.plan')}</span>
+                            <span className="text-sm font-bold truncate ml-2">{subscriptionPlan}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Estado</span>
-                            <Badge variant={subscriptionStatus === "Activa" ? "secondary" : "destructive"}>
+                            <span className="text-sm font-medium">{t('subscription.status')}</span>
+                            <Badge variant={subscriptionStatus === "Activa" ? "default" : "destructive"}>
                                 {subscriptionStatus}
                             </Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Próximo cobro</span>
-                            <span>{nextBillingDate}</span>
+                            <span className="text-sm font-medium">{t('subscription.nextBilling')}</span>
+                            <span className="text-xs sm:text-sm text-muted-foreground text-right ml-2">
+                                {nextBillingDate}
+                            </span>
                         </div>
                     </CardContent>
                     <CardFooter>
                         <Button
-                            className="w-full"
+                            variant="outline"
+                            className="w-full mt-2 sm:mt-4"
                             onClick={handleManageSubscription}
                             disabled={loadingPortal}
                         >
-                            <IconSettings className="mr-2 size-4" />
-                            {loadingPortal ? "Cargando..." : "Gestionar Suscripción"}
+                            {loadingPortal ? (
+                                <>
+                                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    <span className="text-sm">{t('subscription.loading')}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <IconCreditCard className="mr-2 h-4 w-4" />
+                                    <span className="text-sm">{t('subscription.manage')}</span>
+                                </>
+                            )}
                         </Button>
                     </CardFooter>
                 </Card>

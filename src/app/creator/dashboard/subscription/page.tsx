@@ -30,26 +30,28 @@ const STRIPE_PRICE_IDS = {
     BASIC: 'price_1SVhGO2zbUB6qmZWnfYx4ZiH'
 };
 
-const PLANS = [
-    {
-        id: 'basic',
-        name: 'Plan Basic',
-        priceId: STRIPE_PRICE_IDS.BASIC,
-        price: '$99',
-        features: ['Acceso básico', 'Soporte por email', '10 GB de almacenamiento']
-    },
-    {
-        id: 'pro',
-        name: 'Plan Pro',
-        priceId: STRIPE_PRICE_IDS.PRO,
-        price: '$249',
-        features: ['Acceso completo', 'Soporte prioritario', '100 GB de almacenamiento', 'Funciones avanzadas']
-    }
-];
+// PLANS moved inside component to use translations
 
 function CreatorSubscriptionPage() {
     const t = useTranslations("CreatorSubscriptionPage")
     const { creator, token, updateCreatorProfile } = useCreatorAuth()
+
+    const PLANS = [
+        {
+            id: 'basic',
+            name: t('plans.basic'),
+            priceId: STRIPE_PRICE_IDS.BASIC,
+            price: '$99',
+            features: t.raw('availablePlans.features.basic') as string[]
+        },
+        {
+            id: 'pro',
+            name: t('plans.professional'),
+            priceId: STRIPE_PRICE_IDS.PRO,
+            price: '$249',
+            features: t.raw('availablePlans.features.pro') as string[]
+        }
+    ];
 
     const [loading, setLoading] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -99,7 +101,7 @@ function CreatorSubscriptionPage() {
             const userToken = token || localStorage.getItem('creator_token');
 
             if (!userToken) {
-                alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
+                alert(t('alerts.noToken'));
                 return;
             }
 
@@ -118,11 +120,11 @@ function CreatorSubscriptionPage() {
                 window.location.href = data.url;
             } else {
                 console.error('Error:', data.error);
-                alert('No se pudo iniciar el pago.');
+                alert(t('alerts.paymentError'));
             }
         } catch (error) {
             console.error('Error de red:', error);
-            alert('Ocurrió un error al intentar conectar con el servidor.');
+            alert(t('alerts.connectionError'));
         } finally {
             setLoading(false);
         }
@@ -134,7 +136,7 @@ function CreatorSubscriptionPage() {
             const userToken = token || localStorage.getItem('creator_token');
 
             if (!userToken) {
-                alert("No se encontró el token de usuario. Por favor, inicia sesión nuevamente.");
+                alert(t('alerts.noToken'));
                 return;
             }
 
@@ -149,17 +151,17 @@ function CreatorSubscriptionPage() {
             const data = await response.json();
 
             if (response.ok) {
-                alert('Suscripción cancelada exitosamente');
+                alert(t('alerts.cancelSuccess'));
                 setShowCancelConfirm(false);
                 updateCreatorProfile({
                     stripeSubscriptionStatus: 'canceled',
                 });
             } else {
-                alert(data.error || 'Error al cancelar la suscripción');
+                alert(data.error || t('alerts.cancelError'));
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Error de conexión');
+            alert(t('alerts.connectionError'));
         } finally {
             setCancelLoading(false);
         }
@@ -177,13 +179,13 @@ function CreatorSubscriptionPage() {
             {/* Planes Disponibles */}
             {!hasActiveSubscription && (
                 <div>
-                    <h2 className="text-2xl font-semibold mb-4">Planes Disponibles</h2>
+                    <h2 className="text-2xl font-semibold mb-4">{t('availablePlans.title')}</h2>
                     <div className="grid gap-6 md:grid-cols-2">
                         {PLANS.map((plan) => (
                             <Card key={plan.id}>
                                 <CardHeader>
                                     <CardTitle>{plan.name}</CardTitle>
-                                    <div className="text-3xl font-bold">{plan.price}<span className="text-sm font-normal text-muted-foreground">/mes</span></div>
+                                    <div className="text-3xl font-bold">{plan.price}<span className="text-sm font-normal text-muted-foreground">{t('per_month')}</span></div>
                                 </CardHeader>
                                 <CardContent>
                                     <ul className="space-y-2">
@@ -201,7 +203,7 @@ function CreatorSubscriptionPage() {
                                         onClick={() => handleSubscribe(plan.priceId)}
                                         disabled={loading}
                                     >
-                                        {loading ? "Procesando..." : "Suscribirse"}
+                                        {loading ? t('availablePlans.processing') : t('availablePlans.subscribe')}
                                     </Button>
                                 </CardFooter>
                             </Card>
@@ -222,7 +224,7 @@ function CreatorSubscriptionPage() {
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-muted-foreground">{t("currentPlan.statusLabel")}</span>
-                            <Badge variant={planStatus === "active" ? "secondary" : "destructive"}>
+                            <Badge variant={planStatus === "active" ? "outline" : "destructive"}>
                                 {t(`statuses.${planStatus}`)}
                             </Badge>
                         </div>
@@ -238,31 +240,31 @@ function CreatorSubscriptionPage() {
                     <CardFooter className="flex flex-col gap-2">
                         {hasActiveSubscription && !showCancelConfirm && (
                             <Button
-                                variant="destructive"
-                                className="w-full"
+                                variant="default"
+                                className="w-full bg-accent hover:bg-accent/80 hover:text-accent-foreground hover:scale-105"
                                 onClick={() => setShowCancelConfirm(true)}
                             >
-                                Cancelar Suscripción
+                                {t('currentPlan.cancelButton')}
                             </Button>
                         )}
                         {showCancelConfirm && (
                             <div className="w-full space-y-2">
-                                <p className="text-sm text-center">¿Estás seguro de que deseas cancelar tu suscripción?</p>
+                                <p className="text-sm text-center">{t('currentPlan.confirmCancel')}</p>
                                 <div className="flex gap-2">
                                     <Button
-                                        variant="destructive"
-                                        className="flex-1"
+                                        variant="default"
+                                        className="flex-1 bg-accent hover:bg-accent/80 hover:text-accent-foreground"
                                         onClick={handleCancelSubscription}
                                         disabled={cancelLoading}
                                     >
-                                        {cancelLoading ? "Cancelando..." : "Sí, cancelar"}
+                                        {cancelLoading ? t('currentPlan.canceling') : t('currentPlan.yesCancel')}
                                     </Button>
                                     <Button
                                         variant="outline"
                                         className="flex-1"
                                         onClick={() => setShowCancelConfirm(false)}
                                     >
-                                        No, mantener
+                                        {t('currentPlan.noKeep')}
                                     </Button>
                                 </div>
                             </div>

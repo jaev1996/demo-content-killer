@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { useTranslations } from "next-intl"
 import {
     Card,
@@ -92,44 +92,57 @@ export function WhitelistForm() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t("title")}</CardTitle>
-                <CardDescription>{t("subtitle")}</CardDescription>
+            <CardHeader className="space-y-1">
+                <CardTitle className="text-lg sm:text-xl">{t("title")}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">{t("subtitle")}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                     <DialogTrigger asChild>
-                        <Button variant="outline">{t("manageButton")}</Button>
+                        <Button variant="outline" className="w-full sm:w-auto text-sm">{t("manageButton")}</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
-                            <DialogTitle>{t("modalTitle")}</DialogTitle>
-                            <DialogDescription>{t("modalDescription")}</DialogDescription>
+                            <DialogTitle className="text-lg sm:text-xl">{t("modalTitle")}</DialogTitle>
+                            <DialogDescription className="text-xs sm:text-sm">{t("modalDescription")}</DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleAddDomain} className="grid gap-4 py-4">
-                            <div className="flex items-center gap-2 ">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                                 <Input
                                     id="newDomain"
                                     value={newDomain}
                                     onChange={(e) => setNewDomain(e.target.value)}
                                     placeholder={t("addDomainPlaceholder")}
                                     disabled={isAdding}
+                                    className="text-sm flex-1"
                                 />
-                                <Button type="submit" disabled={isAdding} variant="outline">{isAdding && <IconLoader className="mr-2 size-4 animate-spin" />}{isAdding ? t("addingButton") : t("addButton")}</Button>
+                                <Button
+                                    type="submit"
+                                    disabled={isAdding}
+                                    variant="outline"
+                                    className="w-full sm:w-auto text-sm whitespace-nowrap"
+                                >
+                                    {isAdding && <IconLoader className="mr-2 size-4 animate-spin" />}
+                                    {isAdding ? t("addingButton") : t("addButton")}
+                                </Button>
                             </div>
                         </form>
                         <div className="flex flex-wrap gap-2">
                             {whitelist.length > 0 ? (
                                 whitelist.map(domain => (
-                                    <Badge key={domain} variant="secondary" className="p-2">
-                                        <span>{domain}</span>
-                                        <button onClick={() => handleRemoveDomain(domain)} aria-label={t("removeAriaLabel", { domain })} className="ml-2 rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                                            <IconX className="h-4 w-4 ml-2 hover:text-destructive" />
+                                    <Badge key={domain} variant="secondary" className="p-2 text-xs sm:text-sm">
+                                        <span className="break-all">{domain}</span>
+                                        <button
+                                            onClick={() => handleRemoveDomain(domain)}
+                                            aria-label={t("removeAriaLabel", { domain })}
+                                            className="ml-2 rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                        >
+                                            <IconX className="h-3 w-3 sm:h-4 sm:w-4 hover:text-destructive" />
                                         </button>
                                     </Badge>
                                 ))
                             ) : (
-                                <p className="text-sm text-muted-foreground text-center">{t("emptyList")}</p>
+                                <p className="text-xs sm:text-sm text-muted-foreground text-center w-full py-4">{t("emptyList")}</p>
                             )}
                         </div>
                     </DialogContent>

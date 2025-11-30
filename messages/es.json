@@ -239,9 +239,35 @@
             "home": "Inicio",
             "removals": "Eliminaciones",
             "subscription": "Suscripción",
-            "settings": "Ajustes"
+            "settings": "Ajustes",
+            "logout": "Cerrar Sesión"
+        }
+    },
+    "CreatorDashboard": {
+        "welcome": "¡Bienvenido, {name}!",
+        "welcomeSubtitle": "Aquí tienes un resumen de la protección de tu contenido.",
+        "viewReport": "Ver Reporte Completo",
+        "kpis": {
+            "totalRemoved": "Total Eliminado",
+            "totalRemovedDesc": "enlaces eliminados con éxito",
+            "successRate": "Tasa de Éxito",
+            "successRateDesc": "de los enlaces reportados",
+            "activeSearches": "Búsquedas Activas",
+            "activeSearchesDesc": "plataformas monitoreadas 24/7"
         },
-        "logout": "Cerrar Sesión"
+        "activity": {
+            "title": "Actividad de Eliminaciones",
+            "description": "Enlaces encontrados vs. eliminados en los últimos 30 días."
+        },
+        "subscription": {
+            "title": "Suscripción",
+            "description": "Estado actual de tu plan.",
+            "plan": "Plan",
+            "status": "Estado",
+            "nextBilling": "Próximo cobro",
+            "loading": "Cargando...",
+            "manage": "Gestionar Suscripción"
+        }
     },
     "CreatorRemovalsPage": {
         "title": "Gestión de Eliminaciones",
@@ -251,17 +277,21 @@
         "table": {
             "headers": {
                 "url": "Contenido Infractor",
-                "platform": "Plataforma",
                 "detectedOn": "Detectado",
                 "status": "Estado",
-                "resolvedOn": "Resuelto"
+                "resolvedOn": "Resuelto/Última actualización"
             },
             "statuses": {
                 "all": "Todos",
-                "removed": "Eliminado",
+                "completed": "Completado",
                 "in_process": "En Proceso",
-                "reported": "Reportado",
-                "failed": "No se pudo eliminar"
+                "cancelled": "Cancelado"
+            },
+            "pagination": {
+                "showing": "Mostrando {start} a {end} de {total} resultados",
+                "previous": "Anterior",
+                "next": "Siguiente",
+                "page": "Página {current} de {total}"
             },
             "noResults": "No se encontraron resultados que coincidan con tu búsqueda."
         }
@@ -315,25 +345,59 @@
             "addingButton": "Agregando...",
             "emptyList": "Tu whitelist está vacía.",
             "removeAriaLabel": "Eliminar {domain} de la whitelist",
-            "addSuccess": "Dominio añadido a tu whitelist.",
-            "removeSuccess": "Dominio eliminado de tu whitelist."
+            "addSuccess": "Dominio agregado a tu whitelist.",
+            "removeSuccess": "Dominio eliminado de tu whitelist.",
+            "contact": {
+                "title": "Contacto"
+            }
         }
     },
     "CreatorSubscriptionPage": {
         "title": "Mi Suscripción",
         "subtitle": "Consulta y gestiona los detalles de tu plan y tu historial de facturación.",
         "per_month": "/mes",
+        "alerts": {
+            "noToken": "No se encontró el token de usuario. Por favor, inicia sesión nuevamente.",
+            "paymentError": "No se pudo iniciar el pago.",
+            "connectionError": "Ocurrió un error al intentar conectar con el servidor.",
+            "cancelSuccess": "Suscripción cancelada exitosamente",
+            "cancelError": "Error al cancelar la suscripción"
+        },
+        "availablePlans": {
+            "title": "Planes Disponibles",
+            "subscribe": "Suscribirse",
+            "processing": "Procesando...",
+            "features": {
+                "basic": [
+                    "Acceso básico",
+                    "Ideal para empezar a proteger tu contenido.",
+                    "Monitoreo 24/7",
+                    "Hasta 100 eliminaciones/mes"
+                ],
+                "pro": [
+                    "Todo lo del plan Básico",
+                    "Eliminaciones ilimitadas",
+                    "Soporte prioritario 24/7",
+                    "Funciones avanzadas"
+                ]
+            }
+        },
         "currentPlan": {
             "title": "Mi Plan Actual",
             "planLabel": "Plan",
             "statusLabel": "Estado",
             "nextBillingLabel": "Próxima Facturación",
-            "amountLabel": "Importe"
+            "amountLabel": "Importe",
+            "cancelButton": "Cancelar Suscripción",
+            "confirmCancel": "¿Estás seguro de que deseas cancelar tu suscripción?",
+            "yesCancel": "Sí, cancelar",
+            "noKeep": "No, mantener",
+            "canceling": "Cancelando..."
         },
         "plans": {
             "none": "Ninguno",
-            "basic": "Básico",
-            "professional": "Profesional"
+            "basic": "Plan Basic",
+            "professional": "Plan Pro"
         },
         "statuses": {
             "active": "Activa",

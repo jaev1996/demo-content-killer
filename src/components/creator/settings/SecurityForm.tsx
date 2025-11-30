@@ -74,18 +74,55 @@ export function SecurityForm() {
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{t("title")}</CardTitle>
-                <CardDescription>{t("subtitle")}</CardDescription>
+            <CardHeader className="space-y-1">
+                <CardTitle className="text-lg sm:text-xl">{t("title")}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">{t("subtitle")}</CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
-                <CardContent className="grid gap-6 mb-6">
-                    <div className="grid gap-2"><Label htmlFor="currentPassword">{t("currentPasswordLabel")}</Label><Input id="currentPassword" type="password" value={passwords.currentPassword} onChange={handleInputChange} required /></div>
-                    <div className="grid gap-2"><Label htmlFor="newPassword">{t("newPasswordLabel")}</Label><Input id="newPassword" type="password" value={passwords.newPassword} onChange={handleInputChange} required /></div>
-                    <div className="grid gap-2"><Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label><Input id="confirmPassword" type="password" value={passwords.confirmPassword} onChange={handleInputChange} required /></div>
+                <CardContent className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="currentPassword" className="text-sm">{t("currentPasswordLabel")}</Label>
+                        <Input
+                            id="currentPassword"
+                            type="password"
+                            value={passwords.currentPassword}
+                            onChange={handleInputChange}
+                            required
+                            className="text-sm"
+                        />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="newPassword" className="text-sm">{t("newPasswordLabel")}</Label>
+                        <Input
+                            id="newPassword"
+                            type="password"
+                            value={passwords.newPassword}
+                            onChange={handleInputChange}
+                            required
+                            className="text-sm"
+                        />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="confirmPassword" className="text-sm">{t("confirmPasswordLabel")}</Label>
+                        <Input
+                            id="confirmPassword"
+                            type="password"
+                            value={passwords.confirmPassword}
+                            onChange={handleInputChange}
+                            required
+                            className="text-sm"
+                        />
+                    </div>
                 </CardContent>
-                <CardFooter className="border-t px-6 py-4">
-                    <Button type="submit" className="bg-red-600 hover:bg-red-700 border-0" disabled={loading}>{loading && <IconLoader className="mr-2 size-4 animate-spin" />}{loading ? t("updating") : t("updatePasswordButton")}</Button>
+                <CardFooter className="border-t px-4 sm:px-6 py-3 sm:py-4">
+                    <Button
+                        type="submit"
+                        className="bg-red-600 hover:bg-red-700 border-0 w-full sm:w-auto text-sm"
+                        disabled={loading}
+                    >
+                        {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
+                        {loading ? t("updating") : t("updatePasswordButton")}
+                    </Button>
                 </CardFooter>
             </form>
         </Card>

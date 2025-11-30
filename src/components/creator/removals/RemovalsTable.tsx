@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
     Table,
     TableBody,
@@ -9,15 +10,18 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
+import { IconChevronLeft, IconChevronRight, IconExternalLink } from "@tabler/icons-react"
+import { cn } from "@/lib/utils"
 
 // TODO: Mover estos tipos a un archivo central de tipos (ej: src/types/index.ts)
-export type RemovalStatus = "removed" | "in_process" | "reported" | "failed"
+export type RemovalStatus = "completed" | "in_process" | "cancelled"
 
 export interface RemovalItem {
     id: string
     url: string
-    platform: string
     detectedOn: string // ISO date string
     status: RemovalStatus
     resolvedOn: string | null // ISO date string or null
@@ -27,15 +31,23 @@ interface RemovalsTableProps {
     items: RemovalItem[]
 }
 
-const statusVariantMap: Record<RemovalStatus, "default" | "secondary" | "destructive" | "outline"> = {
-    removed: "default",
-    in_process: "secondary",
-    reported: "outline",
-    failed: "destructive",
+// Custom badge styling for each status - works in both light and dark mode
+const statusStyles: Record<RemovalStatus, string> = {
+    completed: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800",
+    in_process: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800",
+    cancelled: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-gray-700",
 }
+
+const ITEMS_PER_PAGE = 10
 
 export function RemovalsTable({ items }: RemovalsTableProps) {
     const t = useTranslations("CreatorRemovalsPage.table")
+    const [currentPage, setCurrentPage] = useState(1)
+
+    const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE)
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const currentItems = items.slice(startIndex, endIndex)
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return "—"
@@ -46,41 +58,159 @@ export function RemovalsTable({ items }: RemovalsTableProps) {
         })
     }
 
+    const handlePreviousPage = () => {
+        setCurrentPage(prev => Math.max(prev - 1, 1))
+    }
+
+    const handleNextPage = () => {
+        setCurrentPage(prev => Math.min(prev + 1, totalPages))
+    }
+
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>{t("headers.url")}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t("headers.platform")}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t("headers.detectedOn")}</TableHead>
-                    <TableHead>{t("headers.status")}</TableHead>
-                    <TableHead className="text-right hidden md:table-cell">{t("headers.resolvedOn")}</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {items.length > 0 ? (
-                    items.map((item) => (
-                        <TableRow key={item.id}>
-                            <TableCell className="max-w-[200px] truncate font-medium">
-                                <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                                    {item.url}
-                                </a>
-                            </TableCell>
-                            <TableCell className="hidden md:table-cell">{item.platform}</TableCell>
-                            <TableCell className="hidden md:table-cell">{formatDate(item.detectedOn)}</TableCell>
-                            <TableCell>
-                                <Badge variant={statusVariantMap[item.status]}>
-                                    {t(`statuses.${item.status}`)}
-                                </Badge>
-                            </TableCell>
-                            <TableCell className="text-right hidden md:table-cell">{formatDate(item.resolvedOn)}</TableCell>
-                        </TableRow>
+        <div className="space-y-4">
+            {/* Vista de tarjetas para móvil */}
+            <div className="md:hidden space-y-3">
+                {currentItems.length > 0 ? (
+                    currentItems.map((item) => (
+                        <Card key={item.id} className="p-4">
+                            <div className="space-y-3">
+                                {/* URL */}
+                                <div className="flex items-start gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-medium text-muted-foreground mb-1">
+                                            {t("headers.url")}
+                                        </p>
+                                        <a
+                                            href={item.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm font-medium hover:underline break-all flex items-center gap-1"
+                                        >
+                                            <span className="line-clamp-2">{item.url}</span>
+                                            <IconExternalLink className="h-3 w-3 flex-shrink-0" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* Status */}
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                                        {t("headers.status")}
+                                    </p>
+                                    <Badge className={cn(statusStyles[item.status], "text-xs")}>
+                                        {t(`statuses.${item.status}`)}
+                                    </Badge>
+                                </div>
+
+                                {/* Dates */}
+                                <div className="grid grid-cols-2 gap-3 pt-2 border-t">
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground mb-1">
+                                            {t("headers.detectedOn")}
+                                        </p>
+                                        <p className="text-sm">{formatDate(item.detectedOn)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-medium text-muted-foreground mb-1">
+                                            {t("headers.resolvedOn")}
+                                        </p>
+                                        <p className="text-sm">{formatDate(item.resolvedOn)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
                     ))
                 ) : (
-                    <TableRow><TableCell colSpan={5} className="h-24 text-center">{t("noResults")}</TableCell></TableRow>
+                    <Card className="p-8">
+                        <p className="text-center text-muted-foreground">{t("noResults")}</p>
+                    </Card>
                 )}
-            </TableBody>
-        </Table>
+            </div>
+
+            {/* Vista de tabla para desktop con scroll horizontal en tablet */}
+            <div className="hidden md:block overflow-x-auto -mx-6 px-6">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="min-w-[250px]">{t("headers.url")}</TableHead>
+                            <TableHead className="min-w-[120px]">{t("headers.detectedOn")}</TableHead>
+                            <TableHead className="min-w-[120px]">{t("headers.status")}</TableHead>
+                            <TableHead className="text-right min-w-[120px]">{t("headers.resolvedOn")}</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {currentItems.length > 0 ? (
+                            currentItems.map((item) => (
+                                <TableRow key={item.id}>
+                                    <TableCell className="max-w-[400px] font-medium">
+                                        <a
+                                            href={item.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:underline flex items-center gap-2 group"
+                                        >
+                                            <span className="truncate">{item.url}</span>
+                                            <IconExternalLink className="h-3 w-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </a>
+                                    </TableCell>
+                                    <TableCell>{formatDate(item.detectedOn)}</TableCell>
+                                    <TableCell>
+                                        <Badge className={cn(statusStyles[item.status])}>
+                                            {t(`statuses.${item.status}`)}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">{formatDate(item.resolvedOn)}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="h-24 text-center">
+                                    {t("noResults")}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            {/* Paginación - Responsive */}
+            {totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-2 pt-2">
+                    <div className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1">
+                        {t("pagination.showing", {
+                            start: startIndex + 1,
+                            end: Math.min(endIndex, items.length),
+                            total: items.length
+                        })}
+                    </div>
+                    <div className="flex items-center gap-2 order-1 sm:order-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handlePreviousPage}
+                            disabled={currentPage === 1}
+                            className="h-8"
+                        >
+                            <IconChevronLeft className="h-4 w-4 sm:mr-1" />
+                            <span className="hidden sm:inline">{t("pagination.previous")}</span>
+                        </Button>
+                        <div className="text-xs sm:text-sm font-medium px-2">
+                            {currentPage} / {totalPages}
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                            className="h-8"
+                        >
+                            <span className="hidden sm:inline">{t("pagination.next")}</span>
+                            <IconChevronRight className="h-4 w-4 sm:ml-1" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }
 
