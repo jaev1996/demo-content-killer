@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useCreatorAuth } from '@/contexts/creator-auth-context';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { IconCheck, IconAlertCircle, IconArrowRight } from "@tabler/icons-react";
 
 const STRIPE_PRICE_IDS = {
     PRO: 'price_1SWoyB2zbUB6qmZWA16KQSE0',
@@ -27,6 +30,28 @@ function PaymentSuccessContent() {
         if (!sessionId) {
             setStatus('error');
             setMessage('No se encontró ID de sesión.');
+            return;
+        }
+
+        // Lógica de MOCK para previsualización
+        if (sessionId === 'mock') {
+            // Simular retardo para ver el estado de carga
+            setTimeout(() => {
+                setSubscriptionDetails({
+                    plan: 'Plan Pro (Vista Previa)',
+                    periodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+                    status: 'Activo'
+                });
+                setStatus('success');
+            }, 1000);
+            return;
+        }
+
+        if (sessionId === 'mock_error') {
+            setTimeout(() => {
+                setStatus('error');
+                setMessage('Error simulado para fines de prueba y diseño.');
+            }, 1000);
             return;
         }
 
@@ -73,46 +98,84 @@ function PaymentSuccessContent() {
     }, [sessionId, updateCreatorProfile]);
 
     return (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-            {status === 'loading' && (
-                <div>
-                    <h1 className="text-2xl font-bold mb-4">Procesando... ⏳</h1>
-                    <p>{message}</p>
-                </div>
-            )}
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+            <Card className="w-full max-w-md shadow-lg border-muted">
+                {status === 'loading' && (
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                        <p className="text-lg font-medium text-foreground">Procesando tu pago...</p>
+                        <p className="text-sm text-muted-foreground mt-2">{message}</p>
+                    </CardContent>
+                )}
 
-            {status === 'success' && (
-                <div>
-                    <h1 className="text-2xl font-bold mb-4 text-green-600">¡Suscripción Exitosa! 🎉</h1>
-                    <p className="mb-4">Tu pago ha sido verificado correctamente.</p>
-
-                    {subscriptionDetails && (
-                        <div className="bg-gray-100 p-6 rounded-lg max-w-md mx-auto mb-8 text-left">
-                            <h3 className="font-bold text-lg mb-4 border-b pb-2">Detalles de la Suscripción</h3>
-                            <div className="space-y-2">
-                                <p><span className="font-semibold">Plan:</span> {subscriptionDetails.plan}</p>
-                                <p><span className="font-semibold">Estado:</span> <span className="text-green-600 font-medium">{subscriptionDetails.status}</span></p>
-                                <p><span className="font-semibold">Próxima facturación:</span> {subscriptionDetails.periodEnd}</p>
+                {status === 'success' && (
+                    <>
+                        <CardHeader className="text-center pb-2">
+                            <div className="mx-auto bg-green-100 dark:bg-green-900/20 p-3 rounded-full w-fit mb-4">
+                                <IconCheck className="w-8 h-8 text-green-600 dark:text-green-500" />
                             </div>
-                        </div>
-                    )}
+                            <CardTitle className="text-2xl font-bold text-foreground">¡Suscripción Exitosa!</CardTitle>
+                            <CardDescription className="text-muted-foreground mt-2">
+                                Tu pago ha sido procesado correctamente y tu cuenta ha sido actualizada.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="pb-6">
+                            {subscriptionDetails && (
+                                <div className="bg-muted/50 p-4 rounded-lg border border-border space-y-3 text-sm">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Plan:</span>
+                                        <span className="font-semibold text-foreground">{subscriptionDetails.plan}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Estado:</span>
+                                        <span className="font-medium text-green-600 dark:text-green-500 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full text-xs">
+                                            {subscriptionDetails.status}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Próxima facturación:</span>
+                                        <span className="font-medium text-foreground">{subscriptionDetails.periodEnd}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                        <CardFooter className="flex justify-center">
+                            <Link href="/creator/dashboard" className="w-full">
+                                <Button className="w-full" size="lg">
+                                    Ir al Dashboard
+                                    <IconArrowRight className="w-4 h-4 ml-2" />
+                                </Button>
+                            </Link>
+                        </CardFooter>
+                    </>
+                )}
 
-                    <p className="mb-8">Tu cuenta ha sido actualizada con las nuevas funciones.</p>
-                    <Link href="/creator/dashboard">
-                        <button className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md">Ir al Dashboard</button>
-                    </Link>
-                </div>
-            )}
-
-            {status === 'error' && (
-                <div>
-                    <h1 className="text-2xl font-bold mb-4 text-red-600">Algo salió mal 😕</h1>
-                    <p className="mb-8 text-red-500">{message}</p>
-                    <Link href="/creator/dashboard">
-                        <button className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md">Volver al Dashboard</button>
-                    </Link>
-                </div>
-            )}
+                {status === 'error' && (
+                    <>
+                        <CardHeader className="text-center pb-2">
+                            <div className="mx-auto bg-red-100 dark:bg-red-900/20 p-3 rounded-full w-fit mb-4">
+                                <IconAlertCircle className="w-8 h-8 text-red-600 dark:text-red-500" />
+                            </div>
+                            <CardTitle className="text-2xl font-bold text-foreground">Algo salió mal</CardTitle>
+                            <CardDescription className="text-red-500 mt-2 font-medium">
+                                {message}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="text-center pb-6">
+                            <p className="text-sm text-muted-foreground">
+                                Si el problema persiste, por favor contacta a nuestro equipo de soporte.
+                            </p>
+                        </CardContent>
+                        <CardFooter className="flex justify-center">
+                            <Link href="/creator/dashboard" className="w-full">
+                                <Button variant="secondary" className="w-full">
+                                    Volver al Dashboard
+                                </Button>
+                            </Link>
+                        </CardFooter>
+                    </>
+                )}
+            </Card>
         </div>
     );
 }

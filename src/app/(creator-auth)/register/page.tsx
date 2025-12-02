@@ -29,12 +29,26 @@ export default function RegisterPage() {
     const [acceptPolicies, setAcceptPolicies] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    // Helper para calcular la fortaleza de la contraseña
+    const calculatePasswordStrength = (pwd: string) => {
+        let strength = 0;
+        if (pwd.length >= 8) strength++;
+        if (/[A-Z]/.test(pwd)) strength++;
+        if (/[0-9]/.test(pwd)) strength++;
+        if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+        return strength;
+    };
+
     // Esquema de validación con Zod y mensajes internacionalizados
     const registerSchema = z
         .object({
             creatorName: z.string().min(3, { message: t("validation.creatorNameLength") }),
             email: z.string().email({ message: t("validation.emailInvalid") }),
-            password: z.string().min(8, { message: t("validation.passwordLength") }),
+            password: z.string()
+                .min(8, { message: t("validation.passwordLength") })
+                .regex(/[A-Z]/, { message: "Debe contener al menos una mayúscula" })
+                .regex(/[0-9]/, { message: "Debe contener al menos un número" })
+                .regex(/[^A-Za-z0-9]/, { message: "Debe contener al menos un carácter especial" }),
             confirmPassword: z.string().min(8, { message: t("validation.passwordLength") }),
             acceptPolicies: z.literal(true, { message: t("validation.acceptPolicies") }),
         })
@@ -112,7 +126,6 @@ export default function RegisterPage() {
                             <p className="text-balance text-muted-foreground">{t("subtitle")}</p>
                         </div>
                         <form onSubmit={handleRegister} className="grid gap-4">
-
                             <div className="grid gap-2">
                                 <Label htmlFor="creatorName">{t("creatorNameLabel")}</Label>
                                 <Input id="creatorName" type="text" value={creatorName} onChange={(e) => setCreatorName(e.target.value)} placeholder={t("creatorNamePlaceholder")} required />
@@ -123,15 +136,43 @@ export default function RegisterPage() {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password">{t("passwordLabel")}</Label>
-                                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("passwordPlaceholder")} required />
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                    }}
+                                    placeholder={t("passwordPlaceholder")}
+                                    required
+                                />
+                                {/* Password Strength Indicator */}
+                                {password && (
+                                    <div className="space-y-1">
+                                        <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                                            <div
+                                                className={`h-full transition-all duration-300 ${calculatePasswordStrength(password) <= 1 ? 'bg-red-500 w-1/4' :
+                                                    calculatePasswordStrength(password) === 2 ? 'bg-orange-500 w-2/4' :
+                                                        calculatePasswordStrength(password) === 3 ? 'bg-yellow-500 w-3/4' :
+                                                            'bg-green-500 w-full'
+                                                    }`}
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground text-right">
+                                            {calculatePasswordStrength(password) <= 1 ? 'Débil' :
+                                                calculatePasswordStrength(password) === 2 ? 'Regular' :
+                                                    calculatePasswordStrength(password) === 3 ? 'Buena' :
+                                                        'Fuerte'}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="confirmPassword">{t("confirmPasswordLabel")}</Label>
                                 <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t("passwordPlaceholder")} required />
                             </div>
-                            <Button type="submit" className="w-full bg-red-600 text-foreground hover:bg-red-700 transition-colors hover:scale-105 inline-block" disabled={loading}>
-
-                                {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
+                            <Button type="submit" className="w-full bg-red-600 text-foreground hover:bg-red-700 transition-colors hover:scale-105" disabled={loading}>
+                                {loading && <IconLoader className="mr-2 size-4 animate-spin inline-block" />}
                                 {loading ? t("registering") : t("registerButton")}
                             </Button>
                         </form>
@@ -165,7 +206,7 @@ export default function RegisterPage() {
                         </blockquote>
                     </div>
                 </div>
-            </div>
+            </div >
             <Toaster richColors position="top-center" />
         </>
 

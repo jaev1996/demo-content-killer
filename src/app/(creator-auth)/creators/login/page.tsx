@@ -109,8 +109,8 @@ export default function CreatorLoginPage() {
                                 <Label htmlFor="password">{t("passwordLabel")}</Label>
                                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("passwordPlaceholder")} required />
                             </div>
-                            <Button type="submit" className="w-full bg-red-600 text-foreground hover:bg-red-700 transition-colors hover:scale-105 inline-block" disabled={loading}>
-                                {loading && <IconLoader className="mr-2 size-4 animate-spin" />}
+                            <Button type="submit" className="w-full bg-red-600 text-foreground hover:bg-red-700 transition-colors hover:scale-105" disabled={loading}>
+                                {loading && <IconLoader className="mr-2 size-4 animate-spin inline-block" />}
                                 {loading ? t("loggingIn") : t("loginButton")}
                             </Button>
                         </form>

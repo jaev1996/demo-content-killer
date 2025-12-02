@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { IconBrandInstagram, IconMail, IconShield } from "@tabler/icons-react";
+import { IconBrandInstagram, IconMail } from "@tabler/icons-react";
+import Image from "next/image";
 
 export function Footer() {
     const t = useTranslations('LandingPage.footer');
@@ -32,7 +33,7 @@ export function Footer() {
                 <div className="flex flex-wrap -mx-4">
                     <div className="w-full px-4 sm:w-2/3 lg:w-4/12">
                         <div className="flex items-center mb-4">
-                            <IconShield className="text-red-600 size-8" />
+                            <Image src="/privaclean.svg" alt="PrivaClean Logo" width={64} height={64} className="size-16" />
                             <span className="ml-2 text-2xl font-bold text-white">PrivaClean</span>
                         </div>
                         <p className="mb-7 text-base text-muted-foreground">
