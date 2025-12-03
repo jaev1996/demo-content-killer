@@ -24,6 +24,7 @@ import {
     IconLoader2
 } from "@tabler/icons-react"
 import { ActivityChart } from "@/components/dashboard/activity-chart"
+import { ProfileCompletenessCard } from "@/components/dashboard/ProfileCompletenessCard"
 
 function CreatorDashboardPage() {
     const { creator } = useCreatorAuth()
@@ -164,6 +165,9 @@ function CreatorDashboardPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Profile Completeness Card - Only shown if profile is incomplete */}
+            <ProfileCompletenessCard />
 
             {/* Activity & Subscription Section - Responsive Grid */}
             <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-7">

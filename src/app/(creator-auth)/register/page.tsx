@@ -86,8 +86,8 @@ export default function RegisterPage() {
             toast.success(t("welcomeMessage", { name: creatorName }))
 
 
-            // Redirigir al dashboard del creador
-            router.push("/creator/dashboard")
+            // Redirigir al onboarding para nuevos usuarios
+            router.push("/creator/onboarding")
 
         } catch (error) {
             if (error instanceof z.ZodError) {

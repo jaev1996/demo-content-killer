@@ -97,9 +97,9 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     }
 
     const SidebarContent = () => (
-        <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex h-full flex-col">
             {/* Header con botón de cerrar en móvil */}
-            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 flex-shrink-0">
                 <Link href="/" className="flex items-center gap-2 font-semibold text-primary flex-1">
                     <Image
                         src="/privaclean.svg"
@@ -122,8 +122,10 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                     </Button>
                 )}
             </div>
+
+            {/* Navigation - scrollable area */}
             <div className="flex-1 overflow-y-auto">
-                <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+                <nav className="grid items-start px-2 py-4 text-sm font-medium lg:px-4">
                     {navItems.map((item) => (
                         <Link
                             key={item.label}
@@ -139,7 +141,9 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                     ))}
                 </nav>
             </div>
-            <div className="mt-auto p-4 flex flex-col gap-2">
+
+            {/* Footer - stays at bottom */}
+            <div className="border-t bg-background p-4 flex flex-col gap-2 flex-shrink-0">
                 <SidebarPreferences />
                 <Button size="sm" className="w-full bg-red-600 hover:bg-red-700" onClick={logout}>
                     <IconLogout className="mr-2 h-4 w-4" />
