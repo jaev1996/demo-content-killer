@@ -9,6 +9,7 @@ import { ProfileForm } from "@/components/creator/settings/ProfileForm"
 import { SecurityForm } from "@/components/creator/settings/SecurityForm"
 import { DmcaForm } from "@/components/creator/settings/DmcaForm"
 import { WhitelistForm } from "@/components/creator/settings/WhitelistForm"
+import { SupportCard } from "@/components/dashboard/SupportCard"
 
 function SettingsPage() {
     const t = useTranslations("CreatorSettingsPage")
@@ -27,7 +28,7 @@ function SettingsPage() {
             <Tabs defaultValue="profile" className="mx-auto w-full max-w-6xl">
                 {/* TabsList con scroll horizontal en móvil */}
                 <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                    <TabsList className="grid w-full grid-cols-3 min-w-[500px] sm:min-w-0">
+                    <TabsList className="grid w-full grid-cols-4 min-w-[600px] sm:min-w-0">
                         <TabsTrigger value="profile" className="text-xs sm:text-sm">
                             <span className="hidden sm:inline">{t("profile.title")} & {t("security.title")}</span>
                             <span className="sm:hidden">Perfil</span>
@@ -37,6 +38,9 @@ function SettingsPage() {
                         </TabsTrigger>
                         <TabsTrigger value="whitelist" className="text-xs sm:text-sm">
                             {t("whitelist.title")}
+                        </TabsTrigger>
+                        <TabsTrigger value="support" className="text-xs sm:text-sm">
+                            Soporte
                         </TabsTrigger>
                     </TabsList>
                 </div>
@@ -57,6 +61,11 @@ function SettingsPage() {
                 {/* Whitelist Tab */}
                 <TabsContent value="whitelist">
                     <WhitelistForm />
+                </TabsContent>
+
+                {/* Support Tab */}
+                <TabsContent value="support">
+                    <SupportCard />
                 </TabsContent>
             </Tabs>
 

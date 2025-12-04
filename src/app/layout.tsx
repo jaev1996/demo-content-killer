@@ -26,10 +26,11 @@ export const metadata: Metadata = {
     },
     icons: {
         icon: [
-            { url: "/favicon.ico", sizes: "any" },
             { url: "/icon.svg", type: "image/svg+xml" },
+            { url: "/privaclean.svg", type: "image/svg+xml" },
         ],
-        apple: "/apple-touch-icon.png",
+        shortcut: "/privaclean.svg",
+        apple: "/apple-icon.png",
     },
     manifest: "/site.webmanifest",
     openGraph: {
@@ -76,6 +77,10 @@ export default async function RootLayout({ children }: Props) {
 
     return (
         <html lang={locale} suppressHydrationWarning>
+            <head>
+                <link rel="icon" href="/privaclean.svg" type="image/svg+xml" />
+                <link rel="shortcut icon" href="/privaclean.svg" />
+            </head>
             <body>
                 <ThemeProvider
                     attribute="class"

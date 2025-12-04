@@ -52,7 +52,8 @@ export default function CreatorLoginPage() {
             const data = await response.json()
 
             // 3. Usar el contexto para gestionar el estado de autenticación
-            login(data.data.profile, data.data.token)
+            // Backend devuelve: { data: { userProfile: {...}, token: "..." } }
+            login(data.data.userProfile, data.data.token)
 
 
             toast.success(t("welcomeBack"))

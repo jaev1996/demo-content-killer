@@ -92,13 +92,13 @@ export function EarningsChart() {
                 <div className="relative h-64 md:h-96">
                     <svg width="100%" height="100%" viewBox="0 0 350 140" preserveAspectRatio="none" className="absolute top-0 left-0" overflow="visible">
                         {/* Eje Y (Ingresos) */}
-                        <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$20k</text>
+                        <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€20k</text>
                         <line x1="35" y1="10" x2="345" y2="10" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="37" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$15k</text>
+                        <text x="30" y="37" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€15k</text>
                         <line x1="35" y1="37" x2="345" y2="37" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="64" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$10k</text>
+                        <text x="30" y="64" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€10k</text>
                         <line x1="35" y1="64" x2="345" y2="64" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="90" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">$5k</text>
+                        <text x="30" y="90" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€5k</text>
                         <line x1="35" y1="90" x2="345" y2="90" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
 
                         <g transform="translate(40, 0)">
