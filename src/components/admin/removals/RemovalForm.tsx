@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api"
-import type { ContentRemoval, CreateRemovalData, ContentType, RemovalStatus } from "@/types/removals"
+import type { ContentRemoval, ContentType, RemovalStatus } from "@/types/removals"
 import { IconLoader2 } from "@tabler/icons-react"
 import { Badge } from "@/components/ui/badge"
 

@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
-import { IconLock, IconLoader } from "@tabler/icons-react"
+import { IconLoader } from "@tabler/icons-react"
 import { Toaster, toast } from "sonner"
 
 /**
