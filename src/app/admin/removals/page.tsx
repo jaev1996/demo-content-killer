@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,11 +46,9 @@ function AdminRemovalsPage() {
         total: 0
     })
 
-    useEffect(() => {
-        fetchRemovals()
-    }, [filters])
 
-    const fetchRemovals = async () => {
+    // Use useCallback to make the function stable and usable in useEffect dependency array
+    const fetchRemovals = useCallback(async () => {
         setLoading(true)
         try {
             const params = new URLSearchParams({
@@ -66,12 +64,16 @@ function AdminRemovalsPage() {
             const data = await response.json()
             setRemovals(data.data.removals)
             setPagination(data.data.pagination)
-        } catch (error) {
+        } catch {
             toast.error('Error al cargar eliminaciones')
         } finally {
             setLoading(false)
         }
-    }
+    }, [filters])
+
+    useEffect(() => {
+        fetchRemovals()
+    }, [fetchRemovals])
 
     const handleDelete = async (id: string) => {
         try {
@@ -83,7 +85,7 @@ function AdminRemovalsPage() {
 
             toast.success('Eliminación borrada exitosamente')
             fetchRemovals()
-        } catch (error) {
+        } catch {
             toast.error('Error al eliminar')
         } finally {
             setDeleteId(null)
@@ -119,7 +121,7 @@ function AdminRemovalsPage() {
                                 <label className="text-sm font-medium">Estado</label>
                                 <Select
                                     value={filters.status}
-                                    onValueChange={(value) => setFilters({ ...filters, status: value as any, page: 1 })}
+                                    onValueChange={(value) => setFilters({ ...filters, status: value as RemovalFilters['status'], page: 1 })}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />

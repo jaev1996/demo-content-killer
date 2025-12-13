@@ -3,9 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { IconCheck, IconArrowRight, IconArrowLeft } from "@tabler/icons-react"
+import { IconCheck } from "@tabler/icons-react"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api"
@@ -23,7 +22,6 @@ export default function OnboardingPage() {
     const { creator, updateCreatorProfile } = useCreatorAuth()
     const [currentStep, setCurrentStep] = useState(1)
     const [completedSteps, setCompletedSteps] = useState<number[]>([])
-    const [saving, setSaving] = useState(false)
 
     // Estados para los datos del formulario
     const [dmcaData, setDmcaData] = useState({
@@ -38,7 +36,6 @@ export default function OnboardingPage() {
 
     const saveDMCAData = async () => {
         try {
-            setSaving(true)
             const payload = {
                 dmcaFullName: dmcaData.dmcaFullName || null,
                 dmcaContactEmail: dmcaData.dmcaContactEmail || null,
@@ -64,14 +61,11 @@ export default function OnboardingPage() {
         } catch (error) {
             toast.error((error as Error).message)
             throw error
-        } finally {
-            setSaving(false)
         }
     }
 
     const saveWhitelistData = async () => {
         try {
-            setSaving(true)
             // Obtener dominios existentes
             const existingDomains = creator?.whitelist || []
 
@@ -100,8 +94,6 @@ export default function OnboardingPage() {
         } catch (error) {
             toast.error((error as Error).message)
             throw error
-        } finally {
-            setSaving(false)
         }
     }
 
@@ -110,7 +102,7 @@ export default function OnboardingPage() {
         if (currentStep === 2 && dmcaData.dmcaFullName) {
             try {
                 await saveDMCAData()
-            } catch (error) {
+            } catch {
                 return // No avanzar si hay error
             }
         }
@@ -118,7 +110,7 @@ export default function OnboardingPage() {
         if (currentStep === 3 && whitelistData.length > 0) {
             try {
                 await saveWhitelistData()
-            } catch (error) {
+            } catch {
                 return // No avanzar si hay error
             }
         }
@@ -157,7 +149,7 @@ export default function OnboardingPage() {
 
             toast.success("¡Perfil configurado exitosamente!")
             router.push("/creator/dashboard")
-        } catch (error) {
+        } catch {
             toast.error("Error al finalizar la configuración")
         }
     }
@@ -223,10 +215,10 @@ export default function OnboardingPage() {
                             <div key={step} className="flex flex-col items-center gap-2">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${completedSteps.includes(step)
-                                            ? "bg-green-500 border-green-500 text-white"
-                                            : currentStep === step
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : "border-muted bg-background text-muted-foreground"
+                                        ? "bg-green-500 border-green-500 text-white"
+                                        : currentStep === step
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-muted bg-background text-muted-foreground"
                                         }`}
                                 >
                                     {completedSteps.includes(step) ? (
