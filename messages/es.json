@@ -50,10 +50,10 @@
             "subtitle": "Elige el plan que mejor se adapta a tu carrera. Sin contratos a largo plazo, cancela cuando quieras.",
             "basic_title": "Básico",
             "basic_desc": "Ideal para empezar a proteger tu contenido.",
-            "basic_price": "$99",
+            "basic_price": "€99",
             "professional_title": "Profesional",
             "professional_desc": "La solución completa para creadores en crecimiento.",
-            "professional_price": "$249",
+            "professional_price": "€200",
             "agency_title": "Agencia",
             "agency_desc": "Gestiona múltiples perfiles con herramientas avanzadas.",
             "agency_price": "Contacto",
@@ -71,13 +71,11 @@
             "professional": [
                 "Todo lo del plan Básico",
                 "Eliminaciones ilimitadas",
-                "Búsqueda en foros y Telegram",
                 "Soporte prioritario 24/7"
             ],
             "agency": [
                 "Todo lo del plan Profesional",
                 "Panel de gestión multi-perfil",
-                "API de integración",
                 "Manager de cuenta dedicado"
             ]
         },
@@ -181,6 +179,246 @@
                 "contact_title": "8. Contáctenos",
                 "contact_p1": "Si tiene alguna pregunta o inquietud sobre nuestra Política de Privacidad o sus datos, no dude en contactarnos."
             }
+        }
+    },
+    "LoginPage": {
+        "title": "Iniciar Sesión",
+        "subtitle": "Ingresa a tu panel para gestionar tu protección.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "tu@email.com",
+        "passwordLabel": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "loginButton": "Iniciar Sesión",
+        "loggingIn": "Ingresando...",
+        "noAccount": "¿No tienes una cuenta?",
+        "registerLink": "Regístrate",
+        "welcomeBack": "¡Bienvenido de nuevo!",
+        "homeAriaLabel": "Volver a la página de inicio",
+        "quote": "&ldquo;Enfócate en crear, nosotros nos encargamos de la protección. Tu tranquilidad es nuestra misión.&rdquo;",
+        "quoteAuthor": "Equipo de PrivaClean",
+        "validation": {
+            "emailInvalid": "Por favor, introduce un email válido.",
+            "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
+            "invalidCredentials": "Credenciales inválidas.",
+            "unknownError": "Ocurrió un error desconocido."
+        }
+    },
+    "RegisterPage": {
+        "title": "Registro de Creador",
+        "subtitle": "Crea tu cuenta para empezar a proteger tu contenido.",
+        "creatorNameLabel": "Nombre de Creador",
+        "creatorNamePlaceholder": "Tu nombre público",
+        "emailLabel": "Email",
+        "emailPlaceholder": "tu@email.com",
+        "passwordLabel": "Contraseña (mín. 8 caracteres)",
+        "confirmPasswordLabel": "Confirmar Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "registerButton": "Crear Cuenta",
+        "registering": "Registrando...",
+        "alreadyAccount": "¿Ya tienes una cuenta?",
+        "loginLink": "Inicia Sesión",
+        "acceptPolicies": "Acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>.",
+        "welcomeMessage": "¡Bienvenido, {name}! Registro completado.",
+        "homeAriaLabel": "Volver a la página de inicio",
+        "quote": "&ldquo;Tu creatividad merece ser protegida. Únete a nosotros y recupera el control de tu contenido.&rdquo;",
+        "quoteAuthor": "Equipo de PrivaClean",
+        "validation": {
+            "creatorNameLength": "El nombre de creador debe tener al menos 3 caracteres.",
+            "emailInvalid": "Por favor, introduce un email válido.",
+            "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
+            "passwordMismatch": "Las contraseñas no coinciden.",
+            "acceptPolicies": "Debes aceptar los términos y políticas para continuar.",
+            "registerError": "No se pudo completar el registro.",
+            "unknownError": "Ocurrió un error desconocido."
+        }
+    },
+    "DashboardSidebar": {
+        "nav": {
+            "home": "Inicio",
+            "removals": "Eliminaciones",
+            "subscription": "Suscripción",
+            "settings": "Ajustes",
+            "logout": "Cerrar Sesión"
+        }
+    },
+    "CreatorDashboard": {
+        "welcome": "¡Bienvenido, {name}!",
+        "welcomeSubtitle": "Aquí tienes un resumen de la protección de tu contenido.",
+        "viewReport": "Ver Reporte Completo",
+        "kpis": {
+            "totalRemoved": "Total Eliminado",
+            "totalRemovedDesc": "enlaces eliminados con éxito",
+            "successRate": "Tasa de Éxito",
+            "successRateDesc": "de los enlaces reportados",
+            "activeSearches": "Búsquedas Activas",
+            "activeSearchesDesc": "plataformas monitoreadas 24/7"
+        },
+        "activity": {
+            "title": "Actividad de Eliminaciones",
+            "description": "Enlaces encontrados vs. eliminados en los últimos 30 días."
+        },
+        "subscription": {
+            "title": "Suscripción",
+            "description": "Estado actual de tu plan.",
+            "plan": "Plan",
+            "status": "Estado",
+            "nextBilling": "Próximo cobro",
+            "loading": "Cargando...",
+            "manage": "Gestionar Suscripción"
+        }
+    },
+    "CreatorRemovalsPage": {
+        "title": "Gestión de Eliminaciones",
+        "subtitle": "Aquí puedes ver un listado detallado de todo el contenido encontrado y el estado de su eliminación.",
+        "searchPlaceholder": "Buscar por URL...",
+        "filterByStatus": "Filtrar por estado",
+        "table": {
+            "headers": {
+                "url": "Contenido Infractor",
+                "detectedOn": "Detectado",
+                "status": "Estado",
+                "resolvedOn": "Resuelto/Última actualización"
+            },
+            "statuses": {
+                "all": "Todos",
+                "completed": "Completado",
+                "in_process": "En Proceso",
+                "cancelled": "Cancelado"
+            },
+            "pagination": {
+                "showing": "Mostrando {start} a {end} de {total} resultados",
+                "previous": "Anterior",
+                "next": "Siguiente",
+                "page": "Página {current} de {total}"
+            },
+            "noResults": "No se encontraron resultados que coincidan con tu búsqueda."
+        }
+    },
+    "CreatorSettingsPage": {
+        "title": "Ajustes de la Cuenta",
+        "subtitle": "Gestiona tu información de perfil, seguridad y configuración de DMCA.",
+        "saveSuccess": "Ajustes guardados con éxito.",
+        "saveError": "No se pudieron guardar los ajustes.",
+        "profile": {
+            "title": "Perfil",
+            "subtitle": "Actualiza tu nombre de creador y tu email de acceso.",
+            "creatorNameLabel": "Nombre de Creador",
+            "emailLabel": "Email de la cuenta",
+            "currentPasswordLabel": "Contraseña Actual",
+            "passwordHelpText": "Para guardar los cambios, por favor introduce tu contraseña actual."
+        },
+        "security": {
+            "title": "Seguridad",
+            "subtitle": "Cambia tu contraseña aquí. Se recomienda usar una contraseña segura.",
+            "currentPasswordLabel": "Contraseña Actual",
+            "newPasswordLabel": "Nueva Contraseña",
+            "confirmPasswordLabel": "Confirmar Nueva Contraseña",
+            "updatePasswordButton": "Actualizar Contraseña",
+            "updating": "Actualizando...",
+            "success": "Contraseña actualizada con éxito.",
+            "validation": {
+                "passwordLength": "La nueva contraseña debe tener al menos 8 caracteres.",
+                "passwordMismatch": "Las contraseñas no coinciden.",
+                "updateError": "No se pudo actualizar la contraseña."
+            }
+        },
+        "dmca": {
+            "title": "Información DMCA",
+            "subtitle": "Esta información se usará para las reclamaciones DMCA. Asegúrate de que sea precisa.",
+            "fullNameLabel": "Nombre Completo Legal",
+            "contactEmailLabel": "Email de Contacto DMCA",
+            "countryLabel": "País de Residencia",
+            "workDescriptionLabel": "Descripción de tu Obra",
+            "signatureLabel": "Firma Digital (tu nombre completo)",
+            "saveButton": "Guardar Información"
+        },
+        "whitelist": {
+            "title": "Whitelist de Sitios",
+            "subtitle": "Los sitios en esta lista serán ignorados. Agrega los dominios donde tu contenido está permitido (ej: onlyfans.com).",
+            "manageButton": "Gestionar Whitelist",
+            "modalTitle": "Gestionar Whitelist",
+            "modalDescription": "Agrega o elimina los dominios que quieres excluir de las detecciones.",
+            "addDomainPlaceholder": "ejemplo.com",
+            "addButton": "Agregar",
+            "addingButton": "Agregando...",
+            "emptyList": "Tu whitelist está vacía.",
+            "removeAriaLabel": "Eliminar {domain} de la whitelist",
+            "addSuccess": "Dominio agregado a tu whitelist.",
+            "removeSuccess": "Dominio eliminado de tu whitelist.",
+            "contact": {
+                "title": "Contacto"
+            }
+        }
+    },
+    "CreatorSubscriptionPage": {
+        "title": "Mi Suscripción",
+        "subtitle": "Consulta y gestiona los detalles de tu plan y tu historial de facturación.",
+        "per_month": "/mes",
+        "alerts": {
+            "noToken": "No se encontró el token de usuario. Por favor, inicia sesión nuevamente.",
+            "paymentError": "No se pudo iniciar el pago.",
+            "connectionError": "Ocurrió un error al intentar conectar con el servidor.",
+            "cancelSuccess": "Suscripción cancelada exitosamente",
+            "cancelError": "Error al cancelar la suscripción"
+        },
+        "availablePlans": {
+            "title": "Planes Disponibles",
+            "subscribe": "Suscribirse",
+            "processing": "Procesando...",
+            "features": {
+                "basic": [
+                    "Acceso básico",
+                    "Ideal para empezar a proteger tu contenido.",
+                    "Monitoreo 24/7",
+                    "Hasta 100 eliminaciones/mes"
+                ],
+                "pro": [
+                    "Todo lo del plan Básico",
+                    "Eliminaciones ilimitadas",
+                    "Soporte prioritario 24/7",
+                    "Funciones avanzadas"
+                ]
+            }
+        },
+        "currentPlan": {
+            "title": "Mi Plan Actual",
+            "planLabel": "Plan",
+            "statusLabel": "Estado",
+            "nextBillingLabel": "Próxima Facturación",
+            "amountLabel": "Importe",
+            "cancelButton": "Cancelar Suscripción",
+            "confirmCancel": "¿Estás seguro de que deseas cancelar tu suscripción?",
+            "yesCancel": "Sí, cancelar",
+            "noKeep": "No, mantener",
+            "canceling": "Cancelando..."
+        },
+        "plans": {
+            "none": "Ninguno",
+            "basic": "Plan Basic",
+            "professional": "Plan Pro"
+        },
+        "statuses": {
+            "active": "Activa",
+            "inactive": "Inactiva",
+            "canceled": "Cancelada",
+            "past_due": "Vencida"
+        },
+        "manageButton": "Gestionar Suscripción",
+        "changePlanButton": "Cambiar de Plan",
+        "billingHistory": {
+            "title": "Historial de Facturación",
+            "subtitle": "Aquí puedes ver y descargar tus facturas anteriores.",
+            "headers": {
+                "date": "Fecha",
+                "amount": "Importe",
+                "status": "Estado",
+                "invoice": "Factura"
+            },
+            "statuses": {
+                "paid": "Pagada",
+                "open": "Pendiente"
+            },
+            "download": "Descargar"
         }
     }
 }

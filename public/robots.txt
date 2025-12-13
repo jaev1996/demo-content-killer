@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and auth areas a
+Disallow: /login
+Disallow: /register
+Disallow: /admin/
+Disallow: /creator/dashboard/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://privaclean.com/sitemap.xml

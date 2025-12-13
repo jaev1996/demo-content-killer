@@ -1,0 +1,16 @@
+{
+    "name": "PrivaClean",
+    "short_name": "PrivaClean",
+    "description": "Protección de Contenido Digital - Eliminación rápida y efectiva de contenido no autorizado",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

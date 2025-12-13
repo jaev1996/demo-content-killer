@@ -12,27 +12,31 @@ export const apiFetch = async (
     options: RequestInit = {}
 ): Promise<Response> => {
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
     const fullUrl = `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`; // Asegurarse de que la URL tenga una barra inicial si no la tiene
 
-    const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null
+    // Priorizamos el token del creador, si no, usamos el del admin.
+    // Esto permite que ambos sistemas de autenticación coexistan.
+    const creatorToken = typeof window !== "undefined" ? localStorage.getItem("creator_token") : null;
+    const adminToken = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+    const token = creatorToken || adminToken;
 
     // Clona las cabeceras existentes o crea unas nuevas
     const headers = new Headers(options.headers || {})
 
     // Añade el token de autorización si existe
     if (token) {
-        headers.append("Authorization", `Bearer ${token}`)
+        headers.append("Authorization", `Bearer ${token}`);
     }
 
     const response = await fetch(fullUrl, { ...options, headers })
 
     if (response.status === 401) {
-        // Si el token es inválido o ha expirado, eliminamos el token y redirigimos al login.
-        localStorage.removeItem("authToken")
-        window.location.href = "/" // Redirección forzada
-        throw new Error("Sesión expirada. Por favor, inicia sesión de nuevo.")
+        // Si el token es inválido, el contexto correspondiente se encargará de la redirección.
+        // Aquí solo lanzamos el error para que el contexto lo capture.
+        // No eliminamos tokens ni redirigimos desde aquí para evitar conflictos.
+        throw new Error("No autorizado o sesión expirada.");
     }
 
     return response

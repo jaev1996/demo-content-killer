@@ -50,10 +50,10 @@
             "subtitle": "Choose the plan that best suits your career. No long-term contracts, cancel anytime.",
             "basic_title": "Basic",
             "basic_desc": "Ideal for starting to protect your content.",
-            "basic_price": "$99",
+            "basic_price": "€99",
             "professional_title": "Professional",
             "professional_desc": "The complete solution for growing creators.",
-            "professional_price": "$249",
+            "professional_price": "€200",
             "agency_title": "Agency",
             "agency_desc": "Manage multiple profiles with advanced tools.",
             "agency_price": "Contact Us",
@@ -71,13 +71,11 @@
             "professional": [
                 "Everything in Basic",
                 "Unlimited removals",
-                "Forum & Telegram search",
                 "24/7 priority support"
             ],
             "agency": [
                 "Everything in Professional",
                 "Multi-profile management panel",
-                "API Integration",
                 "Dedicated account manager"
             ]
         },
@@ -181,6 +179,243 @@
                 "contact_title": "8. Contact Us",
                 "contact_p1": "If you have any questions or concerns about our Privacy Policy or your data, please do not hesitate to contact us."
             }
+        }
+    },
+    "LoginPage": {
+        "title": "Login",
+        "subtitle": "Enter your panel to manage your protection.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@email.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "loginButton": "Login",
+        "loggingIn": "Logging in...",
+        "noAccount": "Don't have an account?",
+        "registerLink": "Sign up",
+        "welcomeBack": "Welcome back!",
+        "homeAriaLabel": "Back to homepage",
+        "quote": "&ldquo;Focus on creating, we'll handle the protection. Your peace of mind is our mission.&rdquo;",
+        "quoteAuthor": "PrivaClean Team",
+        "validation": {
+            "emailInvalid": "Please enter a valid email.",
+            "passwordLength": "Password must be at least 8 characters long.",
+            "invalidCredentials": "Invalid credentials.",
+            "unknownError": "An unknown error occurred."
+        }
+    },
+    "RegisterPage": {
+        "title": "Creator Registration",
+        "subtitle": "Create your account to start protecting your content.",
+        "creatorNameLabel": "Creator Name",
+        "creatorNamePlaceholder": "Your public name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@email.com",
+        "passwordLabel": "Password (min. 8 characters)",
+        "confirmPasswordLabel": "Confirm Password",
+        "passwordPlaceholder": "••••••••",
+        "registerButton": "Create Account",
+        "registering": "Registering...",
+        "alreadyAccount": "Already have an account?",
+        "loginLink": "Login",
+        "acceptPolicies": "I accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>.",
+        "welcomeMessage": "Welcome, {name}! Registration complete.",
+        "homeAriaLabel": "Back to homepage",
+        "quote": "&ldquo;Your creativity deserves to be protected. Join us and take back control of your content.&rdquo;",
+        "quoteAuthor": "PrivaClean Team",
+        "validation": {
+            "creatorNameLength": "Creator name must be at least 3 characters long.",
+            "emailInvalid": "Please enter a valid email.",
+            "passwordLength": "Password must be at least 8 characters long.",
+            "passwordMismatch": "Passwords do not match.",
+            "acceptPolicies": "You must accept the terms and policies to continue.",
+            "registerError": "Could not complete registration.",
+            "unknownError": "An unknown error occurred."
+        }
+    },
+    "DashboardSidebar": {
+        "nav": {
+            "home": "Home",
+            "removals": "Removals",
+            "subscription": "Subscription",
+            "settings": "Settings",
+            "logout": "Logout"
+        }
+    },
+    "CreatorDashboard": {
+        "welcome": "Welcome, {name}!",
+        "welcomeSubtitle": "Here is a summary of your content protection.",
+        "viewReport": "View Full Report",
+        "kpis": {
+            "totalRemoved": "Total Removed",
+            "totalRemovedDesc": "links successfully removed",
+            "successRate": "Success Rate",
+            "successRateDesc": "of reported links",
+            "activeSearches": "Active Searches",
+            "activeSearchesDesc": "platforms monitored 24/7"
+        },
+        "activity": {
+            "title": "Removal Activity",
+            "description": "Links found vs. removed in the last 30 days."
+        },
+        "subscription": {
+            "title": "Subscription",
+            "description": "Current status of your plan.",
+            "plan": "Plan",
+            "status": "Status",
+            "nextBilling": "Next billing",
+            "loading": "Loading...",
+            "manage": "Manage Subscription"
+        }
+    },
+    "CreatorRemovalsPage": {
+        "title": "Removals Management",
+        "subtitle": "Here you can see a detailed list of all content found and its removal status.",
+        "searchPlaceholder": "Search by URL...",
+        "filterByStatus": "Filter by status",
+        "table": {
+            "headers": {
+                "url": "Infringing Content",
+                "detectedOn": "Detected",
+                "status": "Status",
+                "resolvedOn": "Resolved/Last update"
+            },
+            "statuses": {
+                "all": "All",
+                "completed": "Completed",
+                "in_process": "In Process",
+                "cancelled": "Cancelled"
+            },
+            "pagination": {
+                "showing": "Showing {start} to {end} of {total} results",
+                "previous": "Previous",
+                "next": "Next",
+                "page": "Page {current} of {total}"
+            },
+            "noResults": "No results found matching your search."
+        }
+    },
+    "CreatorSettingsPage": {
+        "title": "Account Settings",
+        "subtitle": "Manage your profile information, security, and DMCA configuration.",
+        "saveSuccess": "Settings saved successfully.",
+        "saveError": "Could not save settings.",
+        "profile": {
+            "title": "Profile",
+            "subtitle": "Update your creator name and login email.",
+            "creatorNameLabel": "Creator Name",
+            "emailLabel": "Account Email",
+            "currentPasswordLabel": "Current Password",
+            "passwordHelpText": "To save changes, please enter your current password."
+        },
+        "security": {
+            "title": "Security",
+            "subtitle": "Change your password here. Using a strong password is recommended.",
+            "currentPasswordLabel": "Current Password",
+            "newPasswordLabel": "New Password",
+            "confirmPasswordLabel": "Confirm New Password",
+            "updatePasswordButton": "Update Password",
+            "updating": "Updating...",
+            "success": "Password updated successfully.",
+            "validation": {
+                "passwordLength": "New password must be at least 8 characters long.",
+                "passwordMismatch": "Passwords do not match.",
+                "updateError": "Could not update password."
+            }
+        },
+        "dmca": {
+            "title": "DMCA Information",
+            "subtitle": "This information will be used for DMCA claims. Ensure it is accurate.",
+            "fullNameLabel": "Legal Full Name",
+            "contactEmailLabel": "DMCA Contact Email",
+            "countryLabel": "Country of Residence",
+            "workDescriptionLabel": "Description of your Work",
+            "signatureLabel": "Digital Signature (your full name)",
+            "saveButton": "Save Information"
+        },
+        "whitelist": {
+            "title": "Site Whitelist",
+            "subtitle": "Sites in this list will be ignored. Add domains where your content is allowed (e.g., onlyfans.com).",
+            "manageButton": "Manage Whitelist",
+            "modalTitle": "Manage Whitelist",
+            "modalDescription": "Add or remove domains you want to exclude from detections.",
+            "addDomainPlaceholder": "example.com",
+            "addButton": "Add",
+            "addingButton": "Adding...",
+            "emptyList": "Your whitelist is empty.",
+            "removeAriaLabel": "Remove {domain} from whitelist",
+            "addSuccess": "Domain added to your whitelist.",
+            "removeSuccess": "Domain removed from your whitelist."
+        }
+    },
+    "CreatorSubscriptionPage": {
+        "title": "My Subscription",
+        "subtitle": "View and manage your plan details and billing history.",
+        "per_month": "/month",
+        "alerts": {
+            "noToken": "User token not found. Please log in again.",
+            "paymentError": "Could not initiate payment.",
+            "connectionError": "An error occurred while trying to connect to the server.",
+            "cancelSuccess": "Subscription canceled successfully",
+            "cancelError": "Error canceling subscription"
+        },
+        "availablePlans": {
+            "title": "Available Plans",
+            "subscribe": "Subscribe",
+            "processing": "Processing...",
+            "features": {
+                "basic": [
+                    "Basic access",
+                    "Ideal for starting to protect your content.",
+                    "24/7 Monitoring",
+                    "Up to 100 removals/month"
+                ],
+                "pro": [
+                    "Everything in Basic",
+                    "Unlimited removals",
+                    "Advanced features",
+                    "24/7 priority support"
+                ]
+            }
+        },
+        "currentPlan": {
+            "title": "My Current Plan",
+            "planLabel": "Plan",
+            "statusLabel": "Status",
+            "nextBillingLabel": "Next Billing",
+            "amountLabel": "Amount",
+            "cancelButton": "Cancel Subscription",
+            "confirmCancel": "Are you sure you want to cancel your subscription?",
+            "yesCancel": "Yes, cancel",
+            "noKeep": "No, keep",
+            "canceling": "Canceling..."
+        },
+        "plans": {
+            "none": "None",
+            "basic": "Basic Plan",
+            "professional": "Pro Plan"
+        },
+        "statuses": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "canceled": "Canceled",
+            "past_due": "Past Due"
+        },
+        "manageButton": "Manage Subscription",
+        "changePlanButton": "Change Plan",
+        "billingHistory": {
+            "title": "Billing History",
+            "subtitle": "Here you can view and download your past invoices.",
+            "headers": {
+                "date": "Date",
+                "amount": "Amount",
+                "status": "Status",
+                "invoice": "Invoice"
+            },
+            "statuses": {
+                "paid": "Paid",
+                "open": "Pending"
+            },
+            "download": "Download"
         }
     }
 }

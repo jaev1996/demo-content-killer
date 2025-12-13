@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { IconSkull } from "@tabler/icons-react"
+import { IconLoader2 } from "@tabler/icons-react"
 import { useAuth } from "@/contexts/auth-context"
 
 /**
@@ -25,7 +25,7 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
             return (
                 <div className="flex h-screen w-full items-center justify-center bg-background">
                     <div className="flex flex-col items-center gap-4">
-                        <IconSkull className="size-12 animate-pulse" />
+                        <IconLoader2 className="size-12 animate-spin text-primary" />
                         <p className="text-muted-foreground">Cargando...</p>
                     </div>
                 </div>

@@ -242,7 +242,7 @@ function ProfilesPage() {
                 const hostname = new URL(url.startsWith('http') ? url : `https://${url}`).hostname;
                 // Quitar 'www.' si existe
                 return hostname.replace(/^www\./, '');
-            } catch (e) {
+            } catch {
                 return null; // URL inválida
             }
         };

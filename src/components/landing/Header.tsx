@@ -3,13 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { IconShield, IconMenu2, IconX } from "@tabler/icons-react";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useCreatorAuth } from "@/contexts/creator-auth-context";
+
+import Image from "next/image";
 
 export function Header() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const t = useTranslations('LandingPage.nav');
+    const { creator, isLoading } = useCreatorAuth();
 
     React.useEffect(() => {
         const handleResize = () => {
@@ -26,14 +30,22 @@ export function Header() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     <div className="flex items-center">
-                        <IconShield className="text-red-600 size-8" />
+                        <Image src="/privaclean.svg" alt="PrivaClean Logo" width={64} height={64} className="size-16" />
                         <span className="ml-2 text-2xl font-bold text-foreground">PrivaClean</span>
                     </div>
                     <nav className="hidden md:flex items-center space-x-8">
                         <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#services">{t('services')}</a>
                         <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#pricing">{t('pricing')}</a>
                         <a className="text-muted-foreground hover:text-red-600 transition-colors" href="#faq">{t('faq')}</a>
-                        <Link className="text-muted-foreground hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
+                        {isLoading ? (
+                            <div className="h-5 w-24 bg-muted/50 animate-pulse rounded" />
+                        ) : creator ? (
+                            <Link className="text-muted-foreground hover:text-red-600 transition-colors font-medium" href="/creator/dashboard">
+                                {creator.creatorName || "Dashboard"}
+                            </Link>
+                        ) : (
+                            <Link className="text-muted-foreground hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
+                        )}
                         <div className="border-l border-border h-6"></div>
                         <ThemeToggle />
                         <LanguageSwitcher />
@@ -51,7 +63,15 @@ export function Header() {
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#services">{t('services')}</a>
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#pricing">{t('pricing')}</a>
                         <a className="block text-white hover:text-red-600 transition-colors py-2" href="#faq">{t('faq')}</a>
-                        <Link className="block text-white hover:text-red-600 transition-colors py-2" href="/login">{t('clientAccess')}</Link>
+                        {isLoading ? (
+                            <div className="h-10 w-full bg-muted/50 animate-pulse rounded my-2" />
+                        ) : creator ? (
+                            <Link className="block text-white hover:text-red-600 transition-colors py-2 font-medium" href="/creator/dashboard">
+                                {creator.creatorName || "Dashboard"}
+                            </Link>
+                        ) : (
+                            <Link className="block text-white hover:text-red-600 transition-colors py-2" href="/login">{t('clientAccess')}</Link>
+                        )}
                         <div className="border-t border-gray-800 pt-4 mt-2 flex items-center justify-between">
                             <LanguageSwitcher />
                             <ThemeToggle />

@@ -12,6 +12,7 @@ import { TrustSeparator } from "@/components/landing/TrustSeparator";
 import { TrustStatsSection } from "@/components/landing/TrustStatsSection";
 import { FaqSection } from "@/components/landing/FaqSection";
 import { Footer } from "@/components/landing/Footer";
+//import { WhatsAppButton } from "@/components/WhatsAppButton";
 
 export default function LandingPage() {
   const t = useTranslations("LandingPage.earnings");
@@ -41,6 +42,10 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+
+      {/* WhatsApp Support Button 
+      <WhatsAppButton phoneNumber="+1234567890" />
+      */}
     </div >
   )
 }

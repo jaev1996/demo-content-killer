@@ -1,8 +1,7 @@
 "use client"
 
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import { type Icon } from "@tabler/icons-react"
 
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -24,6 +23,7 @@ export function NavMain({
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
+          {/* 
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="Quick Create"
@@ -40,7 +40,8 @@ export function NavMain({
               <IconMail />
               <span className="sr-only">Inbox</span>
             </Button>
-          </SidebarMenuItem>
+          </SidebarMenuItem> 
+          */}
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item) => (

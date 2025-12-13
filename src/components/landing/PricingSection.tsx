@@ -45,7 +45,7 @@ export function PricingSection() {
                         <p className="text-gray-400 mb-6 flex-grow">{t('pricing.professional_desc')}</p>
                         <p className="text-4xl font-bold text-white mb-6">{t('pricing.professional_price')}<span className="text-lg font-normal text-gray-400">{t('pricing.per_month')}</span></p>
                         <ul className="space-y-4 text-gray-400 mb-8">
-                            {['professional.0', 'professional.1', 'professional.2', 'professional.3'].map(key => (
+                            {['professional.0', 'professional.1', 'professional.2'].map(key => (
                                 <li key={key} className="flex items-center gap-3"><IconCheck className="size-5 text-red-600" /> {t(`features.${key}`)}</li>
                             ))}
                         </ul>
@@ -59,7 +59,7 @@ export function PricingSection() {
                         <p className="text-gray-400 mb-6 flex-grow">{t('pricing.agency_desc')}</p>
                         <p className="text-4xl font-bold text-white mb-6">{t('pricing.agency_price')}</p>
                         <ul className="space-y-4 text-gray-400 mb-8">
-                            {['agency.0', 'agency.1', 'agency.2', 'agency.3'].map(key => (
+                            {['agency.0', 'agency.1', 'agency.2'].map(key => (
                                 <li key={key} className="flex items-center gap-3"><IconCheck className="size-5 text-red-600" /> {t(`features.${key}`)}</li>
                             ))}
                         </ul>
