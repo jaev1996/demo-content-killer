@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import {
   IconCamera,
-  IconSkull,
   IconChartBar,
   IconDashboard,
   IconDatabase,
@@ -18,6 +18,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconTrashX,
 } from "@tabler/icons-react"
 
 //import { NavDocuments } from "@/components/nav-documents"
@@ -35,31 +36,31 @@ import {
 } from "@/components/ui/sidebar"
 
 const navMainItems = [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "Buscar Contenido",
-      url: "/search", // Esta opción podría iniciar una búsqueda
-      icon: IconSearch,
-    },
-    {
-      title: "Reclamos Pendientes",
-      url: "/takedowns", // La lista de reclamos para aprobar
-      icon: IconListCheck,
-    },
-    {
-      title: "Historial de Reclamos",
-      url: "/history", // Historial de reclamos enviados y resueltos
-      icon: IconChartBar,
-    },
-    {
-      title: "Perfiles de Cliente",
-      url: "/profiles", // Donde el cliente gestiona la whitelist
-      icon: IconUserCircle,
-    },
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: IconDashboard,
+  },
+  {
+    title: "Buscar Contenido",
+    url: "/search", // Esta opción podría iniciar una búsqueda
+    icon: IconSearch,
+  },
+  {
+    title: "Reclamos Pendientes",
+    url: "/takedowns", // La lista de reclamos para aprobar
+    icon: IconListCheck,
+  },
+  {
+    title: "Historial de Reclamos",
+    url: "/history", // Historial de reclamos enviados y resueltos
+    icon: IconChartBar,
+  },
+  {
+    title: "Perfiles de Cliente",
+    url: "/profiles", // Donde el cliente gestiona la whitelist
+    icon: IconUserCircle,
+  },
 ]
 const data = {
   // Opciones secundarias para la configuración y ayuda
@@ -153,11 +154,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/admin/users",
         icon: IconUsers,
       })
+      items.push({
+        title: "Gestión de Eliminaciones",
+        url: "/admin/removals",
+        icon: IconTrashX,
+      })
     }
     return items
   }, [user])
 
-    return (
+  return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
@@ -167,8 +173,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconSkull className="!size-5" />
-                <span className="text-base font-semibold">Demo Content Killer.</span>
+                <Image src="/privaclean.svg" alt="PrivaClean" width={24} height={24} className="size-6" />
+                <span className="text-base font-semibold">PrivaClean Admin Panel</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+
 import {
     Table,
     TableBody,
@@ -17,7 +17,7 @@ import { IconChevronLeft, IconChevronRight, IconExternalLink } from "@tabler/ico
 import { cn } from "@/lib/utils"
 
 // TODO: Mover estos tipos a un archivo central de tipos (ej: src/types/index.ts)
-export type RemovalStatus = "completed" | "in_process" | "cancelled"
+export type RemovalStatus = "completed" | "in_process" | "cancelled" | "pending" | "in_progress"
 
 export interface RemovalItem {
     id: string
@@ -29,25 +29,26 @@ export interface RemovalItem {
 
 interface RemovalsTableProps {
     items: RemovalItem[]
+    page: number
+    totalPages: number
+    total: number
+    onPageChange: (page: number) => void
 }
 
 // Custom badge styling for each status - works in both light and dark mode
 const statusStyles: Record<RemovalStatus, string> = {
     completed: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800",
     in_process: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800",
+    in_progress: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-800",
+    pending: "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-400 dark:border-yellow-800",
     cancelled: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-gray-700",
 }
 
-const ITEMS_PER_PAGE = 10
-
-export function RemovalsTable({ items }: RemovalsTableProps) {
+export function RemovalsTable({ items, page, totalPages, total, onPageChange }: RemovalsTableProps) {
     const t = useTranslations("CreatorRemovalsPage.table")
-    const [currentPage, setCurrentPage] = useState(1)
 
-    const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE)
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    const endIndex = startIndex + ITEMS_PER_PAGE
-    const currentItems = items.slice(startIndex, endIndex)
+    // Logic removed: client-side slicing. We now use 'items' directly as they are the current page items.
+    // Logic removed: internal currentPage state.
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return "—"
@@ -59,19 +60,24 @@ export function RemovalsTable({ items }: RemovalsTableProps) {
     }
 
     const handlePreviousPage = () => {
-        setCurrentPage(prev => Math.max(prev - 1, 1))
+        onPageChange(Math.max(page - 1, 1))
     }
 
     const handleNextPage = () => {
-        setCurrentPage(prev => Math.min(prev + 1, totalPages))
+        onPageChange(Math.min(page + 1, totalPages))
     }
+
+    // Determine start/end for display purposes
+    const ITEMS_PER_PAGE = 10 // Assuming 10 from API or passed prop, keeping standardized
+    const startIndex = (page - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + items.length
 
     return (
         <div className="space-y-4">
             {/* Vista de tarjetas para móvil */}
             <div className="md:hidden space-y-3">
-                {currentItems.length > 0 ? (
-                    currentItems.map((item) => (
+                {items.length > 0 ? (
+                    items.map((item) => (
                         <Card key={item.id} className="p-4">
                             <div className="space-y-3">
                                 {/* URL */}
@@ -139,8 +145,8 @@ export function RemovalsTable({ items }: RemovalsTableProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {currentItems.length > 0 ? (
-                            currentItems.map((item) => (
+                        {items.length > 0 ? (
+                            items.map((item) => (
                                 <TableRow key={item.id}>
                                     <TableCell className="max-w-[400px] font-medium">
                                         <a
@@ -179,8 +185,8 @@ export function RemovalsTable({ items }: RemovalsTableProps) {
                     <div className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1">
                         {t("pagination.showing", {
                             start: startIndex + 1,
-                            end: Math.min(endIndex, items.length),
-                            total: items.length
+                            end: endIndex,
+                            total: total
                         })}
                     </div>
                     <div className="flex items-center gap-2 order-1 sm:order-2">
@@ -188,20 +194,20 @@ export function RemovalsTable({ items }: RemovalsTableProps) {
                             variant="outline"
                             size="sm"
                             onClick={handlePreviousPage}
-                            disabled={currentPage === 1}
+                            disabled={page === 1}
                             className="h-8"
                         >
                             <IconChevronLeft className="h-4 w-4 sm:mr-1" />
                             <span className="hidden sm:inline">{t("pagination.previous")}</span>
                         </Button>
                         <div className="text-xs sm:text-sm font-medium px-2">
-                            {currentPage} / {totalPages}
+                            {page} / {totalPages}
                         </div>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={handleNextPage}
-                            disabled={currentPage === totalPages}
+                            disabled={page === totalPages}
                             className="h-8"
                         >
                             <span className="hidden sm:inline">{t("pagination.next")}</span>

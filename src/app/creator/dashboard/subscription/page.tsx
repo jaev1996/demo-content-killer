@@ -12,17 +12,9 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { IconFileText, IconCheck } from "@tabler/icons-react"
+import { IconCheck, IconShieldCheck, IconRobot, IconBolt, IconShieldOff, IconAlertTriangle, IconX } from "@tabler/icons-react"
 
 // Stripe Price IDs
 const STRIPE_PRICE_IDS = {
@@ -57,13 +49,7 @@ function CreatorSubscriptionPage() {
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
     const [cancelLoading, setCancelLoading] = useState(false);
 
-    // Mock de datos para el historial de facturación
-    const billingHistory = [
-        { id: "inv_1", date: "2024-07-25", amount: 249.0, status: "paid", url: "#" },
-        { id: "inv_2", date: "2024-06-25", amount: 249.0, status: "paid", url: "#" },
-        { id: "inv_3_failed", date: "2024-05-25", amount: 249.0, status: "open", url: "#" },
-        { id: "inv_4", date: "2024-04-25", amount: 249.0, status: "paid", url: "#" },
-    ]
+
 
     const { planName, planStatus, nextBillingDate, planAmount } = useMemo(() => {
         if (!creator?.stripeSubscriptionId) {
@@ -199,7 +185,7 @@ function CreatorSubscriptionPage() {
                                 </CardContent>
                                 <CardFooter>
                                     <Button
-                                        className="w-full"
+                                        className="w-full bg-red-600 hover:bg-red-700 text-white shadow-md hover:shadow-red-500/20 transition-all font-semibold"
                                         onClick={() => handleSubscribe(plan.priceId)}
                                         disabled={loading}
                                     >
@@ -237,23 +223,42 @@ function CreatorSubscriptionPage() {
                             <span className="font-semibold">{planAmount} {t("per_month")}</span>
                         </div>
                     </CardContent>
-                    <CardFooter className="flex flex-col gap-2">
+                    <CardFooter className="flex flex-col gap-3 pt-2">
                         {hasActiveSubscription && !showCancelConfirm && (
-                            <Button
-                                variant="default"
-                                className="w-full bg-accent hover:bg-accent/80 hover:text-accent-foreground hover:scale-105"
-                                onClick={() => setShowCancelConfirm(true)}
-                            >
-                                {t('currentPlan.cancelButton')}
-                            </Button>
+                            <>
+                                <div className="w-full bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30 rounded-lg p-3 flex items-center justify-center gap-2">
+                                    <IconShieldCheck className="h-5 w-5 text-green-600 dark:text-green-500" />
+                                    <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                                        Sistema de Protección Activo
+                                    </span>
+                                </div>
+
+                                {/* 
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-xs text-muted-foreground hover:text-destructive w-full"
+                                    onClick={() => setShowCancelConfirm(true)}
+                                >
+                                    {t('currentPlan.cancelButton')}
+                                </Button> 
+                                */}
+                            </>
                         )}
                         {showCancelConfirm && (
-                            <div className="w-full space-y-2">
-                                <p className="text-sm text-center">{t('currentPlan.confirmCancel')}</p>
-                                <div className="flex gap-2">
+                            <div className="w-full space-y-3 bg-muted/30 p-4 rounded-lg border border-dashed">
+                                <div className="flex items-center gap-2 text-destructive">
+                                    <IconAlertTriangle className="h-4 w-4" />
+                                    <p className="text-sm font-medium">{t('currentPlan.confirmCancel')}</p>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Al cancelar, perderás protección inmeditamente al finalizar el periodo actual.
+                                </p>
+                                <div className="flex gap-2 pt-2">
                                     <Button
-                                        variant="default"
-                                        className="flex-1 bg-accent hover:bg-accent/80 hover:text-accent-foreground"
+                                        variant="destructive"
+                                        size="sm"
+                                        className="flex-1"
                                         onClick={handleCancelSubscription}
                                         disabled={cancelLoading}
                                     >
@@ -261,6 +266,7 @@ function CreatorSubscriptionPage() {
                                     </Button>
                                     <Button
                                         variant="outline"
+                                        size="sm"
                                         className="flex-1"
                                         onClick={() => setShowCancelConfirm(false)}
                                     >
@@ -272,43 +278,137 @@ function CreatorSubscriptionPage() {
                     </CardFooter>
                 </Card>
 
-                <Card className="md:col-span-3">
+                <Card className="md:col-span-3 flex flex-col">
                     <CardHeader>
-                        <CardTitle>{t("billingHistory.title")}</CardTitle>
-                        <CardDescription>{t("billingHistory.subtitle")}</CardDescription>
+                        <CardTitle className="flex items-center gap-2">
+                            {hasActiveSubscription ? (
+                                <>
+                                    <IconShieldCheck className="w-6 h-6 text-green-500" />
+                                    Tu Escudo de Protección
+                                </>
+                            ) : (
+                                <>
+                                    <IconShieldOff className="w-6 h-6 text-muted-foreground" />
+                                    Protección Inactiva
+                                </>
+                            )}
+                        </CardTitle>
+                        <CardDescription>
+                            {hasActiveSubscription
+                                ? "Mantienes activo el nivel más alto de seguridad para tu contenido."
+                                : "Actualmente tu contenido es vulnerable a filtraciones y copias no autorizadas."}
+                        </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t("billingHistory.headers.date")}</TableHead>
-                                    <TableHead>{t("billingHistory.headers.amount")}</TableHead>
-                                    <TableHead>{t("billingHistory.headers.status")}</TableHead>
-                                    <TableHead className="text-right">{t("billingHistory.headers.invoice")}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {billingHistory.map((invoice) => (
-                                    <TableRow key={invoice.id}>
-                                        <TableCell>{new Date(invoice.date).toLocaleDateString("es-ES")}</TableCell>
-                                        <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={invoice.status === "paid" ? "secondary" : "destructive"}>
-                                                {t(`billingHistory.statuses.${invoice.status}`)}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button variant="outline" size="sm" asChild>
-                                                <a href={invoice.url} target="_blank" rel="noopener noreferrer">
-                                                    <IconFileText className="mr-2 size-4" />
-                                                    {t("billingHistory.download")}
-                                                </a>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                    <CardContent className="flex-1 grid gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {/* Monitoring Feature */}
+                            <div className={`flex flex-col items-center p-4 border rounded-xl text-center gap-2 transition-colors ${hasActiveSubscription ? "bg-muted/30 hover:bg-muted/50" : "bg-muted/10 opacity-70 grayscale"}`}>
+                                <div className={`p-2.5 rounded-full ${hasActiveSubscription ? "bg-green-100 dark:bg-green-900/20" : "bg-muted"}`}>
+                                    {hasActiveSubscription ? (
+                                        <IconCheck className="w-5 h-5 text-green-600 dark:text-green-500" />
+                                    ) : (
+                                        <IconX className="w-5 h-5 text-muted-foreground" />
+                                    )}
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="font-semibold text-sm">Monitorización</p>
+                                    <p className="text-xs text-muted-foreground">{hasActiveSubscription ? "24/7 Activa" : "Inactiva"}</p>
+                                </div>
+                            </div>
+
+                            {/* AI Scan Feature */}
+                            <div className={`flex flex-col items-center p-4 border rounded-xl text-center gap-2 transition-colors ${hasActiveSubscription ? "bg-muted/30 hover:bg-muted/50" : "bg-muted/10 opacity-70 grayscale"}`}>
+                                <div className={`p-2.5 rounded-full ${hasActiveSubscription ? "bg-blue-100 dark:bg-blue-900/20" : "bg-muted"}`}>
+                                    {hasActiveSubscription ? (
+                                        <IconRobot className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+                                    ) : (
+                                        <IconX className="w-5 h-5 text-muted-foreground" />
+                                    )}
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="font-semibold text-sm">IA Scan</p>
+                                    <p className="text-xs text-muted-foreground">{hasActiveSubscription ? "Optimizado" : "Desactivado"}</p>
+                                </div>
+                            </div>
+
+                            {/* Removals Feature */}
+                            <div className={`flex flex-col items-center p-4 border rounded-xl text-center gap-2 transition-colors ${hasActiveSubscription ? "bg-muted/30 hover:bg-muted/50" : "bg-muted/10 opacity-70 grayscale"}`}>
+                                <div className={`p-2.5 rounded-full ${hasActiveSubscription ? "bg-purple-100 dark:bg-purple-900/20" : "bg-muted"}`}>
+                                    {hasActiveSubscription ? (
+                                        <IconBolt className="w-5 h-5 text-purple-600 dark:text-purple-500" />
+                                    ) : (
+                                        <IconX className="w-5 h-5 text-muted-foreground" />
+                                    )}
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="font-semibold text-sm">Remociones</p>
+                                    <p className="text-xs text-muted-foreground">{hasActiveSubscription ? "Ilimitadas" : "No disponible"}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={`rounded-xl border p-5 ${hasActiveSubscription ? "bg-card/50" : "bg-red-50/50 dark:bg-red-950/10 border-red-200/50 dark:border-red-900/30"}`}>
+                            <h4 className="font-medium text-sm mb-4 flex items-center gap-2">
+                                {hasActiveSubscription ? (
+                                    <IconShieldCheck className="w-4 h-4 text-primary" />
+                                ) : (
+                                    <IconAlertTriangle className="w-4 h-4 text-red-500" />
+                                )}
+                                Estatus de Cobertura
+                            </h4>
+                            <div className="space-y-3">
+                                {/* Search Engines */}
+                                <div className={`flex items-center justify-between text-sm p-3 rounded-lg border ${hasActiveSubscription ? "bg-background/50" : "bg-background/80"}`}>
+                                    <span className="text-muted-foreground">Motores de Búsqueda</span>
+                                    {hasActiveSubscription ? (
+                                        <div className="flex items-center gap-2">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                            </span>
+                                            <span className="font-medium text-green-600 dark:text-green-400 text-xs">Monitoreando</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-red-400"></div>
+                                            <span className="font-medium text-red-600 dark:text-red-400 text-xs">Sin protección</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Social Networks */}
+                                <div className={`flex items-center justify-between text-sm p-3 rounded-lg border ${hasActiveSubscription ? "bg-background/50" : "bg-background/80"}`}>
+                                    <span className="text-muted-foreground">Redes Sociales</span>
+                                    {hasActiveSubscription ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                                            <span className="font-medium text-green-600 dark:text-green-400 text-xs">Protegido</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-red-400"></div>
+                                            <span className="font-medium text-red-600 dark:text-red-400 text-xs">Vulnerable</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Legal Support */}
+                                <div className={`flex items-center justify-between text-sm p-3 rounded-lg border ${hasActiveSubscription ? "bg-background/50" : "bg-background/80"}`}>
+                                    <span className="text-muted-foreground">Soporte Legal</span>
+                                    {hasActiveSubscription ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                                            <span className="font-medium text-green-600 dark:text-green-400 text-xs">Disponible</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-2 rounded-full bg-muted-foreground/30"></div>
+                                            <span className="font-medium text-muted-foreground text-xs">No incluido</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

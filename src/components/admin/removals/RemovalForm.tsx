@@ -10,10 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api"
 import type { ContentRemoval, CreateRemovalData, ContentType, RemovalStatus } from "@/types/removals"
+import { IconLoader2 } from "@tabler/icons-react"
+import { Badge } from "@/components/ui/badge"
 
 interface RemovalFormProps {
     mode: 'create' | 'edit'
     initialData?: ContentRemoval
+    removalId?: string
     onSuccess?: () => void
     onCancel?: () => void
 }
@@ -40,7 +43,20 @@ const PLATFORMS = [
 const CONTENT_TYPES: ContentType[] = ['image', 'video', 'post']
 const STATUSES: RemovalStatus[] = ['pending', 'in_progress', 'completed', 'cancelled']
 
-export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalFormProps) {
+const STATUS_LABELS = {
+    pending: 'Pendiente',
+    in_progress: 'En Proceso',
+    completed: 'Completado',
+    cancelled: 'Cancelado'
+}
+
+const CONTENT_TYPE_LABELS = {
+    image: 'Imagen',
+    video: 'Video',
+    post: 'Publicación'
+}
+
+export function RemovalForm({ mode, initialData, removalId, onSuccess, onCancel }: RemovalFormProps) {
     const [loading, setLoading] = useState(false)
     const [creators, setCreators] = useState<Creator[]>([])
     const [loadingCreators, setLoadingCreators] = useState(true)
@@ -82,14 +98,17 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
             // Validaciones básicas
             if (!formData.creatorId) {
                 toast.error('Debe seleccionar un creador')
+                setLoading(false)
                 return
             }
             if (!formData.platform) {
                 toast.error('Debe seleccionar una plataforma')
+                setLoading(false)
                 return
             }
             if (!formData.contentUrl) {
                 toast.error('Debe ingresar la URL del contenido')
+                setLoading(false)
                 return
             }
 
@@ -109,14 +128,23 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
                 toast.success('Eliminación creada exitosamente')
             } else {
                 // Actualizar eliminación existente
+                if (!removalId && !initialData?.id) {
+                    throw new Error('No se puede actualizar sin ID de eliminación')
+                }
+
                 const updateData = {
                     status: formData.status,
                     adminNotes: formData.adminNotes,
                     description: formData.description,
+                    contentType: formData.contentType,
                     resolvedAt: formData.status === 'completed' ? new Date().toISOString() : null
                 }
 
-                const response = await apiFetch(`/api/admin/removals/${initialData?.id}`, {
+                const idToUse = removalId || initialData?.id
+                console.log('Updating removal with ID:', idToUse)
+                console.log('Update data:', updateData)
+
+                const response = await apiFetch(`/api/admin/removals/${idToUse}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updateData)
@@ -132,6 +160,7 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
 
             onSuccess?.()
         } catch (error) {
+            console.error('Form submission error:', error)
             toast.error(error instanceof Error ? error.message : 'Error desconocido')
         } finally {
             setLoading(false)
@@ -142,62 +171,97 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
         <form onSubmit={handleSubmit}>
             <Card>
                 <CardHeader>
-                    <CardTitle>
-                        {mode === 'create' ? 'Nueva Eliminación' : 'Editar Eliminación'}
-                    </CardTitle>
-                    <CardDescription>
-                        {mode === 'create'
-                            ? 'Registra una nueva solicitud de eliminación de contenido'
-                            : 'Actualiza el estado y detalles de la eliminación'
-                        }
-                    </CardDescription>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <CardTitle className="text-xl">
+                                {mode === 'create' ? 'Nueva Eliminación' : 'Editar Eliminación'}
+                            </CardTitle>
+                            <CardDescription>
+                                {mode === 'create'
+                                    ? 'Registra una nueva solicitud de eliminación de contenido'
+                                    : 'Actualiza el estado y detalles de la eliminación'
+                                }
+                            </CardDescription>
+                        </div>
+                        {mode === 'edit' && initialData && (
+                            <Badge variant={
+                                formData.status === 'completed' ? 'default' :
+                                    formData.status === 'in_progress' ? 'secondary' :
+                                        formData.status === 'cancelled' ? 'destructive' : 'outline'
+                            }>
+                                {STATUS_LABELS[formData.status]}
+                            </Badge>
+                        )}
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {/* Creador */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="creatorId">Creador *</Label>
-                        <Select
-                            value={formData.creatorId}
-                            onValueChange={(value) => setFormData({ ...formData, creatorId: value })}
-                            disabled={mode === 'edit' || loadingCreators}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder={loadingCreators ? "Cargando..." : "Selecciona un creador"} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {creators.map((creator) => (
-                                    <SelectItem key={creator.id} value={creator.id}>
-                                        {creator.creatorName} ({creator.email})
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {/* Información del Creador y Plataforma */}
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        {/* Creador */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="creatorId">
+                                Creador *
+                                {mode === 'edit' && <span className="text-xs text-muted-foreground ml-2">(No editable)</span>}
+                            </Label>
+                            <Select
+                                value={formData.creatorId}
+                                onValueChange={(value) => setFormData({ ...formData, creatorId: value })}
+                                disabled={mode === 'edit' || loadingCreators}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={loadingCreators ? "Cargando..." : "Selecciona un creador"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {loadingCreators ? (
+                                        <div className="flex items-center justify-center p-4">
+                                            <IconLoader2 className="w-4 h-4 animate-spin" />
+                                        </div>
+                                    ) : creators.length === 0 ? (
+                                        <div className="p-4 text-sm text-muted-foreground text-center">
+                                            No hay creadores disponibles
+                                        </div>
+                                    ) : (
+                                        creators.map((creator) => (
+                                            <SelectItem key={creator.id} value={creator.id}>
+                                                {creator.creatorName} ({creator.email})
+                                            </SelectItem>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    {/* Plataforma */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="platform">Plataforma *</Label>
-                        <Select
-                            value={formData.platform}
-                            onValueChange={(value) => setFormData({ ...formData, platform: value })}
-                            disabled={mode === 'edit'}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecciona plataforma" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {PLATFORMS.map((platform) => (
-                                    <SelectItem key={platform} value={platform}>
-                                        {platform}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        {/* Plataforma */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="platform">
+                                Plataforma *
+                                {mode === 'edit' && <span className="text-xs text-muted-foreground ml-2">(No editable)</span>}
+                            </Label>
+                            <Select
+                                value={formData.platform}
+                                onValueChange={(value) => setFormData({ ...formData, platform: value })}
+                                disabled={mode === 'edit'}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona plataforma" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {PLATFORMS.map((platform) => (
+                                        <SelectItem key={platform} value={platform}>
+                                            {platform}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
                     {/* URL del Contenido */}
                     <div className="grid gap-2">
-                        <Label htmlFor="contentUrl">URL del Contenido *</Label>
+                        <Label htmlFor="contentUrl">
+                            URL del Contenido *
+                            {mode === 'edit' && <span className="text-xs text-muted-foreground ml-2">(No editable)</span>}
+                        </Label>
                         <Input
                             id="contentUrl"
                             type="url"
@@ -206,49 +270,51 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
                             placeholder="https://example.com/leaked/content"
                             disabled={mode === 'edit'}
                             required
+                            className="font-mono text-sm"
                         />
                     </div>
 
-                    {/* Tipo de Contenido */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="contentType">Tipo de Contenido</Label>
-                        <Select
-                            value={formData.contentType}
-                            onValueChange={(value) => setFormData({ ...formData, contentType: value as ContentType })}
-                        >
-                            <SelectTrigger>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {CONTENT_TYPES.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        {type === 'image' ? 'Imagen' : type === 'video' ? 'Video' : 'Publicación'}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {/* Tipo de Contenido y Estado */}
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        {/* Tipo de Contenido */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="contentType">Tipo de Contenido</Label>
+                            <Select
+                                value={formData.contentType}
+                                onValueChange={(value) => setFormData({ ...formData, contentType: value as ContentType })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CONTENT_TYPES.map((type) => (
+                                        <SelectItem key={type} value={type}>
+                                            {CONTENT_TYPE_LABELS[type]}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    {/* Estado */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="status">Estado *</Label>
-                        <Select
-                            value={formData.status}
-                            onValueChange={(value) => setFormData({ ...formData, status: value as RemovalStatus })}
-                        >
-                            <SelectTrigger>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {STATUSES.map((status) => (
-                                    <SelectItem key={status} value={status}>
-                                        {status === 'pending' ? 'Pendiente' :
-                                            status === 'in_progress' ? 'En Proceso' :
-                                                status === 'completed' ? 'Completado' : 'Cancelado'}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        {/* Estado */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="status">Estado *</Label>
+                            <Select
+                                value={formData.status}
+                                onValueChange={(value) => setFormData({ ...formData, status: value as RemovalStatus })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {STATUSES.map((status) => (
+                                        <SelectItem key={status} value={status}>
+                                            {STATUS_LABELS[status]}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
                     {/* Descripción */}
@@ -284,22 +350,24 @@ export function RemovalForm({ mode, initialData, onSuccess, onCancel }: RemovalF
                     </div>
 
                     {/* Botones */}
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex flex-col gap-3 pt-4 sm:flex-row">
                         {onCancel && (
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={onCancel}
                                 disabled={loading}
+                                className="w-full sm:w-auto"
                             >
                                 Cancelar
                             </Button>
                         )}
                         <Button
                             type="submit"
-                            disabled={loading}
-                            className="flex-1"
+                            disabled={loading || loadingCreators}
+                            className="w-full sm:flex-1"
                         >
+                            {loading && <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />}
                             {loading ? 'Guardando...' : mode === 'create' ? 'Crear Eliminación' : 'Actualizar'}
                         </Button>
                     </div>

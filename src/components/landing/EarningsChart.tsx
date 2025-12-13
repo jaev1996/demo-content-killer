@@ -133,7 +133,7 @@ export function EarningsChart() {
                         <text x="340" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXEnd')}</text>
                     </svg>
                 </div>
-                <div className="flex justify-center md:justify-start gap-6 mt-4">
+                <div className="flex justify-center md:justify-start gap-6 mt-4 mb-8">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
                         <span className="text-sm text-muted-foreground font-medium">{t('withoutLabel')}</span>
@@ -143,7 +143,64 @@ export function EarningsChart() {
                         <span className="text-sm text-foreground font-bold">{t('withLabel')}</span>
                     </div>
                 </div>
+
+                {/* Revenue Table - OnlyFans style simulation */}
+                <RevenueTable />
             </div>
         </div>
     );
+}
+
+function RevenueTable() {
+    const data = [
+        { date: "JUN 15, 2024", desc: "Recuperación de Contenido Filtrado", status: "PROCESADO", amount: "$4,350.00" },
+        { date: "MAY 30, 2024", desc: "Regalías de Enlaces DMCA", status: "PROCESADO", amount: "$3,800.00" },
+        { date: "MAY 15, 2024", desc: "Recuperación de Tráfico Orgánico", status: "PROCESADO", amount: "$2,100.00" },
+        { date: "ABR 01, 2024", desc: "Inicio de Protección", status: "ACTIVO", amount: "$0.00" },
+    ];
+
+    return (
+        <div className="mt-8 border-t border-border pt-6">
+            <h3 className="text-lg font-semibold mb-4 text-left">Detalle de Ingresos Recuperados</h3>
+            <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-muted-foreground uppercase bg-muted/30">
+                        <tr>
+                            <th className="px-4 py-3 rounded-l-lg">Fecha</th>
+                            <th className="px-4 py-3">Descripción</th>
+                            <th className="px-4 py-3">Estado</th>
+                            <th className="px-4 py-3 text-right rounded-r-lg">Monto Neto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((item, index) => (
+                            <motion.tr
+                                key={index}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 + 0.5 }}
+                                viewport={{ once: true }}
+                                className="border-b border-border hover:bg-muted/10 transition-colors"
+                            >
+                                <td className="px-4 py-4 font-medium">{item.date}</td>
+                                <td className="px-4 py-4">{item.desc}</td>
+                                <td className="px-4 py-4">
+                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.status === 'PROCESADO' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                                        {item.status}
+                                    </span>
+                                </td>
+                                <td className="px-4 py-4 text-right font-bold text-foreground">{item.amount}</td>
+                            </motion.tr>
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colSpan={3} className="px-4 py-4 text-right font-medium text-muted-foreground">Total Recuperado Estimado</td>
+                            <td className="px-4 py-4 text-right font-bold text-xl text-green-500">$10,250.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    )
 }

@@ -44,7 +44,7 @@ export function Header() {
                                 {creator.creatorName || "Dashboard"}
                             </Link>
                         ) : (
-                            <Link className="text-muted-foreground hover:text-red-600 transition-colors" href="/creators/login">{t('clientAccess')}</Link>
+                            <Link className="text-muted-foreground hover:text-red-600 transition-colors" href="/login">{t('clientAccess')}</Link>
                         )}
                         <div className="border-l border-border h-6"></div>
                         <ThemeToggle />
@@ -70,7 +70,7 @@ export function Header() {
                                 {creator.creatorName || "Dashboard"}
                             </Link>
                         ) : (
-                            <Link className="block text-white hover:text-red-600 transition-colors py-2" href="/creators/login">{t('clientAccess')}</Link>
+                            <Link className="block text-white hover:text-red-600 transition-colors py-2" href="/login">{t('clientAccess')}</Link>
                         )}
                         <div className="border-t border-gray-800 pt-4 mt-2 flex items-center justify-between">
                             <LanguageSwitcher />
