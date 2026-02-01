@@ -88,7 +88,9 @@
             "stat2_value": "<24h",
             "stat2_desc": "Average response time",
             "stat3_value": "~25%",
-            "stat3_desc": "Reported revenue increase"
+            "stat3_desc": "Reported revenue increase",
+            "platforms_title": "FULL COVERAGE",
+            "platforms_subtitle": "We remove leaked content from the most important platforms"
         },
         "faq": {
             "title": "Frequently Asked Questions",

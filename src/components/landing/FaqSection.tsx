@@ -12,7 +12,9 @@ export function FaqSection() {
         <AnimatedSection id="faq" className="py-20 bg-background">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t('title')}</h2>
+                    <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter leading-tight uppercase transition-colors">
+                        {t('title')}
+                    </h2>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
                 </div>
                 <motion.div

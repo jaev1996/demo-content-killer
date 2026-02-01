@@ -1,206 +1,106 @@
 "use client";
 
-import { motion, Variants, useMotionValue, useTransform, animate } from "framer-motion";
-import * as React from "react";
-import { useTranslations } from "next-intl";
-
-const pathVariants: Variants = {
-    hidden: {
-        pathLength: 0,
-        opacity: 0,
-    },
-    visible: {
-        pathLength: 1,
-        opacity: 1,
-        transition: {
-            duration: 2,
-            ease: "easeInOut",
-        },
-    },
-};
-
-const circleVariants: Variants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-        scale: 1,
-        opacity: 1,
-        transition: { duration: 0.5, delay: 1.5 },
-    },
-};
-
-function TooltipCircle({ cx, cy, label, value, color }: { cx: number, cy: number, label: string, value: string, color: string }) {
-    const [isHovered, setIsHovered] = React.useState(false);
-    const numericValue = React.useMemo(() => parseFloat(value.replace('%', '')), [value]);
-    const count = useMotionValue(0);
-    const rounded = useTransform(count, (latest) => Math.round(latest));
-    const displayText = useTransform(rounded, (latest) => `${numericValue > 0 ? '+' : ''}${latest}%`);
-
-    React.useEffect(() => {
-        const controls = animate(count, isHovered ? numericValue : 0, {
-            duration: isHovered ? 0.5 : 0.2,
-            ease: "easeOut"
-        });
-        return controls.stop;
-    }, [isHovered, numericValue, count]);
-
-    const isNearTop = cy < 40;
-    const tooltipY = isNearTop ? cy + 12 : cy - 42;
-
-    return (
-        <g onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-            <motion.circle
-                cx={cx}
-                cy={cy}
-                r="5"
-                fill={color}
-                stroke="rgba(0,0,0,0.5)"
-                strokeWidth="2"
-                variants={circleVariants}
-                initial="hidden"
-                whileInView="visible"
-                whileHover={{ scale: 1.2 }}
-                viewport={{ once: true, amount: 0.8 }}
-            />
-            <motion.g
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -10 }}
-                transition={{ duration: 0.2 }}
-                style={{ pointerEvents: 'none' }}
-            >
-                <rect x={cx - 40} y={tooltipY} width="80" height="32" rx="5" fill="black" stroke={color} strokeWidth="1" />
-                <text x={cx} y={tooltipY + 13} textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">{label}</text>
-                <motion.text x={cx} y={tooltipY + 26} textAnchor="middle" fill="white" fontSize="10">{displayText}</motion.text>
-            </motion.g>
-        </g>
-    );
-}
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import {
+    ArrowUpRight,
+    CheckCircle2,
+    Shield
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export function EarningsChart() {
-    const t = useTranslations("LandingPage.earnings");
-
-    // Definimos los puntos para las líneas del gráfico.
-    // "M" es mover a, "C" es curva cúbica de Bézier.
-    // La línea "Sin Protección" es más plana y baja. (Coordenadas Y más altas = más bajo en el gráfico)
-    const withoutPath = "M0,90 C50,95 100,85 150,90 C200,95 250,85 300,90";
-
-    // La línea "Con PrivaClean" es ascendente. (Coordenadas Y más bajas = más alto en el gráfico)
-    const withPath = "M0,90 C50,80 100,85 150,60 C200,35 250,40 300,10";
-
     return (
-        <div className="bg-card text-card-foreground p-8 rounded-lg border border-border w-full max-w-6xl mx-auto">
-            <div className="relative">
-                <div className="relative h-64 md:h-96">
-                    <svg width="100%" height="100%" viewBox="0 0 350 140" preserveAspectRatio="none" className="absolute top-0 left-0" overflow="visible">
-                        {/* Eje Y (Ingresos) */}
-                        <text x="30" y="10" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€20k</text>
-                        <line x1="35" y1="10" x2="345" y2="10" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="37" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€15k</text>
-                        <line x1="35" y1="37" x2="345" y2="37" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="64" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€10k</text>
-                        <line x1="35" y1="64" x2="345" y2="64" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
-                        <text x="30" y="90" textAnchor="end" fill="rgb(156 163 175)" fontSize="10">€5k</text>
-                        <line x1="35" y1="90" x2="345" y2="90" stroke="rgb(55 65 81)" strokeWidth="0.5" strokeDasharray="2,2" />
+        <section className="w-full py-16 md:py-28 overflow-visible bg-background relative">
+            {/* Background Decorative Element */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
-                        <g transform="translate(40, 0)">
-                            {/* Area y línea "Sin Protección" */}
-                            <defs>
-                                <linearGradient id="gradient-without" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="rgb(100 116 139 / 0.4)" />
-                                    <stop offset="100%" stopColor="rgb(100 116 139 / 0.05)" />
-                                </linearGradient>
-                            </defs>
-                            <motion.path d={`${withoutPath} L300,110 L0,110 Z`} fill="url(#gradient-without)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 1 }} />
-                            <motion.path d={withoutPath} fill="none" stroke="rgb(100 116 139)" strokeWidth="1.5" variants={pathVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{ delay: 0.5 }} />
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-                            {/* Area y línea "Con PrivaClean" */}
-                            <defs>
-                                <linearGradient id="gradient-with" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="rgb(220 38 38 / 0.5)" />
-                                    <stop offset="100%" stopColor="rgb(220 38 38 / 0.05)" />
-                                </linearGradient>
-                            </defs>
-                            <motion.path d={`${withPath} L300,110 L0,110 Z`} fill="url(#gradient-with)" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1, delay: 0.5 }} />
-                            <motion.path d={withPath} fill="none" stroke="#DC2626" strokeWidth="2" variants={pathVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} />
+                    {/* Columna Izquierda: Visual del Teléfono (Imagen Directa) */}
+                    <div className="relative flex justify-center lg:justify-end order-2 lg:order-1">
 
-                            {/* Tooltips en los picos (coordenadas ajustadas) */}
-                            <TooltipCircle cx={280} cy={89} label="Estancado" value="-15" color="rgb(100 116 139)" />
-                            <TooltipCircle cx={280} cy={19} label="Ganancia" value="+45" color="#DC2626" />
-                        </g>
-
-                        {/* Eje X (Tiempo) */}
-                        <text x="40" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXStart')}</text>
-                        <text x="190" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXMid')}</text>
-                        <text x="340" y="125" textAnchor="middle" fill="rgb(156 163 175)" fontSize="10">{t('axisXEnd')}</text>
-                    </svg>
-                </div>
-                <div className="flex justify-center md:justify-start gap-6 mt-4 mb-8">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-muted-foreground"></div>
-                        <span className="text-sm text-muted-foreground font-medium">{t('withoutLabel')}</span>
+                        {/* Wrapper for Image and Overlays */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                            className="relative z-20"
+                        >
+                            {/* Main Image: Already contains the phone frame */}
+                            <div className="relative w-[520px] md:w-[700px]">
+                                <Image
+                                    src="/charts-phone.webp"
+                                    alt="Privaclean Earnings Interface"
+                                    width={600}
+                                    height={1200}
+                                    className="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                                    priority
+                                />
+                            </div>
+                        </motion.div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-600"></div>
-                        <span className="text-sm text-foreground font-bold">{t('withLabel')}</span>
-                    </div>
-                </div>
 
-                {/* Revenue Table - OnlyFans style simulation */}
-                <RevenueTable />
+                    {/* Columna Derecha: Texto y Acción */}
+                    <div className="flex flex-col space-y-10 order-1 lg:order-2 z-10 text-center lg:text-left">
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="space-y-6"
+                        >
+                            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-black tracking-[0.2em] uppercase">
+                                <Shield className="w-4 h-4" />
+                                <span>Privaclean Service: Activated</span>
+                            </div>
+
+                            <h2 className="text-5xl md:text-[5.5rem] font-black tracking-tighter leading-[0.85] text-foreground transition-colors">
+                                ELIMINA <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
+                                    FILTRACIONES
+                                </span> <br />
+                                EN TIEMPO REAL
+                            </h2>
+
+                            <p className="text-xl text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
+                                Nuestra tecnología propietaria detecta y remueve contenido no autorizado 24/7, garantizando que tus fans siempre lleguen a tus fuentes oficiales.
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 pt-4"
+                        >
+                            <Button asChild size="lg" className="h-20 w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-black px-12 text-2xl rounded-2xl shadow-[0_25px_50px_-15px_rgba(220,38,38,0.6)] transition-all hover:scale-105 active:scale-95 group border-b-4 border-red-800">
+                                <Link href="/register" className="flex items-center gap-3 uppercase">
+                                    REGISTRARSE
+                                    <ArrowUpRight className="w-8 h-8 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                </Link>
+                            </Button>
+
+                            <div className="flex flex-col gap-3 text-left">
+                                <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground dark:text-slate-200">
+                                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                    </div>
+                                    <span>Recuperación promedio de +35% ingresos</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground dark:text-slate-200">
+                                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                    </div>
+                                    <span>Escaneo constante de Google y sitios pirata</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                </div>
             </div>
-        </div>
+        </section>
     );
-}
-
-function RevenueTable() {
-    const data = [
-        { date: "JUN 15, 2024", desc: "Recuperación de Contenido Filtrado", status: "PROCESADO", amount: "$4,350.00" },
-        { date: "MAY 30, 2024", desc: "Regalías de Enlaces DMCA", status: "PROCESADO", amount: "$3,800.00" },
-        { date: "MAY 15, 2024", desc: "Recuperación de Tráfico Orgánico", status: "PROCESADO", amount: "$2,100.00" },
-        { date: "ABR 01, 2024", desc: "Inicio de Protección", status: "ACTIVO", amount: "$0.00" },
-    ];
-
-    return (
-        <div className="mt-8 border-t border-border pt-6">
-            <h3 className="text-lg font-semibold mb-4 text-left">Detalle de Ingresos Recuperados</h3>
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                    <thead className="text-xs text-muted-foreground uppercase bg-muted/30">
-                        <tr>
-                            <th className="px-4 py-3 rounded-l-lg">Fecha</th>
-                            <th className="px-4 py-3">Descripción</th>
-                            <th className="px-4 py-3">Estado</th>
-                            <th className="px-4 py-3 text-right rounded-r-lg">Monto Neto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item, index) => (
-                            <motion.tr
-                                key={index}
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 + 0.5 }}
-                                viewport={{ once: true }}
-                                className="border-b border-border hover:bg-muted/10 transition-colors"
-                            >
-                                <td className="px-4 py-4 font-medium">{item.date}</td>
-                                <td className="px-4 py-4">{item.desc}</td>
-                                <td className="px-4 py-4">
-                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.status === 'PROCESADO' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
-                                        {item.status}
-                                    </span>
-                                </td>
-                                <td className="px-4 py-4 text-right font-bold text-foreground">{item.amount}</td>
-                            </motion.tr>
-                        ))}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan={3} className="px-4 py-4 text-right font-medium text-muted-foreground">Total Recuperado Estimado</td>
-                            <td className="px-4 py-4 text-right font-bold text-xl text-green-500">$10,250.00</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    )
 }

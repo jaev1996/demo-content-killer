@@ -47,9 +47,12 @@ export function HeroSection() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                 <motion.h1
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
-                    className="text-4xl md:text-6xl font-bold text-foreground leading-tight"
+                    className="text-5xl md:text-8xl font-black text-foreground tracking-tighter leading-[0.9]"
                 >
-                    {t('title')}<span className="text-red-600 dark:text-red-500">{t('titleHighlight')}</span>
+                    {t('title')}<br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 dark:from-red-500 dark:to-red-700">
+                        {t('titleHighlight')}
+                    </span>
                 </motion.h1>
                 <motion.p
                     variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}

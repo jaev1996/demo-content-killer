@@ -88,7 +88,9 @@
             "stat2_value": "<24h",
             "stat2_desc": "Tiempo promedio de respuesta",
             "stat3_value": "~25%",
-            "stat3_desc": "Aumento de ingresos reportado"
+            "stat3_desc": "Aumento de ingresos reportado",
+            "platforms_title": "COBERTURA TOTAL",
+            "platforms_subtitle": "Eliminamos contenido filtrado de las plataformas más importantes"
         },
         "faq": {
             "title": "Preguntas que nos hacen a menudo",
