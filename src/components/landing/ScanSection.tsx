@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const logos = [
     { id: 1, src: "/images/insta-150x150.webp", size: 80, x: "-30%", y: "-25%", blur: 0, depth: 1, delay: 0.1 },
@@ -20,7 +20,12 @@ const logos = [
 
 export function ScanSection() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [isMounted, setIsMounted] = useState(false);
     const [hoveredId, setHoveredId] = useState<number | null>(null);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -34,12 +39,12 @@ export function ScanSection() {
             ref={containerRef}
             className="relative w-full py-32 md:py-48 overflow-hidden bg-background flex items-center justify-center min-h-[700px]"
         >
-            {/* Background radial gradient: Adjusted for better clarity in light mode */}
+            {/* Background radial gradient */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.04)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.08)_0%,transparent_70%)] pointer-events-none" />
 
             {/* Floating Logos Cloud */}
             <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-visible pointer-events-none">
-                {logos.map((logo) => (
+                {logos.map((logo, index) => (
                     <motion.div
                         key={logo.id}
                         className="absolute pointer-events-auto cursor-pointer flex items-center justify-center"
@@ -62,13 +67,13 @@ export function ScanSection() {
                         onMouseLeave={() => setHoveredId(null)}
                     >
                         <motion.div
-                            animate={{
+                            animate={isMounted ? {
                                 y: [0, -15, 0],
                                 x: [0, 10, 0],
                                 rotate: [0, 5, -5, 0],
-                            }}
+                            } : {}}
                             transition={{
-                                duration: 4 + Math.random() * 2,
+                                duration: 4 + (index % 3),
                                 repeat: Infinity,
                                 ease: "easeInOut",
                             }}
@@ -119,7 +124,6 @@ export function ScanSection() {
                     </motion.p>
                 </motion.div>
 
-                {/* Decorative scanning line animation */}
                 <div className="relative h-1 w-64 md:w-96 mx-auto mt-8 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                     <motion.div
                         animate={{ x: ["-100%", "100%"] }}
@@ -129,31 +133,33 @@ export function ScanSection() {
                 </div>
             </motion.div>
 
-            {/* Depth and Life: Particles adjusted for light mode */}
-            <div className="absolute inset-0 pointer-events-none">
-                {[...Array(6)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute rounded-full bg-red-500/5 dark:bg-red-600/20"
-                        style={{
-                            width: Math.random() * 300 + 100,
-                            height: Math.random() * 300 + 100,
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            filter: "blur(80px)",
-                        }}
-                        animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.1, 0.2, 0.1],
-                        }}
-                        transition={{
-                            duration: 10 + i * 2,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                        }}
-                    />
-                ))}
-            </div>
+            {/* Partículas solo en cliente */}
+            {isMounted && (
+                <div className="absolute inset-0 pointer-events-none">
+                    {[...Array(6)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="absolute rounded-full bg-red-500/5 dark:bg-red-600/20"
+                            style={{
+                                width: 100 + (i * 50),
+                                height: 100 + (i * 30),
+                                left: `${(i * 17) % 100}%`,
+                                top: `${(i * 23) % 100}%`,
+                                filter: "blur(80px)",
+                            }}
+                            animate={{
+                                scale: [1, 1.2, 1],
+                                opacity: [0.1, 0.2, 0.1],
+                            }}
+                            transition={{
+                                duration: 10 + i * 2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
         </section>
     );
 }
