@@ -10,6 +10,7 @@ import { EarningsChart } from "@/components/landing/EarningsChart";
 import { PricingSection } from "@/components/landing/PricingSection";
 import { TrustSeparator } from "@/components/landing/TrustSeparator";
 import { TrustStatsSection } from "@/components/landing/TrustStatsSection";
+import { FeaturedTestimony } from "@/components/landing/FeaturedTestimony";
 import { FaqSection } from "@/components/landing/FaqSection";
 import { Footer } from "@/components/landing/Footer";
 //import { WhatsAppButton } from "@/components/WhatsAppButton";
@@ -29,6 +30,7 @@ export default function LandingPage() {
         <PricingSection />
         <TrustSeparator />
         <TrustStatsSection />
+        <FeaturedTestimony />
         <FaqSection />
       </main>
 
