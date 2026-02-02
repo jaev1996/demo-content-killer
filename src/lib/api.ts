@@ -30,7 +30,7 @@ export const apiFetch = async (
         headers.append("Authorization", `Bearer ${token}`);
     }
 
-    const response = await fetch(fullUrl, { ...options, headers })
+    const response = await fetch(fullUrl, { ...options, headers, credentials: 'include' })
 
     if (response.status === 401) {
         // Si el token es inválido, el contexto correspondiente se encargará de la redirección.

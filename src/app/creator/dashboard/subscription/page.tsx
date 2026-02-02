@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { withCreatorAuth } from "@/components/with-creator-auth"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
+import { apiFetch } from "@/lib/api"
 import {
     Card,
     CardContent,
@@ -18,34 +19,35 @@ import { IconCheck, IconShieldCheck, IconRobot, IconBolt, IconShieldOff, IconAle
 
 // Stripe Price IDs
 const STRIPE_PRICE_IDS = {
-    PRO: 'price_1SWoyB2zbUB6qmZWA16KQSE0',
-    BASIC: 'price_1SVhGO2zbUB6qmZWnfYx4ZiH'
+    PRO: 'price_1Sw66cLtgqTiy8gQeRcQowRT',
+    BASIC: 'price_1Sw648LtgqTiy8gQN6Uv0meA'
 };
 
 // PLANS moved inside component to use translations
 
 function CreatorSubscriptionPage() {
     const t = useTranslations("CreatorSubscriptionPage")
-    const { creator, token, updateCreatorProfile } = useCreatorAuth()
+    const { creator, updateCreatorProfile } = useCreatorAuth()
 
     const PLANS = [
         {
             id: 'basic',
             name: t('plans.basic'),
             priceId: STRIPE_PRICE_IDS.BASIC,
-            price: '$99',
+            price: '200€',
             features: t.raw('availablePlans.features.basic') as string[]
         },
         {
             id: 'pro',
             name: t('plans.professional'),
             priceId: STRIPE_PRICE_IDS.PRO,
-            price: '$249',
+            price: '300€',
             features: t.raw('availablePlans.features.pro') as string[]
         }
     ];
 
     const [loading, setLoading] = useState(false);
+    const [portalLoading, setPortalLoading] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
     const [cancelLoading, setCancelLoading] = useState(false);
 
@@ -62,7 +64,7 @@ function CreatorSubscriptionPage() {
         }
 
         const planName = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "Plan Pro" : "Plan Basic"
-        const planAmount = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "$249" : "$99"
+        const planAmount = creator.stripePriceId === STRIPE_PRICE_IDS.PRO ? "300€" : "200€"
 
         const status = creator.stripeSubscriptionStatus || "active"
         const date = creator.stripeCurrentPeriodEnd
@@ -84,20 +86,12 @@ function CreatorSubscriptionPage() {
     const handleSubscribe = async (priceId: string) => {
         setLoading(true);
         try {
-            const userToken = token || localStorage.getItem('creator_token');
-
-            if (!userToken) {
-                alert(t('alerts.noToken'));
-                return;
-            }
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/create-checkout-session`, {
+            const response = await apiFetch('/api/stripe/create-checkout-session', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
-                },
                 body: JSON.stringify({ priceId }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
             const data = await response.json();
@@ -116,22 +110,40 @@ function CreatorSubscriptionPage() {
         }
     }
 
+    const handlePortalSession = async () => {
+        setPortalLoading(true);
+        try {
+            const response = await apiFetch('/api/stripe/create-portal-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Error:', data.error);
+                alert(t('alerts.connectionError'));
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+            alert(t('alerts.connectionError'));
+        } finally {
+            setPortalLoading(false);
+        }
+    }
+
     const handleCancelSubscription = async () => {
         setCancelLoading(true);
         try {
-            const userToken = token || localStorage.getItem('creator_token');
-
-            if (!userToken) {
-                alert(t('alerts.noToken'));
-                return;
-            }
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stripe/cancel-subscription`, {
+            const response = await apiFetch('/api/stripe/cancel-subscription', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
-                },
+                    'Content-Type': 'application/json'
+                }
             });
 
             const data = await response.json();
@@ -232,6 +244,15 @@ function CreatorSubscriptionPage() {
                                         Sistema de Protección Activo
                                     </span>
                                 </div>
+
+                                <Button
+                                    variant="outline"
+                                    className="w-full mt-2"
+                                    onClick={handlePortalSession}
+                                    disabled={portalLoading}
+                                >
+                                    {portalLoading ? t('availablePlans.processing') : t('manageButton')}
+                                </Button>
 
                                 {/* 
                                 <Button

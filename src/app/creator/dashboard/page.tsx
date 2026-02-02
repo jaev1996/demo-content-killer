@@ -84,8 +84,8 @@ function CreatorDashboardPage() {
     // Usamos useMemo para evitar recalcular en cada render
     const { subscriptionStatus, nextBillingDate, subscriptionPlan } = useMemo(() => {
         const STRIPE_PRICE_IDS = {
-            PRO: 'price_1SWoyB2zbUB6qmZWA16KQSE0',
-            BASIC: 'price_1SVhGO2zbUB6qmZWnfYx4ZiH'
+            PRO: 'price_1Sw66cLtgqTiy8gQeRcQowRT',
+            BASIC: 'price_1Sw648LtgqTiy8gQN6Uv0meA'
         };
 
         const isActive = creator!.stripeSubscriptionId && creator!.stripeSubscriptionStatus === 'active';
