@@ -14,7 +14,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { IconLoader } from "@tabler/icons-react"
+import { IconLoader, IconHelpCircle } from "@tabler/icons-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api"
 
@@ -96,7 +97,17 @@ export function ProfileForm() {
             <CardContent>
                 <form className="grid gap-4 sm:gap-6 mb-4 sm:mb-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="creatorName" className="text-sm">{t("creatorNameLabel")}</Label>
+                        <Label htmlFor="creatorName" className="text-sm flex items-center gap-1">
+                            {t("creatorNameLabel")}
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <IconHelpCircle className="size-4 text-muted-foreground cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t("creatorNameHelp")}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </Label>
                         <Input
                             id="creatorName"
                             value={creatorName}

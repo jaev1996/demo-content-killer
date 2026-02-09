@@ -244,7 +244,7 @@ function AdminRemovalsPage() {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead>Creador</TableHead>
+                                                <TableHead>Artista / Nickname</TableHead>
                                                 <TableHead>Plataforma</TableHead>
                                                 <TableHead>Estado</TableHead>
                                                 <TableHead>Reportado</TableHead>

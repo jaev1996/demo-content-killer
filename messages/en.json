@@ -217,8 +217,9 @@
     "RegisterPage": {
         "title": "Creator Registration",
         "subtitle": "Create your account to start protecting your content.",
-        "creatorNameLabel": "Creator Name",
-        "creatorNamePlaceholder": "Your public name",
+        "creatorNameLabel": "Artist Name / Nickname",
+        "creatorNamePlaceholder": "Your public nickname (e.g., @username)",
+        "creatorNameHelp": "This is the name you are known by online. It doesn't have to be your legal name.",
         "emailLabel": "Email",
         "emailPlaceholder": "you@email.com",
         "passwordLabel": "Password (min. 8 characters)",
@@ -234,7 +235,7 @@
         "quote": "&ldquo;Your creativity deserves to be protected. Join us and take back control of your content.&rdquo;",
         "quoteAuthor": "PrivaClean Team",
         "validation": {
-            "creatorNameLength": "Creator name must be at least 3 characters long.",
+            "creatorNameLength": "Artist name must be at least 3 characters long.",
             "emailInvalid": "Please enter a valid email.",
             "passwordLength": "Password must be at least 8 characters long.",
             "passwordMismatch": "Passwords do not match.",
@@ -313,7 +314,8 @@
         "profile": {
             "title": "Profile",
             "subtitle": "Update your creator name and login email.",
-            "creatorNameLabel": "Creator Name",
+            "creatorNameLabel": "Artist Name / Nickname",
+            "creatorNameHelp": "Your public name or social media nickname.",
             "emailLabel": "Account Email",
             "currentPasswordLabel": "Current Password",
             "passwordHelpText": "To save changes, please enter your current password."

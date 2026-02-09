@@ -47,7 +47,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { IconLoader, IconPlus, IconX, IconSearch, IconTrash, IconPencil } from "@tabler/icons-react"
+import { IconLoader, IconPlus, IconX, IconSearch, IconTrash, IconPencil, IconHelpCircle } from "@tabler/icons-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { EditProfileModal } from "./edit-profile-modal"
 
 interface Profile {
@@ -369,7 +370,17 @@ function ProfilesPage() {
                                     <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         {/* Basic Info */}
                                         <div className="grid gap-2">
-                                            <Label htmlFor="creatorName">Nombre de la Creadora</Label>
+                                            <Label htmlFor="creatorName" className="flex items-center gap-1">
+                                                Nombre de Artista / Nickname
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <IconHelpCircle className="size-4 text-muted-foreground cursor-help" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>El nombre público o nickname por el cual es conocida la creadora en redes sociales.</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
                                             <Input
                                                 id="creatorName"
                                                 placeholder="Ej: Elena Valera"

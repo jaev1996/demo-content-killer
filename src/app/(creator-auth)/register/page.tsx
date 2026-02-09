@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Toaster, toast } from "sonner"
-import { IconHome, IconLoader } from "@tabler/icons-react"
+import { IconHome, IconLoader, IconHelpCircle } from "@tabler/icons-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { ThemeToggle } from "@/components/theme-toggle"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
 
@@ -128,7 +129,17 @@ export default function RegisterPage() {
                         </div>
                         <form onSubmit={handleRegister} className="grid gap-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="creatorName">{t("creatorNameLabel")}</Label>
+                                <Label htmlFor="creatorName" className="flex items-center gap-1">
+                                    {t("creatorNameLabel")}
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <IconHelpCircle className="size-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{t("creatorNameHelp")}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </Label>
                                 <Input id="creatorName" type="text" value={creatorName} onChange={(e) => setCreatorName(e.target.value)} placeholder={t("creatorNamePlaceholder")} required />
                             </div>
                             <div className="grid gap-2">

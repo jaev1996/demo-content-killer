@@ -217,8 +217,9 @@
     "RegisterPage": {
         "title": "Registro de Creador",
         "subtitle": "Crea tu cuenta para empezar a proteger tu contenido.",
-        "creatorNameLabel": "Nombre de Creador",
-        "creatorNamePlaceholder": "Tu nombre público",
+        "creatorNameLabel": "Nombre de Artista / Nickname",
+        "creatorNamePlaceholder": "Tu nickname público (ej: @username)",
+        "creatorNameHelp": "Este es el nombre por el que eres conocido/a en internet. No tiene por qué ser tu nombre legal.",
         "emailLabel": "Email",
         "emailPlaceholder": "tu@email.com",
         "passwordLabel": "Contraseña (mín. 8 caracteres)",
@@ -234,7 +235,7 @@
         "quote": "&ldquo;Tu creatividad merece ser protegida. Únete a nosotros y recupera el control de tu contenido.&rdquo;",
         "quoteAuthor": "Equipo de PrivaClean",
         "validation": {
-            "creatorNameLength": "El nombre de creador debe tener al menos 3 caracteres.",
+            "creatorNameLength": "El nombre de artista debe tener al menos 3 caracteres.",
             "emailInvalid": "Por favor, introduce un email válido.",
             "passwordLength": "La contraseña debe tener al menos 8 caracteres.",
             "passwordMismatch": "Las contraseñas no coinciden.",
@@ -313,7 +314,8 @@
         "profile": {
             "title": "Perfil",
             "subtitle": "Actualiza tu nombre de creador y tu email de acceso.",
-            "creatorNameLabel": "Nombre de Creador",
+            "creatorNameLabel": "Nombre de Artista / Nickname",
+            "creatorNameHelp": "Tu nombre público o nickname de redes sociales.",
             "emailLabel": "Email de la cuenta",
             "currentPasswordLabel": "Contraseña Actual",
             "passwordHelpText": "Para guardar los cambios, por favor introduce tu contraseña actual."

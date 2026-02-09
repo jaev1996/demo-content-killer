@@ -2,7 +2,8 @@
 
 import { withAuth } from "@/components/with-auth"
 import { apiFetch } from "@/lib/api"
-import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX, IconLoader } from "@tabler/icons-react"
+import { IconSearch, IconAlertTriangle, IconShield, IconTrash, IconFilter, IconX, IconLoader, IconHelpCircle } from "@tabler/icons-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
@@ -52,17 +53,28 @@ const isSuspiciousLink = (url: string, title: string, snippet: string): boolean 
     const suspiciousKeywords = [
         'descargar', 'gratis', 'filtrado', 'leaked', 'onlyfans', 'pack',
         'telegram', 'mega', 'mediafire', 'drive.google', 'dropbox',
-        'xxx', 'porn', 'adult', 'nude', 'naked', 'sex'
+        'xxx', 'porn', 'adult', 'nude', 'naked', 'sex', 'full', 'censura',
+        'escandalo', 'privado', 'vip', 'premium', 'estreno', 'completo',
+        'video', 'videos', 'tube', 'fucks', 'fuck', 'hole', 'dildo', 'cock',
+        'lube', 'solo', 'toys', 'play', 'amateur', 'webcam', 'cam', 'show',
+        'hub', 'porno', 'leak', 'files', 'folder'
     ]
 
     const text = `${url} ${title} ${snippet}`.toLowerCase()
     return suspiciousKeywords.some(keyword => text.includes(keyword))
 }
 
-// Función para obtener el nivel de riesgo
+// Función para obtener el nivel de riesgo mejorada
 const getRiskLevel = (url: string, title: string, snippet: string): 'high' | 'medium' | 'low' => {
-    const highRiskKeywords = ['leaked', 'filtrado', 'pack', 'onlyfans', 'telegram']
-    const mediumRiskKeywords = ['descargar', 'gratis', 'mega', 'drive']
+    const highRiskKeywords = [
+        'leaked', 'filtrado', 'pack', 'onlyfans', 'telegram', 'mega', 'drive',
+        'mega.nz', 'mediafire', 'leak', 'files', 'folder', 'dropbox'
+    ]
+    const mediumRiskKeywords = [
+        'descargar', 'gratis', 'xxx', 'porn', 'nude', 'censura', 'completo',
+        'full', 'fucks', 'fuck', 'hole', 'dildo', 'cock', 'lube', 'solo',
+        'toys', 'webcam', 'cam', 'show', 'hub', 'porno', 'tube', 'amateur'
+    ]
 
     const text = `${url} ${title} ${snippet}`.toLowerCase()
 
@@ -155,8 +167,29 @@ function SearchPage() {
                 throw new Error(data.error || "Ocurrió un error en la búsqueda.");
             }
 
-            setApiResults(data.results || []);
-            toast.success(`Búsqueda completada. Se encontraron ${data.count} resultados.`);
+            // Filtrar resultados según la whitelist del creador seleccionado
+            let results = data.results || [];
+            const creatorWhitelist = selectedProfile?.whitelist || [];
+
+            if (creatorWhitelist.length > 0) {
+                results = results.filter((result: SearchResult) => {
+                    try {
+                        const urlDomain = new URL(result.link).hostname.replace(/^www\./, '').toLowerCase();
+                        return !creatorWhitelist.some(whiteDomain =>
+                            urlDomain === whiteDomain.toLowerCase() ||
+                            urlDomain.endsWith(`.${whiteDomain.toLowerCase()}`)
+                        );
+                    } catch {
+                        return true; // Si la URL no es válida, la dejamos pasar para revisión manual
+                    }
+                });
+            }
+
+            setApiResults(results);
+            const filteredCount = results.length;
+            const hiddenCount = (data.results?.length || 0) - filteredCount;
+
+            toast.success(`Búsqueda completada. Se muestran ${filteredCount} resultados.${hiddenCount > 0 ? ` (${hiddenCount} omitidos por whitelist)` : ''}`);
 
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Error desconocido al realizar la búsqueda';
@@ -248,10 +281,49 @@ function SearchPage() {
                                 <CardHeader>
                                     <CardTitle>Nuevo Rastreo</CardTitle>
                                     <CardDescription>
-                                        Ingresa los términos de búsqueda y selecciona la creadora.
+                                        Selecciona la creadora y elige o escribe los términos de búsqueda.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
+                                    <div className="mb-6 space-y-4 p-4 border rounded-lg bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900">
+                                        <Label className="text-sm font-semibold flex items-center gap-2 text-orange-800 dark:text-orange-300">
+                                            <IconFilter className="size-4" />
+                                            Plantillas de Búsqueda Rápida
+                                        </Label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {[
+                                                "videos porno",
+                                                "videos xxx gratis",
+                                                "full pack leaked",
+                                                "videos sin censura",
+                                                "contenido exclusivo",
+                                                "onlyfans free access",
+                                                "recopilación packs",
+                                                "google drive leak"
+                                            ].map((template) => (
+                                                <Button
+                                                    key={template}
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="bg-white dark:bg-slate-900 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-800/40 text-xs"
+                                                    onClick={() => setSearchTerm(template)}
+                                                >
+                                                    {template}
+                                                </Button>
+                                            ))}
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-xs text-muted-foreground hover:text-destructive"
+                                                onClick={() => setSearchTerm("")}
+                                            >
+                                                Limpiar
+                                            </Button>
+                                        </div>
+
+                                    </div>
                                     <form onSubmit={handleSubmit} className="grid gap-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="search">
@@ -261,14 +333,24 @@ function SearchPage() {
                                                 id="search"
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                placeholder="Ej: nombre de la creadora pack, videos filtrados de..., contenido exclusivo..."
+                                                placeholder="Ej: @nombre pack leaked, videos nuevos, etc."
                                                 rows={3}
                                                 required
                                             />
                                         </div>
 
                                         <div className="grid gap-3">
-                                            <Label>Creadora de Contenido</Label>
+                                            <Label className="flex items-center gap-1">
+                                                Artista / Nickname
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <IconHelpCircle className="size-4 text-muted-foreground cursor-help" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Selecciona la creadora para la cual quieres realizar el rastreo de contenido.</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </Label>
 
                                             {/* Filtro de perfiles */}
                                             <div className="relative">
@@ -311,12 +393,7 @@ function SearchPage() {
                                                 <SelectContent>
                                                     {filteredProfiles.map((profile) => (
                                                         <SelectItem key={profile.id} value={profile.id}>
-                                                            <div className="flex items-center justify-between w-full">
-                                                                <span>{profile.creatorName}</span>
-                                                                <Badge variant="secondary" className="ml-2 text-xs">
-                                                                    {profile.id}
-                                                                </Badge>
-                                                            </div>
+                                                            <span>{profile.creatorName}</span>
                                                         </SelectItem>
                                                     ))}
                                                     {filteredProfiles.length === 0 && !loadingProfiles && (

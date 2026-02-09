@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { IconLoader, IconDeviceFloppy } from "@tabler/icons-react"
+import { IconLoader, IconDeviceFloppy, IconHelpCircle } from "@tabler/icons-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { apiFetch } from "@/lib/api"
 
@@ -102,7 +103,17 @@ export function EditProfileModal({ profile, isOpen, onOpenChange, onProfileUpdat
                 <form onSubmit={handleSubmit} className="space-y-4 py-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="edit-creatorName">Nombre de la Creadora</Label>
+                            <Label htmlFor="edit-creatorName" className="flex items-center gap-1">
+                                Nombre de Artista / Nickname
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <IconHelpCircle className="size-4 text-muted-foreground cursor-help" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>El nombre público o nickname por el cual es conocida la creadora en redes sociales.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </Label>
                             <Input id="edit-creatorName" value={formData.creatorName || ''} onChange={e => handleChange('creatorName', e.target.value)} />
                         </div>
                         <div className="grid gap-2">

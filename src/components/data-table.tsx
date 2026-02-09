@@ -386,9 +386,9 @@ export function DataTable({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       )
                     })}
@@ -607,7 +607,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="creatorName">Nombre de la Creadora</Label>
+              <Label htmlFor="creatorName">Nombre de Artista / Nickname</Label>
               <Input id="creatorName" defaultValue={item.creatorName} readOnly />
             </div>
             <div className="flex flex-col gap-3">
