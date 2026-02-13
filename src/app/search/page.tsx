@@ -89,6 +89,8 @@ function SearchPage() {
     const [apiResults, setApiResults] = React.useState<SearchResult[] | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [error, setError] = React.useState<string | null>(null)
+    const [selectedUrls, setSelectedUrls] = React.useState<Set<string>>(new Set())
+    const [isBatchProcessing, setIsBatchProcessing] = React.useState(false)
 
     // Estados para perfiles
     const [profiles, setProfiles] = React.useState<Profile[]>([])
@@ -217,10 +219,96 @@ function SearchPage() {
             toast.success(`Solicitud de retiro enviada para: ${url}`)
             // Eliminar el resultado de la lista para evitar duplicados
             setApiResults(prevResults => prevResults?.filter(result => result.link !== url) || null)
+            // Quitar de seleccionados si estaba
+            setSelectedUrls(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(url);
+                return newSet;
+            });
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Ocurrió un error desconocido.')
         }
     }
+
+    const handleBatchRequestRemoval = async () => {
+        if (!selectedCreator) {
+            toast.error("Por favor, selecciona una creadora primero.");
+            return;
+        }
+
+        if (selectedUrls.size === 0) {
+            toast.error("No hay enlaces seleccionados.");
+            return;
+        }
+
+        setIsBatchProcessing(true);
+        const urlsArray = Array.from(selectedUrls);
+        let successCount = 0;
+        let failCount = 0;
+
+        toast.info(`Procesando ${urlsArray.length} solicitudes...`);
+
+        try {
+            // Nota: El backend por ahora recibe una por una, pero el frontend ya lo gestiona como lote.
+            // En una etapa posterior, el backend podría recibir el array completo.
+            for (const url of urlsArray) {
+                try {
+                    const response = await apiFetch('/api/takedowns', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            infringingUrl: url,
+                            userProfileId: selectedCreator,
+                            sourceQuery: searchTerm
+                        }),
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                        setApiResults(prev => prev?.filter(r => r.link !== url) || null);
+                    } else {
+                        failCount++;
+                    }
+                } catch (e) {
+                    console.error(`Error procesando ${url}:`, e);
+                    failCount++;
+                }
+            }
+
+            if (successCount > 0) {
+                toast.success(`${successCount} solicitudes enviadas a pendientes.`);
+            }
+            if (failCount > 0) {
+                toast.error(`${failCount} solicitudes fallaron.`);
+            }
+
+            setSelectedUrls(new Set());
+        } finally {
+            setIsBatchProcessing(false);
+        }
+    };
+
+    const toggleUrlSelection = (url: string) => {
+        setSelectedUrls(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(url)) {
+                newSet.delete(url);
+            } else {
+                newSet.add(url);
+            }
+            return newSet;
+        });
+    };
+
+    const selectAllVisible = () => {
+        if (!apiResults) return;
+        const allUrls = apiResults.map(r => r.link);
+        setSelectedUrls(new Set(allUrls));
+    };
+
+    const deselectAll = () => {
+        setSelectedUrls(new Set());
+    };
 
     const handleAddToWhitelist = async (url: string) => {
         if (!selectedCreator) {
@@ -470,10 +558,24 @@ function SearchPage() {
                             {apiResults && !loading && (
                                 <Card className="mt-6">
                                     <CardHeader>
-                                        <CardTitle>Resultados de la Búsqueda</CardTitle>
-                                        <CardDescription>
-                                            {apiResults.length} resultado(s) encontrado(s) para <strong>{selectedProfile?.creatorName}</strong>
-                                        </CardDescription>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <CardTitle>Resultados de la Búsqueda</CardTitle>
+                                                <CardDescription>
+                                                    {apiResults.length} resultado(s) encontrado(s) para <strong>{selectedProfile?.creatorName}</strong>
+                                                </CardDescription>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button variant="outline" size="sm" onClick={selectAllVisible}>
+                                                    Seleccionar todo
+                                                </Button>
+                                                {selectedUrls.size > 0 && (
+                                                    <Button variant="ghost" size="sm" onClick={deselectAll}>
+                                                        Deseleccionar
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
                                     </CardHeader>
                                     <CardContent>
                                         {apiResults.length === 0 ? (
@@ -489,16 +591,29 @@ function SearchPage() {
                                                     return (
                                                         <Card
                                                             key={idx}
-                                                            className={`transition-all hover:shadow-md ${isSuspicious
+                                                            className={`transition-all hover:shadow-md relative overflow-hidden ${isSuspicious
                                                                 ? riskLevel === 'high'
                                                                     ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20'
                                                                     : riskLevel === 'medium'
                                                                         ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/20'
                                                                         : 'border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20'
                                                                 : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20'
-                                                                }`}
+                                                                } ${selectedUrls.has(result.link) ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+                                                            onClick={(e) => {
+                                                                // Si hacen clic en el card, alternamos selección a menos que sea un link o botón
+                                                                if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) return;
+                                                                toggleUrlSelection(result.link);
+                                                            }}
                                                         >
-                                                            <CardHeader className="pb-3">
+                                                            <div className="absolute top-4 right-4 z-10">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedUrls.has(result.link)}
+                                                                    onChange={() => toggleUrlSelection(result.link)}
+                                                                    className="size-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                                />
+                                                            </div>
+                                                            <CardHeader className="pb-3 pr-12">
                                                                 <div className="flex items-start justify-between gap-4">
                                                                     <div className="flex-1 min-w-0">
                                                                         <div className="flex items-center gap-2 mb-2">
@@ -597,6 +712,47 @@ function SearchPage() {
 
                         </div>
                     </div>
+
+                    {/* Barra de Acciones Flotante */}
+                    {selectedUrls.size > 0 && (
+                        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                            <Card className="shadow-2xl border-blue-200 dark:border-blue-900 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
+                                <CardContent className="p-4 flex items-center gap-6">
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                                            {selectedUrls.size} enlaces seleccionados
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                            Listos para pasar a pendientes
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={deselectAll}
+                                            disabled={isBatchProcessing}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                                            onClick={handleBatchRequestRemoval}
+                                            disabled={isBatchProcessing}
+                                        >
+                                            {isBatchProcessing ? (
+                                                <IconLoader className="animate-spin size-4 mr-2" />
+                                            ) : (
+                                                <IconTrash className="size-4 mr-2" />
+                                            )}
+                                            {isBatchProcessing ? 'Procesando...' : 'Añadir a Pendientes'}
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
                 </main>
             </SidebarInset>
         </SidebarProvider>

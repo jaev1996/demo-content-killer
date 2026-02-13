@@ -62,18 +62,19 @@ interface GoogleFormResponse {
 interface TakedownApprovalModalProps {
     isOpen: boolean
     onOpenChange: (isOpen: boolean) => void
-    request: TakedownRequest | null
+    requests: TakedownRequest[]
     profile: Profile | null
-    onSuccess: (requestId: string) => void
+    onSuccess: (requestIds: string[]) => void
 }
 
 export function TakedownApprovalModal({
     isOpen,
     onOpenChange,
-    request,
+    requests,
     profile,
     onSuccess,
 }: TakedownApprovalModalProps) {
+    const request = requests[0] || null; // Para compatibilidad con datos base como el primer ID
     const [activeTab, setActiveTab] = React.useState("email")
     const [scrapedEmail, setScrapedEmail] = React.useState("")
     const [emailBody, setEmailBody] = React.useState("")
@@ -86,13 +87,16 @@ export function TakedownApprovalModal({
 
     // Simula la obtención de datos cuando se abre el modal o cambia la pestaña
     React.useEffect(() => { // Resetear estados al abrir para evitar mostrar datos viejos
-        if (isOpen && request) {
+        if (isOpen && requests.length > 0) {
             const fetchDataForTab = async () => {
                 setIsLoadingTabData(true)
+                const mainRequest = requests[0];
+                const allRequestIds = requests.map(r => r.id).join(',');
+
                 if (activeTab === "email") {
-                    // Simulación de scraping de email
-                    try { // Llamada a la nueva API para previsualizar el email
-                        const response = await apiFetch(`/api/takedowns/${request.id}/preview-email`);
+                    try {
+                        // Enviamos todos los IDs para que el backend sepa que es un lote
+                        const response = await apiFetch(`/api/takedowns/${mainRequest.id}/preview-email?batch=${allRequestIds}`);
                         const result = await response.json();
 
                         if (!response.ok) {
@@ -102,7 +106,15 @@ export function TakedownApprovalModal({
                         const { to, subject, body, signature } = result.data;
                         setScrapedEmail(to || "No se pudo encontrar un email.");
                         setEmailSubject(subject || "");
-                        setEmailBody(`${body}\n\n${signature}`);
+
+                        // Si hay múltiples URLs y el backend no las incluyó, las añadimos nosotros
+                        let finalBody = body;
+                        if (requests.length > 1 && !body.includes(requests[1].infringingUrl)) {
+                            const urlsList = requests.map(r => `- ${r.infringingUrl}`).join('\n');
+                            finalBody = body.replace(/infringing URL[:\s]+[^\n]+/i, `infringing URLs:\n${urlsList}`);
+                        }
+
+                        setEmailBody(`${finalBody}\n\n${signature}`);
 
                     } catch (err) {
                         toast.error(err instanceof Error ? err.message : "Error al cargar datos del email.");
@@ -110,14 +122,20 @@ export function TakedownApprovalModal({
                     }
                 } else if (activeTab === "google") {
                     try {
-                        // Llamada a la API para previsualizar los datos del formulario de Google
-                        const response = await apiFetch(`/api/takedowns/${request.id}/preview-google-form`);
+                        const response = await apiFetch(`/api/takedowns/${mainRequest.id}/preview-google-form?batch=${allRequestIds}`);
                         const result = await response.json();
                         if (!response.ok) {
                             throw new Error(result.message || "Error al generar datos para Google.");
                         }
                         const { formFields, manualSteps } = result.data as GoogleFormResponse;
-                        setGoogleFormData(formFields);
+
+                        // Consolidar todas las URLs para el formulario
+                        const consolidatedUrls = requests.map(r => r.infringingUrl).join('\n');
+
+                        setGoogleFormData({
+                            ...formFields,
+                            infringingUrls: consolidatedUrls
+                        });
                         setGoogleManualSteps(manualSteps);
                     } catch (err) {
                         toast.error(err instanceof Error ? err.message : "Error al cargar datos para Google.");
@@ -173,18 +191,21 @@ export function TakedownApprovalModal({
     };
 
     const handleAction = async (actionType: 'email' | 'google') => {
-        if (!request) return;
+        if (requests.length === 0) return;
 
         setIsProcessing(true);
+        const allRequestIds = requests.map(r => r.id);
+
         try {
             if (actionType === 'email') {
                 const [body, ...signatureParts] = emailBody.split(/\n\nAtentamente,\n/);
                 const signature = signatureParts.join('\n\nAtentamente,\n');
 
-                const response = await apiFetch(`/api/takedowns/${request.id}/send-email`, {
+                const response = await apiFetch(`/api/takedowns/batch/send-email`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        ids: allRequestIds,
                         to: scrapedEmail,
                         subject: emailSubject,
                         body,
@@ -197,25 +218,24 @@ export function TakedownApprovalModal({
                     throw new Error(result.message || "Fallo al enviar el correo.");
                 }
                 toast.success(result.message);
-                onSuccess(request.id); // Notifica a la página para que recargue los datos
+                onSuccess(allRequestIds);
 
             } else if (actionType === 'google') {
-                const response = await apiFetch(`/api/takedowns/${request.id}/submit-google-form`, {
+                const response = await apiFetch(`/api/takedowns/batch/submit-google-form`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ formFields: googleFormData }),
+                    body: JSON.stringify({
+                        ids: allRequestIds,
+                        formFields: googleFormData
+                    }),
                 });
                 if (!response.ok) {
-                    try {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || "Fallo al iniciar el proceso para Google.")
-                    } catch {
-                        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`)
-                    }
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Fallo al iniciar el proceso para Google.");
                 }
                 const result = await response.json();
                 toast.success(result.message || `Proceso de retiro para Google iniciado.`);
-                onSuccess(request.id); // Notifica a la página para que recargue los datos
+                onSuccess(allRequestIds);
             }
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Error desconocido");
@@ -426,9 +446,10 @@ export function TakedownApprovalModal({
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[625px]">
                 <DialogHeader>
-                    <DialogTitle>Aprobar Solicitud de Retiro</DialogTitle>
+                    <DialogTitle>Aprobar Solicitud de Retiro ({requests.length} URLs)</DialogTitle>
                     <DialogDescription>
                         Selecciona el método para procesar el reclamo para <span className="font-semibold">{profile.creatorName}</span>.
+                        {requests.length > 1 && ` Se enviará un único reclamo con todas las URLs seleccionadas.`}
                     </DialogDescription>
                 </DialogHeader>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -473,10 +494,10 @@ export function TakedownApprovalModal({
                                             <Label htmlFor="email-body">Cuerpo del Mensaje (generado por IA)</Label>
                                             <Textarea id="email-body" value={emailBody} onChange={(e) => setEmailBody(e.target.value)} rows={10} />
                                         </div>
-                                        <Button onClick={() => handleAction('email')} disabled={isProcessing || !!request.emailSentAt}>
+                                        <Button onClick={() => handleAction('email')} disabled={isProcessing}>
                                             {isProcessing && <IconLoader className="mr-2 size-4 animate-spin" />}
-                                            {request.emailSentAt
-                                                ? `Email Enviado (${new Date(request.emailSentAt).toLocaleString()})`
+                                            {requests.some(r => r.emailSentAt)
+                                                ? 'Re-enviar Email de Reclamo (Ya hay enviados)'
                                                 : 'Enviar Email de Reclamo'
                                             }
                                         </Button>
