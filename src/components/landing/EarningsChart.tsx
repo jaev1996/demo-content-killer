@@ -9,8 +9,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export function EarningsChart() {
+    const t = useTranslations('LandingPage.earnings');
     return (
         <section className="w-full py-16 md:py-28 overflow-visible bg-background relative">
             {/* Background Decorative Element */}
@@ -53,19 +55,19 @@ export function EarningsChart() {
                         >
                             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-black tracking-[0.2em] uppercase">
                                 <Shield className="w-4 h-4" />
-                                <span>Privaclean Service: Activated</span>
+                                <span>{t('badge')}</span>
                             </div>
 
-                            <h2 className="text-5xl md:text-[5.5rem] font-black tracking-tighter leading-[0.85] text-foreground transition-colors">
-                                ELIMINA <br />
+                            <h2 className="text-5xl md:text-[5.5rem] font-black tracking-tighter leading-[0.85] text-foreground transition-colors uppercase">
+                                {t('titleLine1')} <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
-                                    FILTRACIONES
+                                    {t('titleHighlight')}
                                 </span> <br />
-                                EN TIEMPO REAL
+                                {t('titleLine2')}
                             </h2>
 
                             <p className="text-xl text-slate-400 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
-                                Nuestra tecnología propietaria detecta y remueve contenido no autorizado 24/7, garantizando que tus fans siempre lleguen a tus fuentes oficiales.
+                                {t('description')}
                             </p>
                         </motion.div>
 
@@ -77,7 +79,7 @@ export function EarningsChart() {
                         >
                             <Button asChild size="lg" className="h-20 w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-black px-12 text-2xl rounded-2xl shadow-[0_25px_50px_-15px_rgba(220,38,38,0.6)] transition-all hover:scale-105 active:scale-95 group border-b-4 border-red-800">
                                 <Link href="/register" className="flex items-center gap-3 uppercase">
-                                    REGISTRARSE
+                                    {t('cta')}
                                     <ArrowUpRight className="w-8 h-8 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </Link>
                             </Button>
@@ -87,13 +89,13 @@ export function EarningsChart() {
                                     <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
                                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                                     </div>
-                                    <span>Recuperación promedio de +35% ingresos</span>
+                                    <span>{t('feature1')}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground dark:text-slate-200">
                                     <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
                                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                                     </div>
-                                    <span>Escaneo constante de Google y sitios pirata</span>
+                                    <span>{t('feature2')}</span>
                                 </div>
                             </div>
                         </motion.div>

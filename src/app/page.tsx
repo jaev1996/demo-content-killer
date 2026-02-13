@@ -2,7 +2,6 @@
 
 import { Header } from "@/components/landing/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { MissionSeparator } from "@/components/landing/MissionSeparator";
 import { ProcessSection } from "@/components/landing/ProcessSection";
 import { ScanSection } from "@/components/landing/ScanSection";
 import { FocusSeparator } from "@/components/landing/FocusSeparator";
@@ -22,7 +21,6 @@ export default function LandingPage() {
 
       <main className="pt-20">
         <HeroSection />
-        <MissionSeparator />
         <ProcessSection />
         <EarningsChart />
         <ScanSection />

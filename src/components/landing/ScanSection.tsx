@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const logos = [
     { id: 1, src: "/images/insta-150x150.webp", size: 80, x: "-30%", y: "-25%", blur: 0, depth: 1, delay: 0.1 },
@@ -19,6 +20,7 @@ const logos = [
 ];
 
 export function ScanSection() {
+    const t = useTranslations('LandingPage.scan');
     const containerRef = useRef<HTMLDivElement>(null);
     const [isMounted, setIsMounted] = useState(false);
     const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -110,8 +112,8 @@ export function ScanSection() {
                     <motion.h2
                         className="text-5xl md:text-8xl font-black text-foreground tracking-tighter leading-[0.85] uppercase transition-colors"
                     >
-                        GLOBAL SCAN & <br />
-                        <span className="text-red-600 dark:text-red-500">INSTANT TAKEDOWN</span>
+                        {t('titleLine1')} <br />
+                        <span className="text-red-600 dark:text-red-500">{t('titleHighlight')}</span>
                     </motion.h2>
 
                     <motion.p
@@ -120,7 +122,7 @@ export function ScanSection() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="text-2xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400 italic tracking-tight"
                     >
-                        Secure & Anonymous Protection
+                        {t('subtitle')}
                     </motion.p>
                 </motion.div>
 

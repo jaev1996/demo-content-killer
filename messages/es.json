@@ -16,16 +16,19 @@
             "text": "Tu tranquilidad es nuestra misión."
         },
         "earnings": {
-            "title": "Visualiza el Impacto en Tus Ingresos",
-            "subtitle": "La piratería no solo afecta tu tranquilidad, sino también tu bolsillo. Ve la diferencia que nuestra protección puede hacer.",
-            "withoutLabel": "Sin Protección",
-            "withLabel": "Con PrivaClean",
-            "valuePropositionTitle": "Maximiza Tu Potencial",
-            "valuePropositionDescription": "La piratería diluye tus ingresos. Al proteger tu contenido, no solo detienes las pérdidas, sino que fomentas un crecimiento constante y seguro.",
-            "axisY": "Ingresos (USD)",
-            "axisXStart": "Inicio",
-            "axisXMid": "Mes 3",
-            "axisXEnd": "Mes 6"
+            "badge": "SERVICIO PRIVACLEAN: ACTIVADO",
+            "titleLine1": "ELIMINA",
+            "titleHighlight": "FILTRACIONES",
+            "titleLine2": "EN TIEMPO REAL",
+            "description": "Nuestra tecnología propietaria detecta y remueve contenido no autorizado 24/7, garantizando que tus fans siempre lleguen a tus fuentes oficiales.",
+            "cta": "REGISTRARSE",
+            "feature1": "Recuperación promedio de +35% ingresos",
+            "feature2": "Escaneo constante de Google y sitios pirata"
+        },
+        "scan": {
+            "titleLine1": "ESCANEO GLOBAL &",
+            "titleHighlight": "ELIMINACIÓN INSTANTÁNEA",
+            "subtitle": "Protección Segura y Anónima"
         },
         "process": {
             "title": "Nuestro Proceso Detallado",

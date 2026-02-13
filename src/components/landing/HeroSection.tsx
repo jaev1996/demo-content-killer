@@ -10,7 +10,7 @@ export function HeroSection() {
 
     return (
         <motion.section
-            className="relative py-20 md:py-32 flex items-center min-h-[calc(100vh-5rem)] bg-background overflow-hidden"
+            className="relative py-16 md:py-24 flex items-center min-h-[70vh] bg-background overflow-hidden"
             initial="hidden"
             animate="visible"
             variants={{
@@ -31,7 +31,7 @@ export function HeroSection() {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="relative w-[500px] h-[500px] md:w-[900px] md:h-[900px]"
+                    className="relative w-[400px] h-[400px] md:w-[800px] md:h-[800px]"
                 >
                     <Image
                         src="/privaclean.svg"
@@ -69,6 +69,22 @@ export function HeroSection() {
                     </Link>
                 </motion.div>
             </div>
+
+            {/* Scroll Indicator */}
+            <motion.div
+                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
+            >
+                <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center p-1">
+                    <motion.div
+                        className="w-1 h-2 bg-red-600 rounded-full"
+                        animate={{ y: [0, 12, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                </div>
+            </motion.div>
         </motion.section>
     );
 }

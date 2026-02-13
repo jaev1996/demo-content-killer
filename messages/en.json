@@ -16,16 +16,19 @@
             "text": "Your peace of mind is our mission."
         },
         "earnings": {
-            "title": "Visualize the Impact on Your Income",
-            "subtitle": "Piracy not only affects your peace of mind, but also your wallet. See the difference our protection can make.",
-            "withoutLabel": "Without Protection",
-            "withLabel": "With PrivaClean",
-            "valuePropositionTitle": "Maximize Your Potential",
-            "valuePropositionDescription": "Piracy dilutes your income. By protecting your content, you not only stop losses but also foster steady and secure growth.",
-            "axisY": "Income (USD)",
-            "axisXStart": "Start",
-            "axisXMid": "Month 3",
-            "axisXEnd": "Month 6"
+            "badge": "PRIVACLEAN SERVICE: ACTIVATED",
+            "titleLine1": "ELIMINATE",
+            "titleHighlight": "LEAKS",
+            "titleLine2": "IN REAL TIME",
+            "description": "Our proprietary technology detects and removes unauthorized content 24/7, ensuring your fans always reach your official sources.",
+            "cta": "REGISTER NOW",
+            "feature1": "Average +35% revenue recovery",
+            "feature2": "Constant scanning of Google and pirate sites"
+        },
+        "scan": {
+            "titleLine1": "GLOBAL SCAN &",
+            "titleHighlight": "INSTANT TAKEDOWN",
+            "subtitle": "Secure & Anonymous Protection"
         },
         "process": {
             "title": "Our Detailed Process",
