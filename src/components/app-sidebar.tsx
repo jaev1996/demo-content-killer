@@ -19,6 +19,7 @@ import {
   IconSettings,
   IconUsers,
   IconTrashX,
+  IconTicket,
 } from "@tabler/icons-react"
 
 //import { NavDocuments } from "@/components/nav-documents"
@@ -60,6 +61,11 @@ const navMainItems = [
     title: "Perfiles de Cliente",
     url: "/profiles", // Donde el cliente gestiona la whitelist
     icon: IconUserCircle,
+  },
+  {
+    title: "Tickets de Soporte",
+    url: "/admin/tickets",
+    icon: IconTicket,
   },
 ]
 const data = {

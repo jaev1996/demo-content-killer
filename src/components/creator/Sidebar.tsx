@@ -12,6 +12,7 @@ import {
     IconSettings,
     IconLogout,
     IconX,
+    IconTicket,
 } from "@tabler/icons-react"
 import { useCreatorAuth } from "@/contexts/creator-auth-context"
 import { cn } from "@/lib/utils"
@@ -47,6 +48,11 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             href: "/creator/dashboard/subscription",
             label: t("nav.subscription"),
             icon: IconCreditCard,
+        },
+        {
+            href: "/creator/dashboard/tickets",
+            label: "Soporte",
+            icon: IconTicket,
         },
         {
             href: "/creator/dashboard/settings",
